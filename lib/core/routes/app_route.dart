@@ -1,0 +1,4 @@
+enum AppRoute {
+  simulation,
+  report
+}

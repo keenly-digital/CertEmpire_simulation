@@ -2,6 +2,11 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // Light Theme Colors
+
+  static const Color orangeColor =
+      Color(0xFFc0590a);
+  static const Color darkBlue =
+      Color(0xFF0b0838); // Teal primary (darker teal)
   static const Color lightPrimary =
       Color(0xFF008AA0); // Teal primary (darker teal)
   static const Color lightOnPrimary =
@@ -36,6 +41,7 @@ class AppColors {
   //Bottom-Navigation-Bar
   static const Color unSelectedNavItem = Color(0xFF04484B);
   static const Color bottomNavBar = Color(0xFF16BCC3);
+  static const Color blue = Color(0xFF0c018b);
 
 //Other
   static const Color redButton = Color(0xFFE76D6F);
@@ -46,6 +52,7 @@ class AppColors {
   static const Color selected = Color(0xFF0D4F59);
   static const Color unselected = Color(0xFF696969);
   static const Color grey = Color(0xFFE8E8E8);
+  static const Color lightGrey = Color(0xFFf6f6f6);
   static const Color tileLeadingIcon = Color(0xFF3C3C3C);
   static const Color dottedLine = Color(0xFF6F7172);
   static const Color green = Color(0xFF38950C);
@@ -62,4 +69,5 @@ class AppColors {
   static const Color passBackground = Color(0xFFEAFCE4);
   static const Color scoreBackground = Color(0xFFE8F8FB);
   static const Color passTextColour = Color(0xFF13A000);
+  static const Color black = Color(0xFF000000);
 }

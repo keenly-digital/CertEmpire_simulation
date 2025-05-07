@@ -1,5 +1,5 @@
 enum ApiEndpoint {
-  register,
+  getSimulationData,
   login,
   verifyAccount,
   updateProfile,
@@ -34,7 +34,7 @@ enum ApiEndpoint {
 extension ApiEndpointPath on ApiEndpoint {
   String get path {
     switch (this) {
-      case ApiEndpoint.register:
+      case ApiEndpoint.getSimulationData:
         return '/User/Signup';
       case ApiEndpoint.login:
         return '/User/Login';

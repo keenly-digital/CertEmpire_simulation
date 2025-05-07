@@ -83,6 +83,7 @@ class ThemeConfig {
           fontFamily: fontFamily,
           fontSize: _responsiveFontSize(10),
           fontWeight: FontManager.light),
+
     );
   }
 
