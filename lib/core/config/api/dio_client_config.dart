@@ -6,10 +6,12 @@ import 'dio_interceptors.dart';
 class ApiClient {
   late final Dio _dio;
   String _token = '';
-  static const _baseUrl = 'https://exam-backend-production-1314.up.railway.app/api';
-  static const _connectTimeout = Duration(minutes: 5);
-  static const _receiveTimeout = Duration(minutes: 5);
-  static const _sendTimeout = Duration(minutes: 5);
+  // static const _baseUrl = 'https://exam-backend-production-1314.up.railway.app/api';
+  static const _baseUrl = 'https://certempirbackend-production.up.railway.app/api/';
+
+  static const _connectTimeout = Duration(minutes: 15);
+  static const _receiveTimeout = Duration(minutes: 15);
+  static const _sendTimeout = Duration(minutes: 15);
 
   ApiClient._internal() {
     _dio = Dio(BaseOptions(

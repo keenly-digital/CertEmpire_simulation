@@ -1,9 +1,26 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class ReportMainView extends StatelessWidget {
+import '../../report_history_dependencies.dart';
+import '../bloc/get_all_report_bloc.dart';
+import '../bloc/get_all_report_events.dart';
+
+class ReportMainView extends StatefulWidget {
   const ReportMainView({super.key});
+
+  @override
+  State<ReportMainView> createState() => _ReportMainViewState();
+}
+
+class _ReportMainViewState extends State<ReportMainView> {
+  @override
+  void initState() {
+    super.initState();
+    reportHistoryDependency();
+    fetchReports();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -52,11 +69,10 @@ class ReportMainView extends StatelessWidget {
                       reportRow(
                         reportName: "Outdated Question 05",
                         examName:
-                            "AWS Certified Advanced Networking - Specialty ANS-C01",
+                        "AWS Certified Advanced Networking - Specialty ANS-C01",
                         status: "Approved",
-
                       ),
-                      SizedBox(height: 10.h,)
+                      SizedBox(height: 10.h),
                     ],
                   );
                 },
@@ -100,5 +116,12 @@ class ReportMainView extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  void fetchReports() {
+    // context.read<GetAllReportsBloc>().add(GetAllReportsEvent(pageSize: '10',
+    //     userId: "d4759a71-c7cd-4ff8-a394-97e96ae5267d",
+    //     pageNumber: pageNumber
+    //         :));
   }
 }

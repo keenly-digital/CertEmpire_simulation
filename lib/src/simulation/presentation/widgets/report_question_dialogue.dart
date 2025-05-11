@@ -1,10 +1,18 @@
 import 'package:certempiree/core/res/app_strings.dart';
-import 'package:certempiree/src/simulation/presentation/widgets/thank_you_dialogue.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/widgets/report_type_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../data/models/submit_report_param.dart';
+
 class ReportQuestionDialog extends StatefulWidget {
-  const ReportQuestionDialog({super.key});
+  int? questionId;
+  String? fileId;
+
+  ReportQuestionDialog({super.key, this.questionId, this.fileId});
 
   @override
   _ReportQuestionDialogState createState() => _ReportQuestionDialogState();
@@ -12,7 +20,7 @@ class ReportQuestionDialog extends StatefulWidget {
 
 class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
   String? _selectedReason;
-  final TextEditingController _controller = TextEditingController();
+  final TextEditingController _explanationController = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,9 +43,10 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   style: TextStyle(
                     color: Colors.red,
                     fontWeight: FontWeight.bold,
-                    fontSize: 14.sp,
+                    fontSize: 12.sp,
                     decoration: TextDecoration.underline,
-                  decorationColor: Colors.red),
+                    decorationColor: Colors.red,
+                  ),
                 ),
                 SizedBox(height: 15.h),
                 Align(
@@ -45,11 +54,11 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   child: Text(
                     AppStrings.chooseCriteria,
                     style: TextStyle(
-                      fontSize: 10.sp,
+                      fontSize: 8.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
-                 ),
+                ),
                 Row(
                   children: [
                     Transform.scale(
@@ -57,7 +66,8 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                       child: Radio<String>(
                         value: 'Outdated',
                         groupValue: _selectedReason,
-                        onChanged: (val) => setState(() => _selectedReason = val),
+                        onChanged:
+                            (val) => setState(() => _selectedReason = val),
                       ),
                     ),
                     Text(
@@ -70,7 +80,8 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                       child: Radio<String>(
                         value: 'Framed Wrong',
                         groupValue: _selectedReason,
-                        onChanged: (val) => setState(() => _selectedReason = val),
+                        onChanged:
+                            (val) => setState(() => _selectedReason = val),
                       ),
                     ),
                     Text(
@@ -85,7 +96,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   child: Text(
                     'Write An Explanation To This Report. *',
                     style: TextStyle(
-                      fontSize: 10.sp,
+                      fontSize: 8.sp,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -98,7 +109,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                     borderRadius: BorderRadius.circular(4.r),
                   ),
                   child: TextField(
-                    controller: _controller,
+                    controller: _explanationController,
                     maxLines: null,
                     expands: true,
                     style: TextStyle(fontSize: 15),
@@ -121,12 +132,28 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                       foregroundColor: Colors.red,
                     ),
                     onPressed: () {
-                      showDialog(
-                        context: context,
-                        builder: (context) => ThankYouDialogue(),
+                      if (_explanationController.text.isEmpty ||
+                          (_selectedReason?.isEmpty ?? false)) {
+                        CommonHelper.showToast(
+                          message: "Reason And Explanation Is Required",
+                        );
+                        return;
+                      }
+                      SubmitQuestionReportParam submitReportParam =
+                          SubmitQuestionReportParam(
+                            explanation: _explanationController.text,
+                            type: ReportTypeEnum.Question.index,
+                            userId: AppStrings.userId,
+                            targetId: widget.questionId ?? 0,
+                            reason: _selectedReason,
+                            fileId: widget.fileId,
+                          );
+                      context.read<SimulationBloc>().submitQuestionReport(
+                        submitReportParam,
+                        context,
                       );
                     },
-                    child: Text('SUBMIT', style: TextStyle(fontSize: 14.sp)),
+                    child: Text('SUBMIT', style: TextStyle(fontSize: 10.sp)),
                   ),
                 ),
               ],

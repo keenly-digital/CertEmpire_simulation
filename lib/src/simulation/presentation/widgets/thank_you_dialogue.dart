@@ -13,6 +13,7 @@ class _ThankYouDialogueState extends State<ThankYouDialogue> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
+
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
         side: BorderSide(color: Colors.red, width: 1.5.w),
@@ -59,11 +60,8 @@ class _ThankYouDialogueState extends State<ThankYouDialogue> {
                       side: BorderSide(color: Colors.red, width: 1.5.w),
                       foregroundColor: Colors.red,
                     ),
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.of(context).pop();
-                      Future.delayed(Duration.zero, () {
-                        Navigator.of(context).pop(); // Close the parent screen
-                      });
                     },
                     child: Text(
                       AppStrings.close,

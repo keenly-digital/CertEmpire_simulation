@@ -1,9 +1,17 @@
 import 'package:certempiree/core/res/app_strings.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/widgets/report_type_enum.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../data/models/submit_report_param.dart';
+
 class ReportExplainationDialogue extends StatelessWidget {
-  const ReportExplainationDialogue({super.key});
+  int? questionId;
+  String? fileId;
+
+  ReportExplainationDialogue({super.key, this.questionId, this.fileId});
 
   @override
   Widget build(BuildContext context) {
@@ -31,7 +39,6 @@ class ReportExplainationDialogue extends StatelessWidget {
                     fontSize: 10.sp,
                     decoration: TextDecoration.underline,
                     decorationColor: Colors.red, // underline color
-
                   ),
                 ),
                 SizedBox(height: 15.h),
@@ -42,7 +49,7 @@ class ReportExplainationDialogue extends StatelessWidget {
                     fontWeight: FontWeight.w600,
                   ),
                 ),
-                SizedBox(height: 10,),
+                SizedBox(height: 10),
                 Container(
                   height: 150.h,
                   decoration: BoxDecoration(
@@ -73,9 +80,25 @@ class ReportExplainationDialogue extends StatelessWidget {
                       foregroundColor: Colors.red,
                     ),
                     onPressed: () {
-                      Navigator.of(context).pop();
+                      SubmitQuestionReportParam submitReportParam =
+                          SubmitQuestionReportParam(
+                            explanation: _controller.text,
+                            type: ReportTypeEnum.Explanation.index,
+                            userId: "d4759a71-c7cd-4ff8-a394-97e96ae5267d",
+                            targetId: questionId ?? 0,
+                            reason: "",
+                            fileId: fileId ?? "",
+                          );
+                      context.read<SimulationBloc>().submitQuestionReport(
+                        submitReportParam,
+                        context,
+                      );
+                      Navigator.pop(context);
                     },
-                    child: Text(AppStrings.submit, style: TextStyle(fontSize: 14.sp)),
+                    child: Text(
+                      AppStrings.submit,
+                      style: TextStyle(fontSize: 14.sp),
+                    ),
                   ),
                 ),
               ],

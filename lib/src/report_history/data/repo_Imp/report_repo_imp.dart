@@ -1,15 +1,20 @@
 import 'package:certempiree/core/config/api/api_result.dart';
-import 'package:certempiree/src/simulation/data/data_sources/simulation_remote_data_src.dart';
+import 'package:certempiree/src/report_history/data/data_sources/report_remote_data_src.dart';
+import 'package:certempiree/src/report_history/data/models/get_all_reports.dart';
 
 import '../../domain/repos/report_repo.dart';
 
-class SimulationRepoImp extends AuthRepo {
-  final SimulationDataSrc _simulationDataSrc;
+class ReportRepoImp extends ReportRepo {
+  final ReportRemoteDataSrc _remoteDataSrc;
 
-  SimulationRepoImp(this._simulationDataSrc);
+  ReportRepoImp(this._remoteDataSrc);
 
   @override
-  Future<ApiResult<APIResponse<String?>>> getSimulationData(String req) async {
-    return await getSimulationData(req);
+  Future<ApiResult<APIResponse<GetAllReportsModel?>>> getAllReports(
+    String userId,
+    int pageNumber,
+    int pageSize,
+  ) async {
+    return await _remoteDataSrc.getAllReports(userId, pageNumber, pageSize);
   }
 }

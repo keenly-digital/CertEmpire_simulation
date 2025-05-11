@@ -12,11 +12,11 @@ class AppRouter {
       GoRoute(
         path: '/',
         name: AppRoute.simulation.name,
-        builder: (context, state) =>ReportMainView(),
+        builder: (context, state) =>ExamQuestionPage(),
       ), GoRoute(
         path: 'report',
         name: AppRoute.report.name,
-        builder: (context, state) =>  ExamQuestionPage(),
+        builder: (context, state) =>  ReportMainView(),
       ),
 
     ],
