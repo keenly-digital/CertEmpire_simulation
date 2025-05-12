@@ -1,4 +1,10 @@
-enum ApiEndpoint { getSimulationData, reportQuestion, getAllReports,reportAnswer }
+enum ApiEndpoint {
+  getSimulationData,
+  reportQuestion,
+  getAllReports,
+  reportAnswer,
+  viewRejectReason,
+}
 
 extension ApiEndpointPath on ApiEndpoint {
   String get path {
@@ -11,6 +17,8 @@ extension ApiEndpointPath on ApiEndpoint {
         return 'Report/GetAllReports';
       case ApiEndpoint.reportAnswer:
         return 'Report/ReportAnswer';
+      case ApiEndpoint.viewRejectReason:
+        return 'Report/ViewRejectReason';
     }
   }
 }

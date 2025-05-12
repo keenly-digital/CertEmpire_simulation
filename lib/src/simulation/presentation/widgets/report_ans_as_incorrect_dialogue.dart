@@ -154,7 +154,7 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                                   explanation: explanationController.text,
                                   type: ReportTypeEnum.Answer.index,
                                   userId:
-                                      "d4759a71-c7cd-4ff8-a394-97e96ae5267d",
+                                      AppStrings.userId,
                                   targetId: questionId ?? 0,
                                   reason: "",
                                   fileId: AppStrings.fileId,

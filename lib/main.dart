@@ -1,3 +1,4 @@
+import 'package:certempiree/src/report_history/presentation/bloc/report_bloc/get_all_report_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_cubit.dart';
 import 'package:flutter/material.dart';
@@ -32,8 +33,8 @@ class MyApp extends StatelessWidget {
         return MultiBlocProvider(
           providers: [
             BlocProvider(create: (context) => SimulationBloc()),
-
             BlocProvider(create: (context) => ReportAnsCubit()),
+            BlocProvider(create: (context) => GetAllReportsBloc()),
           ],
           child: MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,

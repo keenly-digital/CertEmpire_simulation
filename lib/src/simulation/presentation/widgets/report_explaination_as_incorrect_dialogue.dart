@@ -7,11 +7,11 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/submit_report_param.dart';
 
-class ReportExplainationDialogue extends StatelessWidget {
-  int? questionId;
-  String? fileId;
+class ReportExplanationDialogue extends StatelessWidget {
+  final int? questionId;
+  final String? fileId;
 
-  ReportExplainationDialogue({super.key, this.questionId, this.fileId});
+  const ReportExplanationDialogue({super.key, this.questionId, this.fileId});
 
   @override
   Widget build(BuildContext context) {
@@ -84,7 +84,7 @@ class ReportExplainationDialogue extends StatelessWidget {
                           SubmitQuestionReportParam(
                             explanation: _controller.text,
                             type: ReportTypeEnum.Explanation.index,
-                            userId: "d4759a71-c7cd-4ff8-a394-97e96ae5267d",
+                            userId: AppStrings.userId,
                             targetId: questionId ?? 0,
                             reason: "",
                             fileId: fileId ?? "",

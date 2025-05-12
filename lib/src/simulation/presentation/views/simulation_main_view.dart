@@ -317,7 +317,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                                     builder:
                                                         (
                                                           c,
-                                                        ) => ReportExplainationDialogue(
+                                                        ) => ReportExplanationDialogue(
                                                           questionId:
                                                               simulationData
                                                                   .simulationData
