@@ -1,4 +1,5 @@
 enum AppRoute {
   simulation,
-  report
+  report,
+  myRewardMainView
 }

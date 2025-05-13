@@ -1,9 +1,9 @@
 class Assets {
   static const String svg = "assets/svgs";
   static const String png = "assets/images";
+  static const String icons = "assets/icons";
 
   // NAVIGATION-ICONS
-  static const String back = "${Assets.svg}/back.svg";
   static const String navHome = "${Assets.svg}/nav_home_ic.svg";
   static const String navFile = "${Assets.svg}/nav_file_ic.svg";
   static const String navQuiz = "${Assets.svg}/nav_quiz_ic.svg";
@@ -11,6 +11,8 @@ class Assets {
   static const String hamburger = "${Assets.png}/hamburger.png";
 
   // OTHER-ICONS
+  static const String withDrawIcon = "${Assets.icons}/withDrawIcon.png";
+
   static const String landingBackground = "${Assets.png}/landing_bg.png";
   static const String caseStudy = "${Assets.png}/casestudy.png";
   static const String question = "${Assets.png}/question.png";

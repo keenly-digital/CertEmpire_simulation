@@ -70,4 +70,8 @@ class AppColors {
   static const Color scoreBackground = Color(0xFFE8F8FB);
   static const Color passTextColour = Color(0xFF13A000);
   static const Color black = Color(0xFF000000);
+  static const Color purple = Color(0xFF600987);
+  static const Color dividerColor = Color(0xFFf0e5f6);
+  static const Color borderColor = Color(0xFF2c0186);
+  static const Color greenBorder = Color(0xFF48de5a);
 }
