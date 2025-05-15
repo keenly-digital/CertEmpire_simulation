@@ -1,4 +1,5 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
+import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/check_email_dialogue.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/success_dialogue.dart';
@@ -21,13 +22,18 @@ class WithdrawRequestDialog extends StatelessWidget {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.wallet, size: 70.r, color: AppColors.purple),
+                    Image.asset(
+                      Assets.withDrawIcon,
+                      color: AppColors.purple,
+                      height: 70.h,
+                      width: 70.w,
+                    ),
                     Text(
                       'Withdraw Request',
                       textAlign: TextAlign.center,
@@ -40,7 +46,11 @@ class WithdrawRequestDialog extends StatelessWidget {
                     Text(
                       'You\'re about to request a withdrawal of \$30 against community help that you rendered wrt Amazon AZ-900. This will be processed manually via a refund.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(fontSize: 8.sp, color: Colors.black,fontWeight: FontWeight.w500),
+                      style: TextStyle(
+                        fontSize: 8.sp,
+                        color: Colors.black,
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                     SizedBox(height: 10.h),
                     RewardButton(
@@ -58,8 +68,8 @@ class WithdrawRequestDialog extends StatelessWidget {
                       onPressed: () async {
                         Navigator.pop(context, 'coupon');
                         await showDialog<String>(
-                        context: context,
-                        builder: (context) => const CheckEmailDialogue(),
+                          context: context,
+                          builder: (context) => const CheckEmailDialogue(),
                         );
                       },
                       child: Text(

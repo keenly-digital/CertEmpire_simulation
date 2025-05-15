@@ -34,6 +34,7 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
         LogUtil.debug("Simulation-onSuccess :${(res.data?.toJson())}");
 
         if (res.success && res.data != null) {
+          res.data?.data?.items?.add(res.data?.data?.items?[0]??Item());
           emit(
             (state as SimulationState).copyWith(
               simulationData: res.data?.data,
@@ -57,42 +58,55 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
   }
 
   Future<void> _onChangeAnswer(
-    ShowAnswerEvent event,
-    Emitter<SimulationInitState> emit,
-  ) async {
+      ShowAnswerEvent event,
+      Emitter<SimulationInitState> emit,
+      ) async {
     final currentState = state;
 
     if (currentState is SimulationState) {
-      final questions = currentState.simulationData?.questions;
+      final simulationData = currentState.simulationData;
+      if (simulationData == null || simulationData.items == null) return;
 
-      if (questions == null || questions.length <= (event.questionIndex ?? 0)) {
-        return;
-      }
+      // Create a new list with updated items
+      final updatedItems = simulationData.items!.map((item) {
+        if (item.topic?.topicItems == null) return item;
 
-      final updatedQuestions = List<Question>.from(questions);
+        // Create new topic with updated topic items
+        final updatedTopicItems = item.topic!.topicItems!.map((topicItem) {
+          if (topicItem.caseStudy?.questions == null) return topicItem;
 
-      final oldQuestion = updatedQuestions[event.questionIndex ?? 0];
+          // Create new case study with updated questions
+          final updatedQuestions = topicItem.caseStudy!.questions!.asMap().entries.map((entry) {
+            final index = entry.key;
+            final question = entry.value;
 
-      final updatedQuestion = Question(
-        id: oldQuestion.id,
-        questionText: oldQuestion.questionText,
-        questionDescription: oldQuestion.questionDescription,
-        options: oldQuestion.options,
-        correctAnswerIndices: oldQuestion.correctAnswerIndices,
-        explanation: oldQuestion.explanation,
-        showAnswer: !(oldQuestion.showAnswer ?? false),
-        questionImageUrl: oldQuestion.questionImageUrl,
-        answerImageUrl: oldQuestion.answerImageUrl,
-        timeTaken: oldQuestion.timeTaken,
-        q: oldQuestion.q,
-      );
+            // Only update the question at the specified index
+            if (event.questionIndex == index) {
+              return question.copyWith(
+                showAnswer: !(question.showAnswer ?? false),
+              );
+            }
+            return question;
+          }).toList();
 
-      updatedQuestions[event.questionIndex ?? 0] = updatedQuestion;
+          return topicItem.copyWith(
+            caseStudy: topicItem.caseStudy?.copyWith(
+              questions: updatedQuestions,
+            ),
+          );
+        }).toList();
+
+        return item.copyWith(
+          topic: item.topic?.copyWith(
+            topicItems: updatedTopicItems,
+          ),
+        );
+      }).toList();
 
       emit(
         currentState.copyWith(
-          simulationData: currentState.simulationData?.copyWith(
-            questions: updatedQuestions,
+          simulationData: simulationData.copyWith(
+            items: updatedItems,
           ),
         ),
       );

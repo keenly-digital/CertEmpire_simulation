@@ -11,7 +11,7 @@ class AppRouter {
     initialLocation: '/',
     routes: [
       GoRoute(
-        path: 'myRewardMainView',
+        path: '/',
         name: AppRoute.simulation.name,
         builder: (context, state) => ExamQuestionPage(),
       ),
@@ -21,7 +21,7 @@ class AppRouter {
         builder: (context, state) => ReportMainView(),
       ),
       GoRoute(
-        path: '/',
+        path: 'myRewardMainView',
         name: AppRoute.myRewardMainView.name,
         builder: (context, state) => MyRewardMainView(),
       ),

@@ -1,7 +1,8 @@
-import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../core/res/asset.dart';
 
 class FailedDialogue extends StatelessWidget {
   const FailedDialogue({super.key});
@@ -25,11 +26,8 @@ class FailedDialogue extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(
-                      Icons.mark_email_read_outlined,
-                      size: 70.r,
-                      color: Colors.red,
-                    ),
+                    Image.asset(Assets.error, height: 70.h, width: 70.w),
+
                     Text(
                       'Withdrawal failed ',
                       textAlign: TextAlign.center,

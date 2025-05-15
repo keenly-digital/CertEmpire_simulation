@@ -3,9 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
+import '../../data/models/get_all_reward_data_model.dart';
 
 class ReportSummaryCard extends StatelessWidget {
-  const ReportSummaryCard({super.key});
+  RewardData? rewardData;
+
+  ReportSummaryCard({super.key, this.rewardData});
 
   @override
   Widget build(BuildContext context) {
@@ -34,18 +37,30 @@ class ReportSummaryCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  'AWS Certified Advanced Networking - Specialty ANS-C01',
+                  rewardData?.fileName ?? "",
                   style: TextStyle(fontSize: 10.sp, color: Colors.black87),
                 ),
                 SizedBox(height: 14.h),
                 Wrap(
                   spacing: 5.w,
                   runSpacing: 5.h,
-                  children: const [
-                    _StatBox(label: 'Reports Submitted', value: '10'),
-                    _StatBox(label: 'Reports Approved', value: '8'),
-                    _StatBox(label: 'Voted Reports', value: '12'),
-                    _StatBox(label: 'Voted Reports Approved', value: '9'),
+                  children: [
+                    _StatBox(
+                      label: 'Reports Submitted',
+                      value: "${rewardData?.reportsSubmitted ?? 0}",
+                    ),
+                    _StatBox(
+                      label: 'Reports Approved',
+                      value: "${rewardData?.approvedReports ?? 0}",
+                    ),
+                    _StatBox(
+                      label: 'Voted Reports',
+                      value: "${rewardData?.votedReports ?? 0}",
+                    ),
+                    _StatBox(
+                      label: 'Voted Reports Approved',
+                      value: "${rewardData?.votedReportsApproved ?? 0}",
+                    ),
                   ],
                 ),
               ],
@@ -86,7 +101,10 @@ class ReportSummaryCard extends StatelessWidget {
                 },
                 child: const Text(
                   'Withdraw',
-                  style: TextStyle(color: AppColors.borderColor,fontWeight: FontWeight.w500),
+                  style: TextStyle(
+                    color: AppColors.borderColor,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],

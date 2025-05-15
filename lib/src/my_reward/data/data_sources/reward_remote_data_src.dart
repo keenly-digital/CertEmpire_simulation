@@ -1,26 +1,28 @@
 import 'package:certempiree/core/config/api/api_result.dart';
-import 'package:certempiree/src/report_history/data/models/get_all_reports.dart';
 
 import '../../../../core/config/api/api_endpoint.dart';
 import '../../../../core/config/api/api_manager.dart';
-import '../../../report_history/data/models/view_reason_model.dart';
+import '../models/get_all_reward_data_model.dart';
 
 class MyRewardDataSrc {
   final ApiManager _apiManager;
 
   MyRewardDataSrc(this._apiManager);
 
-  Future<ApiResult<APIResponse<ViewReportReason>>> getReportReason(
-    String reportId,
+  Future<ApiResult<APIResponse<GetAllRewardDataModel>>> getUserReward(
+    String userId,
   ) async {
     final result = await _apiManager.get(
-      ApiEndpoint.viewRejectReason,
-      queryParameters: {'ReportId': reportId},
+      ApiEndpoint.getUserRewards,
+      queryParameters: {'userId': userId},
     );
     return result.when(
       onSuccess:
           (res) => ApiResult.success(
-            APIResponse.fromJson(res, (data) => ViewReportReason.fromJson(res)),
+            APIResponse.fromJson(
+              res,
+              (data) => GetAllRewardDataModel.fromJson(res),
+            ),
           ),
       onFailure: (message) => ApiResult.failure(message),
     );

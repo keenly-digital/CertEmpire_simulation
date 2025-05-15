@@ -3,6 +3,8 @@ import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dar
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/res/asset.dart';
+
 class SuccessDialogue extends StatelessWidget {
   const SuccessDialogue({super.key});
 
@@ -19,13 +21,13 @@ class SuccessDialogue extends StatelessWidget {
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
+              padding: EdgeInsets.symmetric(horizontal: 15.w),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Icon(Icons.mark_email_read_outlined, size: 70.r, color: AppColors.greenBorder),
+                    Image.asset(Assets.sendEmail, height: 70.h, width: 70.w),
                     Text(
                       'Successfully Sent',
                       textAlign: TextAlign.center,
