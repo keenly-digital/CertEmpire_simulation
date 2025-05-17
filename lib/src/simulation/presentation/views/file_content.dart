@@ -7,17 +7,25 @@ import '../widgets/file_topic_row.dart';
 
 class FileContentWidget extends StatelessWidget {
   final FileContent fileContent;
+  final String searchQuery;
 
-  const FileContentWidget({super.key, required this.fileContent});
+  const FileContentWidget({
+    super.key,
+    required this.fileContent,
+    this.searchQuery = '',
+  });
 
   @override
   Widget build(BuildContext context) {
-    final flatItems = _flattenItems(fileContent.items);
+    final flatItems =
+        _flattenItems(
+          fileContent.items,
+        ).where((item) => _matchesSearch(item, searchQuery)).toList();
+
     return ListView.builder(
       itemCount: flatItems.length,
       itemBuilder: (context, index) {
         var flatItem = flatItems[index];
-
         return flatItem.item.when(
           question:
               (question) => AdminFileQuestionItemRow(
@@ -29,6 +37,16 @@ class FileContentWidget extends StatelessWidget {
               (caseStudy) => FileCaseStudyRowWidget(caseStudy: caseStudy),
         );
       },
+    );
+  }
+
+  bool _matchesSearch(FlatItem item, String query) {
+    if (query.isEmpty) return true;
+    return item.item.when(
+      question:
+          (q) => q.questionText.toLowerCase().contains(query.toLowerCase()),
+      topic: (_) => true,
+      caseStudy: (_) => true,
     );
   }
 

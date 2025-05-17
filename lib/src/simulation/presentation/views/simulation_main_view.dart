@@ -12,6 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/shared/widgets/spaces.dart';
 import '../../../../main.dart';
 import '../bloc/simulation_bloc/simulation_event.dart';
+import '../cubit/search_cubit/search_cubit.dart';
 import '../widgets/app_button.dart';
 
 class ExamQuestionPage extends StatefulWidget {
@@ -53,45 +54,50 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                             simulationState.simulationData?.fileName ?? "",
                             style: context.textTheme.headlineSmall,
                           ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: TextFormField(
-                                  decoration: InputDecoration(
-                                    contentPadding: EdgeInsets.symmetric(
-                                      horizontal: 15.w,
+                          BlocBuilder<SearchCubit, String>(
+                            builder: (context, query) {
+                              return Row(
+                                children: [
+                                  Expanded(
+                                    child: TextFormField(
+                                      onChanged: (value) =>
+                                          context.read<SearchCubit>().setQuery(value),
+                                      decoration: InputDecoration(
+                                        contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
+                                        labelText: 'Search',
+                                        border: OutlineInputBorder(),
+                                        prefixIcon: Icon(Icons.search),
+                                      ),
                                     ),
-                                    labelText: 'Search',
-                                    hintStyle: TextStyle(color: Colors.black),
-                                    labelStyle: TextStyle(color: Colors.black),
-                                    border: OutlineInputBorder(),
-                                    prefixIcon: Icon(Icons.search),
                                   ),
-                                ),
-                              ),
-                              horizontalSpace(5),
-                              appButton(
-                                onPressed: () {},
-                                text: "Save In Account",
-                                textColor: Colors.black,
-                              ),
-                              horizontalSpace(5),
-                              appButton(
-                                withIcon: true,
-                                onPressed: () {},
-                                text: "Save In Account",
-                                textColor: Colors.white,
-                                borderColor: AppColors.darkPrimary,
-                                background: AppColors.darkPrimary,
-                              ),
-                            ],
+                                  horizontalSpace(5),
+                                  appButton(
+                                    onPressed: () {},
+                                    text: "Save In Account",
+                                    textColor: Colors.black,
+                                  ),
+                                  horizontalSpace(5),
+                                  appButton(
+                                    withIcon: true,
+                                    onPressed: () {},
+                                    text: "Save In Account",
+                                    textColor: Colors.white,
+                                    borderColor: AppColors.darkPrimary,
+                                    background: AppColors.darkPrimary,
+                                  ),
+                                ],
+                              );
+                            },
                           ),
-                          Expanded(
-                            child: FileContentWidget(
-                              fileContent:
-                                  simulationState.simulationData ??
-                                  FileContent(),
-                            ),
+                          BlocBuilder<SearchCubit, String>(
+                            builder: (context, query) {
+                              return Expanded(
+                                child: FileContentWidget(
+                                  fileContent: simulationState.simulationData ?? FileContent(),
+                                  searchQuery: query,
+                                ),
+                              );
+                            },
                           ),
                         ],
                       ),
