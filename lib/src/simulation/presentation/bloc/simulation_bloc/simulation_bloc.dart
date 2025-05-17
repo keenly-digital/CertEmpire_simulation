@@ -18,7 +18,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
 
   SimulationBloc() : super(SimulationState()) {
     on<FetchSimulationDataEvent>((_onFetchSimulationData));
-    on<ShowAnswerEvent>((_onChangeAnswer));
   }
 
   Future<void> _onFetchSimulationData(
@@ -27,11 +26,11 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
   ) async {
     emit((state as SimulationState).copyWith(loading: true, success: false));
     final result = await _simulationRepo.getSimulationData(event.fieldId ?? "");
-LogUtil.debug("${result.isSuccess}asdasd");
-LogUtil.debug("${result.isSuccess}asdasd");
     await result.when(
       onSuccess: (res) async {
-        LogUtil.debug("Simulation-onSuccess........... :${(res.data?.toJson())}");
+        LogUtil.debug(
+          "Simulation-onSuccess........... :${(res.data?.toJson())}",
+        );
 
         if (res.success && res.data != null) {
           emit(
@@ -41,7 +40,6 @@ LogUtil.debug("${result.isSuccess}asdasd");
               success: true,
             ),
           );
-          LogUtil.debug("${(state as SimulationState).simulationData}uwiueoiwueoiqweiou");
         } else {
           emit(
             (state as SimulationState).copyWith(loading: false, success: false),
@@ -57,61 +55,6 @@ LogUtil.debug("${result.isSuccess}asdasd");
     );
   }
 
-  Future<void> _onChangeAnswer(
-    ShowAnswerEvent event,
-    Emitter<SimulationInitState> emit,
-  ) async {
-    final currentState = state;
-
-    if (currentState is SimulationState) {
-      // final simulationData = currentState.simulationData;
-      // if (simulationData == null || simulationData == null) return;
-      //
-      // // Create a new list with updated items
-      // final updatedItems = simulationData.items!.map((item) {
-      //   if (item.topic?.topicItems == null) return item;
-      //
-      //   // Create new topic with updated topic items
-      //   final updatedTopicItems = item.topic!.topicItems!.map((topicItem) {
-      //     if (topicItem.caseStudy?.questions == null) return topicItem;
-      //
-      //     // Create new case study with updated questions
-      //     final updatedQuestions = topicItem.caseStudy!.questions!.asMap().entries.map((entry) {
-      //       final index = entry.key;
-      //       final question = entry.value;
-      //
-      //       // Only update the question at the specified index
-      //       if (event.questionIndex == index) {
-      //         return question.copyWith(
-      //           showAnswer: !(question.showAnswer ?? false),
-      //         );
-      //       }
-      //       return question;
-      //     }).toList();
-      //
-      //     return topicItem.copyWith(
-      //       caseStudy: topicItem.caseStudy?.copyWith(
-      //         questions: updatedQuestions,
-      //       ),
-      //     );
-      //   }).toList();
-      //
-      //   return item.copyWith(
-      //     topic: item.topic?.copyWith(
-      //       topicItems: updatedTopicItems,
-      //     ),
-      //   );
-      // }).toList();
-      //
-      // emit(
-      //   currentState.copyWith(
-      //     simulationData: simulationData.copyWith(
-      //       items: updatedItems,
-      //     ),
-      //   ),
-      // );
-    }
-  }
 
   Future submitQuestionReport(
     SubmitQuestionReportParam submitReportParam,

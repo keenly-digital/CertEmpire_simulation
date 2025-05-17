@@ -130,8 +130,6 @@ class _AdminQuestionOverviewWidgetState
                       onPressed: () {
                         setState(() {
                           _showAnswer = !_showAnswer;
-                          print(_showAnswer);
-                          print("sadjiwejioewjfuheruvfvbxnv");
                         });
                         context.read<SimulationBloc>().add(
                           ShowAnswerEvent(questionIndex: widget.questionIndex),

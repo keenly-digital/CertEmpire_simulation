@@ -15,7 +15,8 @@ import 'core/di/dependency_injection.dart';
 import 'core/res/app_strings.dart';
 import 'core/routes/app_router.dart';
 import 'core/shared/widgets/snakbar.dart';
-String? screenName,userId,fileId;
+
+String? screenName, userId, fileId;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -38,7 +39,6 @@ class _MyAppState extends State<MyApp> {
   }
 
   void _handleIncomingLink() {
-    print("askldjosijqwiomalskmnmascnaslzsovz;kvsjkDnv;ksdjhv;iasdjbuj");
     final uri = Uri.base;
     final encodedData = uri.queryParameters['data'];
     if (encodedData != null) {
@@ -56,9 +56,7 @@ class _MyAppState extends State<MyApp> {
         print("${AppStrings.fileId} WIOQEUOQWIUEOQWIU");
         print("${AppStrings.userId} WIOQEUOQWIUEOQWIU");
         Snackbar.show("wqioeuqwoiueqw ${data['fileId']}");
-        setState(() {
-
-        });
+        setState(() {});
       } catch (e) {
         debugPrint("Error decoding data: $e");
       }
@@ -84,7 +82,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => MyRewardBloc()),
             BlocProvider(create: (context) => SearchCubit()),
           ],
-          child:  MaterialApp.router(
+          child: MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
             debugShowCheckedModeBanner: false,
             title: AppStrings.appName,
@@ -93,7 +91,6 @@ class _MyAppState extends State<MyApp> {
             themeMode: ThemeMode.system,
             routerConfig: AppRouter.router,
           ),
-
         );
       },
     );

@@ -10,5 +10,6 @@ class Assets {
   static const String checkEmail = "${Assets.icons}/checkEmail.png";
   static const String caseStudy = "${Assets.icons}/caseStudy.png";
   static const String topic = "${Assets.icons}/topic.png";
+  static const String task = "${Assets.icons}/task.png";
 
 }
