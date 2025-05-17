@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/report_history/presentation/bloc/report_bloc/get_all_report_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
@@ -12,15 +14,57 @@ import 'core/di/dependency_injection.dart';
 import 'core/res/app_strings.dart';
 import 'core/routes/app_router.dart';
 import 'core/shared/widgets/snakbar.dart';
+String? screenName,userId,fileId;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupDependencies();
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    super.initState();
+    _handleIncomingLink();
+  }
+
+  void _handleIncomingLink() {
+    print("askldjosijqwiomalskmnmascnaslzsovz;kvsjkDnv;ksdjhv;iasdjbuj");
+    final uri = Uri.base;
+    final encodedData = uri.queryParameters['data'];
+    if (encodedData != null) {
+      try {
+        final decodedJson = utf8.decode(base64Url.decode(encodedData));
+        final Map<String, dynamic> data = jsonDecode(decodedJson);
+
+        AppStrings.fileId = data['fileId'];
+        fileId = data['fileId'];
+        AppStrings.userId = data['userId'];
+        userId = data['userId'];
+        AppStrings.screenName = data['screenName'];
+        screenName = data['screenName'];
+        print("${decodedJson} WIOQEUOQWIUEOQWIU");
+        print("${AppStrings.fileId} WIOQEUOQWIUEOQWIU");
+        print("${AppStrings.userId} WIOQEUOQWIUEOQWIU");
+        Snackbar.show("wqioeuqwoiueqw ${data['fileId']}");
+        setState(() {
+
+        });
+      } catch (e) {
+        debugPrint("Error decoding data: $e");
+      }
+    } else {
+      debugPrint("No data received in query.");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +82,7 @@ class MyApp extends StatelessWidget {
             BlocProvider(create: (context) => GetAllReportsBloc()),
             BlocProvider(create: (context) => MyRewardBloc()),
           ],
-          child: MaterialApp.router(
+          child:  MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
             debugShowCheckedModeBanner: false,
             title: AppStrings.appName,
@@ -47,6 +91,7 @@ class MyApp extends StatelessWidget {
             themeMode: ThemeMode.system,
             routerConfig: AppRouter.router,
           ),
+
         );
       },
     );

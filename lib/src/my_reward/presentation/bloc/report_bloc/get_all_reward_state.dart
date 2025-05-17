@@ -6,19 +6,33 @@ class RewardInitialState extends Equatable {
   final List<RewardData>? rewardData;
   final bool? loading;
   final String? errorMessage;
+  final bool? withDrawLoading;
 
   @override
-  List<Object?> get props => [rewardData, loading, errorMessage];
+  List<Object?> get props => [
+    rewardData,
+    loading,
+    errorMessage,
+    withDrawLoading,
+  ];
 
-  const RewardInitialState({this.rewardData, this.loading, this.errorMessage});
+  const RewardInitialState({
+    this.rewardData,
+    this.loading,
+    this.errorMessage,
+    this.withDrawLoading,
+  });
 
   RewardInitialState copyWith({
     List<RewardData>? rewardData,
     bool? loading,
     String? errorMessage,
+
+    bool? withDrawLoading,
   }) {
     return RewardInitialState(
       rewardData: rewardData ?? this.rewardData,
+      withDrawLoading: withDrawLoading ?? this.withDrawLoading,
       loading: loading ?? this.loading,
       errorMessage: errorMessage ?? this.errorMessage,
     );

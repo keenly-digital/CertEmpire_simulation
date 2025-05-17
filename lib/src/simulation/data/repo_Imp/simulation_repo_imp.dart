@@ -1,4 +1,4 @@
-import 'package:certempiree/src/simulation/data/models/simulation_model.dart';
+import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/data/models/submit_report_model.dart';
 import 'package:certempiree/src/simulation/data/models/submit_report_param.dart';
 import 'package:certempiree/src/simulation/domain/repos/simulation_repo.dart';
@@ -14,7 +14,7 @@ class SimulationRepoImp extends SimulationRepo {
   SimulationRepoImp(this._simulationDataSrc);
 
   @override
-  Future<ApiResult<APIResponse<SimulationDataModel?>>> getSimulationData(
+  Future<ApiResult<APIResponse<FileContent?>>> getSimulationData(
     String fileId,
   ) async {
     return await _simulationDataSrc.getSimulationData(fileId);

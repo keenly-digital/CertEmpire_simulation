@@ -1,11 +1,11 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/simulation_model.dart';
+import '../../../data/models/file_content_model.dart';
 
 sealed class SimulationInitState extends Equatable {}
 
 class SimulationState extends SimulationInitState {
-  final SimulationData? simulationData;
+  final FileContent? simulationData;
   final bool loading;
   final bool success;
   final String? errorMessage;
@@ -18,7 +18,7 @@ class SimulationState extends SimulationInitState {
   });
 
   SimulationState copyWith({
-    SimulationData? simulationData,
+    FileContent? simulationData,
     bool? loading,
     bool? success,
     String? errorMessage,

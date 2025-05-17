@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 
-import '../../data/models/simulation_model.dart';
+import '../../data/models/file_content_model.dart';
+import '../../data/models/question_model.dart';
 
 class ReportAnswerState extends Equatable {
   final Question? question;

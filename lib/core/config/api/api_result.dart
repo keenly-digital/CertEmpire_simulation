@@ -67,15 +67,18 @@ class APIResponse<T> {
   // }
 
   factory APIResponse.fromJson(
-      Map<String, dynamic> json, T Function(dynamic) fromJson) {
+    Map<String, dynamic> json,
+    T Function(dynamic) fromJson,
+  ) {
     final rawData = json['Data'];
     T? parsedData;
     if (rawData == null || (rawData is String && rawData.isEmpty)) {
       parsedData = null; // Handle empty or null data
     } else if (rawData is String) {
       parsedData = fromJson(rawData);
+    } else if (T is int || T is double || T == bool) {
+      parsedData = rawData as T;
     } else if (rawData is List) {
-      // Handle list of objects
       parsedData = fromJson(rawData);
     } else if (rawData is Map<String, dynamic>) {
       // Handle single object

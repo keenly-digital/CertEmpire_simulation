@@ -1,14 +1,20 @@
+import 'package:certempiree/core/res/app_strings.dart';
+import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/withdraw_request_dialogue.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/get_all_reward_data_model.dart';
+import '../bloc/report_bloc/get_all_reward_events.dart';
+import '../bloc/report_bloc/get_all_reward_state.dart';
 
 class ReportSummaryCard extends StatelessWidget {
-  RewardData? rewardData;
+  final RewardData? rewardData;
+   int index = -1;
 
-  ReportSummaryCard({super.key, this.rewardData});
+   ReportSummaryCard({super.key, this.rewardData,  required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -51,7 +57,7 @@ class ReportSummaryCard extends StatelessWidget {
                     ),
                     _StatBox(
                       label: 'Reports Approved',
-                      value: "${rewardData?.approvedReports ?? 0}",
+                      value: "${rewardData?.votedReportsApproved ?? 0}",
                     ),
                     _StatBox(
                       label: 'Voted Reports',
@@ -83,29 +89,47 @@ class ReportSummaryCard extends StatelessWidget {
                 style: TextStyle(fontSize: 14, color: Colors.black87),
               ),
               const SizedBox(height: 4),
-              const Text(
-                '\$25 USD',
+              Text(
+                '\$${rewardData?.filePrice} USD',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 12),
-              OutlinedButton(
-                style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.purple,
-                  side: BorderSide(color: AppColors.borderColor),
-                ),
-                onPressed: () async {
-                  await showDialog<String>(
-                    context: context,
-                    builder: (context) => const WithdrawRequestDialog(),
+              BlocBuilder<MyRewardBloc, RewardInitialState>(
+                builder: (context, state) {
+                  return (state.withDrawLoading == false &&
+                          index == context.read<MyRewardBloc>().cardIndex)
+                      ?
+                       CircularProgressIndicator():OutlinedButton(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.purple,
+                      side: BorderSide(color: AppColors.borderColor),
+                    ),
+                    onPressed: () async {
+                      await showDialog<String>(
+                        context: context,
+                        builder: (context) => const WithdrawRequestDialog(),
+                      );
+                    },
+                    child: TextButton(
+                      onPressed: () {
+                        context.read<MyRewardBloc>().add(
+                          WithDrawRewardEvent(
+                            context: context,
+                            fileId: AppStrings.fileId,
+                            userId: AppStrings.userId,
+                          ),
+                        );
+                      },
+                      child: Text(
+                        'Withdraw',
+                        style: TextStyle(
+                          color: AppColors.borderColor,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
                   );
                 },
-                child: const Text(
-                  'Withdraw',
-                  style: TextStyle(
-                    color: AppColors.borderColor,
-                    fontWeight: FontWeight.w500,
-                  ),
-                ),
               ),
             ],
           ),

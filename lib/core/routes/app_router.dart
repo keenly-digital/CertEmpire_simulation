@@ -16,12 +16,12 @@ class AppRouter {
         builder: (context, state) => ExamQuestionPage(),
       ),
       GoRoute(
-        path: 'report',
+        path: '/report',
         name: AppRoute.report.name,
         builder: (context, state) => ReportMainView(),
       ),
       GoRoute(
-        path: 'myRewardMainView',
+        path: '/myRewardMainView',
         name: AppRoute.myRewardMainView.name,
         builder: (context, state) => MyRewardMainView(),
       ),

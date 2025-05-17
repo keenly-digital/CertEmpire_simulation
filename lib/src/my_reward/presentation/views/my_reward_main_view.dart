@@ -31,12 +31,18 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
     return Scaffold(
       body: BlocBuilder<MyRewardBloc, RewardInitialState>(
         builder: (context, state) {
-          return ListView.builder(
-            itemCount: state.rewardData?.length,
-            itemBuilder: (context, index) {
-              return ReportSummaryCard(rewardData: state.rewardData?[index]);
-            },
-          );
+          return state.loading == true
+              ? Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                itemCount: state.rewardData?.length,
+                itemBuilder: (context, index) {
+                  return ReportSummaryCard(
+                    rewardData: state.rewardData?[index],
+                    index : index
+
+                  );
+                },
+              );
         },
       ),
     );

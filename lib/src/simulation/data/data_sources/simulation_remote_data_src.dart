@@ -3,8 +3,8 @@ import 'package:certempiree/src/simulation/data/models/submit_report_model.dart'
 
 import '../../../../core/config/api/api_endpoint.dart';
 import '../../../../core/config/api/api_manager.dart';
+import '../models/file_content_model.dart';
 import '../models/report_ans_param_model.dart';
-import '../models/simulation_model.dart';
 import '../models/submit_report_param.dart';
 
 class SimulationDataSrc {
@@ -12,7 +12,7 @@ class SimulationDataSrc {
 
   SimulationDataSrc(this._apiManager);
 
-  Future<ApiResult<APIResponse<SimulationDataModel>>> getSimulationData(
+  Future<ApiResult<APIResponse<FileContent>>> getSimulationData(
     String fileId,
   ) async {
     final result = await _apiManager.get(
@@ -22,10 +22,7 @@ class SimulationDataSrc {
     return result.when(
       onSuccess:
           (res) => ApiResult.success(
-            APIResponse.fromJson(
-              res,
-              (data) => SimulationDataModel.fromJson(res),
-            ),
+            APIResponse.fromJson(res, (data) => FileContent.fromJson(data)),
           ),
       onFailure: (message) => ApiResult.failure(message),
     );

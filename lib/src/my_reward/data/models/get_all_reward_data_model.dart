@@ -28,45 +28,45 @@ class GetAllRewardDataModel {
 }
 
 class RewardData {
-  String? fileId;
+  String? orderNumber;
   String? fileName;
   int? filePrice;
-  int? approvedReports;
   int? reportsSubmitted;
+  int? reportsApproved;
   int? votedReports;
   int? votedReportsApproved;
-  double? balance;
+  double? currentBalance;
 
   RewardData({
-    this.fileId,
+    this.orderNumber,
     this.fileName,
     this.filePrice,
-    this.approvedReports,
     this.reportsSubmitted,
+    this.reportsApproved,
     this.votedReports,
     this.votedReportsApproved,
-    this.balance,
+    this.currentBalance,
   });
 
   factory RewardData.fromJson(Map<String, dynamic> json) => RewardData(
-    fileId: json["fileId"],
+    orderNumber: json["orderNumber"],
     fileName: json["fileName"],
     filePrice: json["filePrice"],
-    approvedReports: json["approvedReports"],
     reportsSubmitted: json["reportsSubmitted"],
+    reportsApproved: json["reportsApproved"],
     votedReports: json["votedReports"],
     votedReportsApproved: json["votedReportsApproved"],
-    balance: json["balance"]?.toDouble(),
+    currentBalance: json["currentBalance"]?.toDouble(),
   );
 
   Map<String, dynamic> toJson() => {
-    "fileId": fileId,
+    "orderNumber": orderNumber,
     "fileName": fileName,
     "filePrice": filePrice,
-    "approvedReports": approvedReports,
     "reportsSubmitted": reportsSubmitted,
+    "reportsApproved": reportsApproved,
     "votedReports": votedReports,
     "votedReportsApproved": votedReportsApproved,
-    "balance": balance,
+    "currentBalance": currentBalance,
   };
 }

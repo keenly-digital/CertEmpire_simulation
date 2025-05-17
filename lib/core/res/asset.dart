@@ -8,5 +8,7 @@ class Assets {
   static const String error = "${Assets.icons}/error.png";
   static const String sendEmail = "${Assets.icons}/sendEmail.png";
   static const String checkEmail = "${Assets.icons}/checkEmail.png";
+  static const String caseStudy = "${Assets.icons}/caseStudy.png";
+  static const String topic = "${Assets.icons}/topic.png";
 
 }

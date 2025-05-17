@@ -1,4 +1,4 @@
-import '../../../data/models/simulation_model.dart';
+import '../../../data/models/file_content_model.dart';
 
 abstract class SimulationEvent {}
 
