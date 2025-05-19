@@ -9,24 +9,24 @@ import 'app_route.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/',
+    initialLocation: '/Simulation',
     routes: [
       GoRoute(
-        path: '/',
+        path: '/Simulation',
         name: AppRoute.simulation.name,
         builder: (context, state) => ExamQuestionPage(),
       ),
       GoRoute(
-        path: '/report',
+        path: '/Report',
         name: AppRoute.report.name,
         builder: (context, state) => ReportMainView(),
       ),
       GoRoute(
-        path: '/myRewardMainView',
+        path: '/MyRewards',
         name: AppRoute.myRewardMainView.name,
         builder: (context, state) => MyRewardMainView(),
       ),  GoRoute(
-        path: '/my_tasks',
+        path: '/MyTasks',
         name: AppRoute.myTasks.name,
         builder: (context, state) => MyTaskMainView(),
       ),

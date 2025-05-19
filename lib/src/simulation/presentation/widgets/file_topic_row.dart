@@ -1,9 +1,6 @@
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:readmore/readmore.dart';
 
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/res/asset.dart';
 import '../../../../core/utils/spacer_utility.dart';
 import '../../data/models/file_content_model.dart';
@@ -27,11 +24,16 @@ class FileTopicRowWidget extends StatelessWidget {
             Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                BorderBox(
-                  width: 20.w,
-                  height: 20.h,
-                  child: Image.asset(Assets.topic),
+                Container(
+                  margin: EdgeInsets.only(left: 5, top: 5),
+                  child: Image.asset(
+                    Assets.topic,
+                    width: 22,
+                    height: 22,
+                    color: Colors.black,
+                  ),
                 ),
+
                 SpacerUtil.horizontalSmall(),
                 Column(
                   mainAxisSize: MainAxisSize.min,

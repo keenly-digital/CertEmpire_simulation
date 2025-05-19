@@ -7,6 +7,7 @@ import 'package:certempiree/src/simulation/presentation/cubit/report_ans_cubit.d
 import 'package:certempiree/src/simulation/presentation/cubit/search_cubit/search_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'core/config/app_config.dart';
@@ -45,17 +46,10 @@ class _MyAppState extends State<MyApp> {
       try {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
-
         AppStrings.fileId = data['fileId'];
         fileId = data['fileId'];
         AppStrings.userId = data['userId'];
         userId = data['userId'];
-        AppStrings.screenName = data['screenName'];
-        screenName = data['screenName'];
-        print("${decodedJson} WIOQEUOQWIUEOQWIU");
-        print("${AppStrings.fileId} WIOQEUOQWIUEOQWIU");
-        print("${AppStrings.userId} WIOQEUOQWIUEOQWIU");
-        Snackbar.show("wqioeuqwoiueqw ${data['fileId']}");
         setState(() {});
       } catch (e) {
         debugPrint("Error decoding data: $e");
@@ -90,6 +84,9 @@ class _MyAppState extends State<MyApp> {
             darkTheme: ThemeConfig.lightTheme(),
             themeMode: ThemeMode.system,
             routerConfig: AppRouter.router,
+            localizationsDelegates: [
+              FlutterQuillLocalizations.delegate,
+            ],
           ),
         );
       },

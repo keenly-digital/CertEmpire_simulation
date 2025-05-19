@@ -37,6 +37,7 @@ class AppColors {
   static const Color darkOnError = Color(0xFF000000);
   static const Color darkOnBackground = Color(0xFFFFFFFF);
   static const Color darkOnSurface = Color(0xFFFFFFFF);
+  static const Color lightBlue = Color(0xFF2783EC);
 
   //Bottom-Navigation-Bar
   static const Color unSelectedNavItem = Color(0xFF04484B);
@@ -74,4 +75,7 @@ class AppColors {
   static const Color dividerColor = Color(0xFFf0e5f6);
   static const Color borderColor = Color(0xFF2c0186);
   static const Color greenBorder = Color(0xFF48de5a);
+  static const Color reportColor = Color(0xFFED2349);
+  static const Color lightPurple = Color(0xFF6946b1);
+  static const Color cyan = Color(0xFF79E0DC);
 }

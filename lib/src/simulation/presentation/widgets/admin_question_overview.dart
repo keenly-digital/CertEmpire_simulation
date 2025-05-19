@@ -1,3 +1,4 @@
+import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_ans_as_incorrect_dialogue.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_explaination_as_incorrect_dialogue.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_question_dialogue.dart';
@@ -10,15 +11,13 @@ import '../../../../core/res/app_strings.dart';
 import '../../../../core/shared/widgets/spaces.dart';
 import '../../../../core/utils/spacer_utility.dart';
 import '../../data/models/question_model.dart';
-import '../bloc/simulation_bloc/simulation_bloc.dart';
-import '../bloc/simulation_bloc/simulation_event.dart';
 import '../cubit/report_ans_cubit.dart';
 import 'border_box.dart';
 
 class AdminQuestionOverviewWidget extends StatefulWidget {
   final Question question;
   final int questionIndex;
-  final VoidCallback? onShowAnswerToggle; // Callback for answer toggle
+  final VoidCallback? onShowAnswerToggle;
 
   const AdminQuestionOverviewWidget({
     super.key,
@@ -39,13 +38,30 @@ class _AdminQuestionOverviewWidgetState
   @override
   void initState() {
     super.initState();
-    // _showAnswer = widget.question.showAnswer;
+  }
+
+  double calculateLeftMargin() {
+    if (widget.question.hasTopic() && widget.question.hasCaseStudy()) {
+      return SpacerUtil.instance.large;
+    } else if (widget.question.hasTopic()) {
+      return SpacerUtil.instance.medium;
+    } else if (widget.question.hasCaseStudy()) {
+      return SpacerUtil.instance.medium;
+    } else {
+      return 0;
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     return BorderBox(
-      margin: SpacerUtil.only(bottom: SpacerUtil.instance.small),
+      padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
+
+      margin: SpacerUtil.only(
+        top: SpacerUtil.instance.small,
+        left: calculateLeftMargin(),
+        bottom: SpacerUtil.instance.small,
+      ),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -55,34 +71,30 @@ class _AdminQuestionOverviewWidgetState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
                       "Q.${widget.questionIndex}",
                       style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.black,
                         fontSize: 16,
-                        fontWeight: FontWeight.w500,
-                        color: AppColors.lightSecondary,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.black,
                       ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
-                      child: Text(
-                        widget.question.questionText ?? "",
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w500,
-                        ),
+                      child: EditorView(
+                        initialContent: widget.question.questionText,
                       ),
                     ),
                   ],
                 ),
                 SizedBox(height: 5.h),
-                Text(
-                  "      ${widget.question.questionDescription ?? ""}",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.w700,
-                  ),
+                EditorView(
+                  initialContent: widget.question.questionDescription,
                 ),
                 const SizedBox(height: 16),
                 ListView.builder(
@@ -91,20 +103,18 @@ class _AdminQuestionOverviewWidgetState
                   itemCount: widget.question.options.length,
                   itemBuilder: (context, optionIndex) {
                     final isCorrect =
-                        (widget.question.correctAnswerIndices.contains(
+                        widget.question.correctAnswerIndices.contains(
                           optionIndex,
-                        )) &&
-                        _showAnswer == true;
+                        ) &&
+                        _showAnswer;
 
-                    return Text(
-                      "        ${widget.question.options[optionIndex] ?? ""}",
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: isCorrect ? Colors.green : Colors.black,
-                      ),
+                    return EditorView(
+                      initialContent: widget.question.options[optionIndex],
+                      textColor: isCorrect ? Colors.green : null,
                     );
                   },
                 ),
+
                 SizedBox(height: 10.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.end,
@@ -122,7 +132,7 @@ class _AdminQuestionOverviewWidgetState
                       },
                       child: Text(
                         AppStrings.reportQue,
-                        style: TextStyle(color: AppColors.orangeColor),
+                        style: TextStyle(color: AppColors.reportColor),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -131,15 +141,12 @@ class _AdminQuestionOverviewWidgetState
                         setState(() {
                           _showAnswer = !_showAnswer;
                         });
-                        context.read<SimulationBloc>().add(
-                          ShowAnswerEvent(questionIndex: widget.questionIndex),
-                        );
                       },
                       child: Text(
                         !_showAnswer
                             ? AppStrings.showAnswer
                             : AppStrings.hideAnswer,
-                        style: const TextStyle(color: AppColors.lightPrimary),
+                        style: const TextStyle(color: AppColors.lightPurple),
                       ),
                     ),
                   ],
@@ -195,16 +202,20 @@ class _AdminQuestionOverviewWidgetState
                             ),
                           ],
                         ),
-                        Text.rich(
-                          TextSpan(
-                            children: [
-                              TextSpan(
-                                text: AppStrings.explanation,
-                                style: TextStyle(fontWeight: FontWeight.w700),
+                        Row(
+                          children: [
+                            Text(
+                              AppStrings.explanation,
+                              style: TextStyle(fontWeight: FontWeight.w700),
+                            ),
+                            horizontalSpace(3),
+                            Expanded(
+                              child: EditorView(
+                                initialContent:
+                                    widget.question.answerExplanation,
                               ),
-                              TextSpan(text: widget.question.answerExplanation),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 5),
                         Align(

@@ -1,18 +1,18 @@
 import '../../../../core/config/api/api_endpoint.dart';
 import '../../../../core/config/api/api_manager.dart';
 import '../../../../core/config/api/api_result.dart';
-import '../../../my_reward/data/models/get_all_reward_data_model.dart';
+import '../models/my_task_model.dart';
 
-class MyRewardDataSrc {
+class MyTaskDataSrc {
   final ApiManager _apiManager;
 
-  MyRewardDataSrc(this._apiManager);
+  MyTaskDataSrc(this._apiManager);
 
-  Future<ApiResult<APIResponse<GetAllRewardDataModel>>> getUserReward(
+  Future<ApiResult<APIResponse<GetAllTaskModel>>> getMyTask(
     String userId,
   ) async {
     final result = await _apiManager.get(
-      ApiEndpoint.getUserRewards,
+      ApiEndpoint.getAllTasks,
       queryParameters: {'userId': userId},
     );
     return result.when(
@@ -20,7 +20,7 @@ class MyRewardDataSrc {
           (res) => ApiResult.success(
             APIResponse.fromJson(
               res,
-              (data) => GetAllRewardDataModel.fromJson(res),
+              (data) => (GetAllTaskModel.fromJson(res)),
             ),
           ),
       onFailure: (message) => ApiResult.failure(message),

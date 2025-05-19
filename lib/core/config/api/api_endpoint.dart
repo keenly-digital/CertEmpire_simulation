@@ -6,6 +6,7 @@ enum ApiEndpoint {
   viewRejectReason,
   getUserRewards,
   withdrawReward,
+  getAllTasks,
 }
 
 extension ApiEndpointPath on ApiEndpoint {
@@ -25,6 +26,8 @@ extension ApiEndpointPath on ApiEndpoint {
         return 'Report/ViewRejectReason';
       case ApiEndpoint.withdrawReward:
         return 'MyReward/Withdraw';
+      case ApiEndpoint.getAllTasks:
+        return 'MyTask/GetAllTasks';
     }
   }
 }

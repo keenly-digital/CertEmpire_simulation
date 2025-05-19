@@ -89,7 +89,7 @@ class ReportExplanationDialogue extends StatelessWidget {
                             reason: "",
                             fileId: fileId ?? "",
                           );
-                      context.read<SimulationBloc>().submitQuestionReport(
+                      context.read<SimulationBloc>().submitExplanationReport(
                         submitReportParam,
                         context,
                       );

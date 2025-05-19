@@ -55,7 +55,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
     );
   }
 
-
   Future submitQuestionReport(
     SubmitQuestionReportParam submitReportParam,
     BuildContext context,
@@ -65,11 +64,10 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
     final res = await _simulationRepo.reportQuestion(submitReportParam);
     return res.when(
       onSuccess: (data) async {
-        CommonHelper.showLoader(context);
-        Navigator.pop(context);
-
+        CommonHelper.hideLoader(context);
         showDialog(
           context: context,
+
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: false,
         );
@@ -92,7 +90,7 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
 
     final res = await _simulationRepo.reportQuestion(submitReportParam);
     return res.when(
-      onSuccess: (data) async {
+      onSuccess: (data)  {
         Navigator.pop(context);
 
         showDialog(

@@ -10,7 +10,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/shared/widgets/spaces.dart';
-import '../../../../main.dart';
 import '../bloc/simulation_bloc/simulation_event.dart';
 import '../cubit/search_cubit/search_cubit.dart';
 import '../widgets/app_button.dart';
@@ -26,12 +25,10 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   @override
   void initState() {
     super.initState();
-    Future.delayed(Duration(seconds: 5)).then((value) {
-      if (!mounted) return;
-      context.read<SimulationBloc>().add(
-        FetchSimulationDataEvent(fieldId: AppStrings.fileId),
-      );
-    });
+    if (!mounted) return;
+    context.read<SimulationBloc>().add(
+      FetchSimulationDataEvent(fieldId: AppStrings.fileId),
+    );
   }
 
   @override
@@ -51,8 +48,17 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            simulationState.simulationData?.fileName ?? "",
-                            style: context.textTheme.headlineSmall,
+                            simulationState.simulationData?.fileName.replaceAll(
+                                  "%",
+                                  "",
+                                ) ??
+                                "",
+                            style: context.textTheme.headlineSmall?.copyWith(
+                              color: AppColors.blue,
+                              decoration: TextDecoration.underline,
+                              decorationColor:
+                                  AppColors.blue, // underline color
+                            ),
                           ),
                           BlocBuilder<SearchCubit, String>(
                             builder: (context, query) {
@@ -60,30 +66,37 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                 children: [
                                   Expanded(
                                     child: TextFormField(
-                                      onChanged: (value) =>
-                                          context.read<SearchCubit>().setQuery(value),
+                                      onChanged:
+                                          (value) => context
+                                              .read<SearchCubit>()
+                                              .setQuery(value),
                                       decoration: InputDecoration(
-                                        contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 15.w,
+                                        ),
                                         labelText: 'Search',
+                                        labelStyle: TextStyle(
+                                          color: AppColors.black,
+                                        ),
+
                                         border: OutlineInputBorder(),
                                         prefixIcon: Icon(Icons.search),
+                                        hintStyle: TextStyle(
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ),
                                   ),
                                   horizontalSpace(5),
-                                  appButton(
-                                    onPressed: () {},
-                                    text: "Save In Account",
-                                    textColor: Colors.black,
-                                  ),
+
                                   horizontalSpace(5),
                                   appButton(
                                     withIcon: true,
                                     onPressed: () {},
-                                    text: "Save In Account",
+                                    text: "Download",
                                     textColor: Colors.white,
-                                    borderColor: AppColors.darkPrimary,
-                                    background: AppColors.darkPrimary,
+                                    borderColor: AppColors.lightBlue,
+                                    background: AppColors.lightBlue,
                                   ),
                                 ],
                               );
@@ -93,7 +106,9 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                             builder: (context, query) {
                               return Expanded(
                                 child: FileContentWidget(
-                                  fileContent: simulationState.simulationData ?? FileContent(),
+                                  fileContent:
+                                      simulationState.simulationData ??
+                                      FileContent(),
                                   searchQuery: query,
                                 ),
                               );

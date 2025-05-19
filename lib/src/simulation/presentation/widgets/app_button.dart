@@ -7,16 +7,25 @@ Widget appButton({
   Color? borderColor,
   Color? textColor,
   bool? withIcon,
+  double borderRadius = 8.0,
 }) {
   return TextButton(
     onPressed: onPressed,
     style: TextButton.styleFrom(
       backgroundColor: background,
-      side: BorderSide(color: borderColor ?? Colors.black), // Adds a border
+      side: BorderSide(
+        color: borderColor ?? Colors.black,
+
+      ),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius), // ⬅️ Apply here
+      ),
     ),
     child: Row(
       children: [
-        withIcon == true ? Icon(Icons.download,color: Colors.white,) : SizedBox.shrink(),
+        withIcon == true
+            ? Icon(Icons.download, color: Colors.white)
+            : SizedBox.shrink(),
         Text(text ?? "", style: TextStyle(color: textColor ?? Colors.black)),
       ],
     ),

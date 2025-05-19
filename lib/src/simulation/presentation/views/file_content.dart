@@ -1,7 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../data/models/file_content_model.dart';
-import '../widgets/admin_file_question_item_row.dart';
+import '../widgets/admin_question_overview.dart';
 import '../widgets/file_casestudy_row.dart';
 import '../widgets/file_topic_row.dart';
 
@@ -28,7 +28,7 @@ class FileContentWidget extends StatelessWidget {
         var flatItem = flatItems[index];
         return flatItem.item.when(
           question:
-              (question) => AdminFileQuestionItemRow(
+              (question) => AdminQuestionOverviewWidget(
                 question: question,
                 questionIndex: question.q,
               ),
