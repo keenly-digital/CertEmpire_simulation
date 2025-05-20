@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 
-class SearchCubit extends Cubit<String> {
-  SearchCubit() : super('');
+class SearchQuestionCubit extends Cubit<String> {
+  SearchQuestionCubit() : super('');
 
   void setQuery(String query) => emit(query);
 }

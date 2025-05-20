@@ -60,7 +60,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                   AppColors.blue, // underline color
                             ),
                           ),
-                          BlocBuilder<SearchCubit, String>(
+                          BlocBuilder<SearchQuestionCubit, String>(
                             builder: (context, query) {
                               return Row(
                                 children: [
@@ -68,7 +68,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                     child: TextFormField(
                                       onChanged:
                                           (value) => context
-                                              .read<SearchCubit>()
+                                              .read<SearchQuestionCubit>()
                                               .setQuery(value),
                                       decoration: InputDecoration(
                                         contentPadding: EdgeInsets.symmetric(
@@ -102,7 +102,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                               );
                             },
                           ),
-                          BlocBuilder<SearchCubit, String>(
+                          BlocBuilder<SearchQuestionCubit, String>(
                             builder: (context, query) {
                               return Expanded(
                                 child: FileContentWidget(

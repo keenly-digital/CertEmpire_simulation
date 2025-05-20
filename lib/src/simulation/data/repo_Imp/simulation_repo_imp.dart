@@ -29,7 +29,7 @@ class SimulationRepoImp extends SimulationRepo {
   Future<ApiResult<APIResponse<SubmitQuestionReportModel?>>> reportExplanation(
     SubmitQuestionReportParam submitReportParam,
   ) async {
-    return await _simulationDataSrc.reportQuestion(submitReportParam);
+    return await _simulationDataSrc.reportExplanation(submitReportParam);
   }
 
   @override

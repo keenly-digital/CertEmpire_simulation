@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
+import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import 'package:certempiree/src/report_history/presentation/bloc/report_bloc/get_all_report_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_cubit.dart';
@@ -74,7 +75,8 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => ReportAnsCubit()),
             BlocProvider(create: (context) => GetAllReportsBloc()),
             BlocProvider(create: (context) => MyRewardBloc()),
-            BlocProvider(create: (context) => SearchCubit()),
+            BlocProvider(create: (context) => SearchQuestionCubit()),
+            BlocProvider(create: (context) => GetAllTaskBloc()),
           ],
           child: MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,

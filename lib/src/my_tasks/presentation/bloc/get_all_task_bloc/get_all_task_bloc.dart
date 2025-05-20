@@ -1,13 +1,14 @@
 import 'package:bloc/bloc.dart';
+import 'package:certempiree/core/di/dependency_injection.dart';
 import 'package:certempiree/src/my_tasks/domain/task/task_repo.dart';
 
 import 'get_all_task_event.dart';
 import 'get_all_task_state.dart';
 
 class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
-  final TaskRepo _taskRepo;
+  final TaskRepo _taskRepo = getIt<TaskRepo>();
 
-  GetAllTaskBloc(this._taskRepo) : super(GetAllTaskState()) {
+  GetAllTaskBloc() : super(GetAllTaskState()) {
     on<GetAllTaskEvent>(_getAllTask);
   }
 
@@ -18,8 +19,8 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     emit(state.copyWith(isLoading: true));
     final res = await _taskRepo.getAllTask(event.userId);
     res.when(
-      onSuccess: (data) {
-        emit(state.copyWith(isLoading: false));
+      onSuccess: (dataa) {
+        emit(state.copyWith(isLoading: false, taskItem: dataa.data?.data));
       },
       onFailure: (message) {
         emit(state.copyWith(isLoading: false, errorMessage: message));

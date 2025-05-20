@@ -6,6 +6,8 @@ class SubmitQuestionReportParam {
   String? explanation;
   String? userId;
   String? fileId;
+  String? questionNumber;
+
 
   SubmitQuestionReportParam({
     this.type,
@@ -13,7 +15,8 @@ class SubmitQuestionReportParam {
     this.reason,
     this.explanation,
     this.userId,
-    this.fileId
+    this.fileId,
+    this.questionNumber,
   });
 
   factory SubmitQuestionReportParam.fromJson(Map<String, dynamic> json) => SubmitQuestionReportParam(
@@ -23,6 +26,7 @@ class SubmitQuestionReportParam {
     explanation: json["explanation"],
     userId: json["userId"],
     fileId: json["fileId"],
+    questionNumber: json["questionNumber"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -32,5 +36,6 @@ class SubmitQuestionReportParam {
     "explanation": explanation,
     "userId": userId,
     "fileId": fileId,
+    "questionNumber": questionNumber,
   };
 }

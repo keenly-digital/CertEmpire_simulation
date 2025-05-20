@@ -56,7 +56,6 @@ class _AdminQuestionOverviewWidgetState
   Widget build(BuildContext context) {
     return BorderBox(
       padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
-
       margin: SpacerUtil.only(
         top: SpacerUtil.instance.small,
         left: calculateLeftMargin(),
@@ -93,9 +92,7 @@ class _AdminQuestionOverviewWidgetState
                   ],
                 ),
                 SizedBox(height: 5.h),
-                EditorView(
-                  initialContent: widget.question.questionDescription,
-                ),
+                EditorView(initialContent: widget.question.questionDescription),
                 const SizedBox(height: 16),
                 ListView.builder(
                   shrinkWrap: true,

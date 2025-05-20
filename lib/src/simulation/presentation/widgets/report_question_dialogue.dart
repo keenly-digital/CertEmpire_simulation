@@ -9,10 +9,16 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../data/models/submit_report_param.dart';
 
 class ReportQuestionDialog extends StatefulWidget {
-  int? questionId;
-  String? fileId;
+  final int? questionId;
+  final String? fileId;
+  final int? questionIndex;
 
-  ReportQuestionDialog({super.key, this.questionId, this.fileId});
+  const ReportQuestionDialog({
+    super.key,
+    this.questionId,
+    this.fileId,
+    this.questionIndex,
+  });
 
   @override
   _ReportQuestionDialogState createState() => _ReportQuestionDialogState();
@@ -147,6 +153,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                             targetId: widget.questionId ?? 0,
                             reason: _selectedReason,
                             fileId: widget.fileId,
+                            questionNumber: "Question ${widget.questionIndex}",
                           );
                       context.read<SimulationBloc>().submitQuestionReport(
                         submitReportParam,

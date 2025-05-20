@@ -1,28 +1,80 @@
+
 class GetAllTaskModel {
-  final String id;
-  final String title;
-  final String description;
-  final String status;
-  final DateTime createdAt;
-  final DateTime updatedAt;
+  bool? success;
+  String? message;
+  String? error;
+  List<TaskItem>? data;
 
   GetAllTaskModel({
-    required this.id,
-    required this.title,
-    required this.description,
-    required this.status,
-    required this.createdAt,
-    required this.updatedAt,
+    this.success,
+    this.message,
+    this.error,
+    this.data,
   });
 
-  factory GetAllTaskModel.fromJson(Map<String, dynamic> json) {
-    return GetAllTaskModel(
-      id: json['id'],
-      title: json['title'],
-      description: json['description'],
-      status: json['status'],
-      createdAt: DateTime.parse(json['created_at']),
-      updatedAt: DateTime.parse(json['updated_at']),
-    );
-  }
+  factory GetAllTaskModel.fromJson(Map<String, dynamic> json) => GetAllTaskModel(
+    success: json["Success"],
+    message: json["Message"],
+    error: json["Error"],
+    data: json["Data"] == null ? [] : List<TaskItem>.from(json["Data"]!.map((x) => TaskItem.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "Success": success,
+    "Message": message,
+    "Error": error,
+    "Data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+  };
+}
+
+class TaskItem {
+  String? taskId;
+  String? examName;
+  String? questionId;
+  String? questionContent;
+  List<int>? currentAnswer;
+  String? currentExplanation;
+  List<dynamic>? suggestedAnswer;
+  String? suggestedExplanation;
+  String? reportType;
+  DateTime? requestedAt;
+
+  TaskItem({
+    this.taskId,
+    this.examName,
+    this.questionId,
+    this.questionContent,
+    this.currentAnswer,
+    this.currentExplanation,
+    this.suggestedAnswer,
+    this.suggestedExplanation,
+    this.reportType,
+    this.requestedAt,
+  });
+
+  factory TaskItem.fromJson(Map<String, dynamic> json) => TaskItem(
+    taskId: json["taskId"],
+    examName: json["examName"],
+    questionId: json["questionId"],
+    questionContent: json["questionContent"],
+    currentAnswer: json["currentAnswer"] == null ? [] : List<int>.from(json["currentAnswer"]!.map((x) => x)),
+    currentExplanation: json["currentExplanation"],
+    suggestedAnswer: json["suggestedAnswer"] == null ? [] : List<dynamic>.from(json["suggestedAnswer"]!.map((x) => x)),
+    suggestedExplanation: json["suggestedExplanation"],
+    reportType: json["reportType"],
+    requestedAt: json["requestedAt"] == null ? null : DateTime.parse(json["requestedAt"]),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "taskId": taskId,
+    "examName": examName,
+    "questionId": questionId,
+    "questionContent": questionContent,
+    "currentAnswer": currentAnswer == null ? [] : List<dynamic>.from(currentAnswer!.map((x) => x)),
+    "currentExplanation": currentExplanation,
+    "suggestedAnswer": suggestedAnswer == null ? [] : List<dynamic>.from(suggestedAnswer!.map((x) => x)),
+    "suggestedExplanation": suggestedExplanation,
+    "reportType": reportType,
+    "requestedAt": requestedAt?.toIso8601String(),
+  };
 }
