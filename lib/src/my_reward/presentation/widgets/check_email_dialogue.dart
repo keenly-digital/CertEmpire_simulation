@@ -1,7 +1,6 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/res/asset.dart';
 
@@ -10,50 +9,56 @@ class CheckEmailDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+
+    final double dialogWidth = screenWidth > 600 ? 400 : screenWidth * 0.85;
+    final double dialogHeight = screenHeight > 700 ? 300 : screenHeight * 0.55;
+
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: AppColors.purple, width: 2),
       ),
       child: SizedBox(
-        width: 0.75.sw,
-        height: 0.65.sh,
+        width: dialogWidth,
+        height: dialogHeight,
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 20),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    Image.asset(Assets.checkEmail, height: 70.h, width: 70.w),
-                    Text(
+                    Image.asset(Assets.checkEmail, height: 70, width: 70),
+                    const SizedBox(height: 12),
+                    const Text(
                       'Check Your Email',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'A Coupon will be sent to you shortly via email.',
+                    const SizedBox(height: 10),
+                    const Text(
+                      'A coupon will be sent to you shortly via email.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.black,
+                        fontSize: 13,
                         fontWeight: FontWeight.w500,
+                        color: Colors.black87,
                       ),
                     ),
-                    SizedBox(height: 10.h),
+                    const SizedBox(height: 20),
                     RewardButton(
                       onPressed: () {
                         Navigator.pop(context);
                       },
                       txt: "Close",
                     ),
-                    SizedBox(height: 8.h),
                   ],
                 ),
               ),
@@ -65,7 +70,7 @@ class CheckEmailDialogue extends StatelessWidget {
               right: 8,
               child: GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: Icon(Icons.close, size: 20.r, color: Colors.grey),
+                child: const Icon(Icons.close, size: 24, color: Colors.grey),
               ),
             ),
           ],

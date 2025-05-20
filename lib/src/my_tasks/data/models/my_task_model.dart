@@ -1,3 +1,12 @@
+// To parse this JSON data, do
+//
+//     final getAllTaskModel = getAllTaskModelFromJson(jsonString);
+
+import 'dart:convert';
+
+GetAllTaskModel getAllTaskModelFromJson(String str) => GetAllTaskModel.fromJson(json.decode(str));
+
+String getAllTaskModelToJson(GetAllTaskModel data) => json.encode(data.toJson());
 
 class GetAllTaskModel {
   bool? success;
@@ -37,7 +46,9 @@ class TaskItem {
   List<dynamic>? suggestedAnswer;
   String? suggestedExplanation;
   String? reportType;
-  DateTime? requestedAt;
+  String? requestedAt;
+  String? reason;
+  String? questionNumber;
 
   TaskItem({
     this.taskId,
@@ -50,6 +61,8 @@ class TaskItem {
     this.suggestedExplanation,
     this.reportType,
     this.requestedAt,
+    this.reason,
+    this.questionNumber,
   });
 
   factory TaskItem.fromJson(Map<String, dynamic> json) => TaskItem(
@@ -62,7 +75,9 @@ class TaskItem {
     suggestedAnswer: json["suggestedAnswer"] == null ? [] : List<dynamic>.from(json["suggestedAnswer"]!.map((x) => x)),
     suggestedExplanation: json["suggestedExplanation"],
     reportType: json["reportType"],
-    requestedAt: json["requestedAt"] == null ? null : DateTime.parse(json["requestedAt"]),
+    requestedAt: json["requestedAt"],
+    reason: json["reason"],
+    questionNumber: json["questionNumber"],
   );
 
   Map<String, dynamic> toJson() => {
@@ -75,6 +90,8 @@ class TaskItem {
     "suggestedAnswer": suggestedAnswer == null ? [] : List<dynamic>.from(suggestedAnswer!.map((x) => x)),
     "suggestedExplanation": suggestedExplanation,
     "reportType": reportType,
-    "requestedAt": requestedAt?.toIso8601String(),
+    "requestedAt": requestedAt,
+    "reason": reason,
+    "questionNumber": questionNumber,
   };
 }

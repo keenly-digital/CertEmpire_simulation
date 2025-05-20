@@ -5,24 +5,28 @@ import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dar
 import 'package:certempiree/src/my_reward/presentation/widgets/success_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 class WithdrawRequestDialog extends StatelessWidget {
   const WithdrawRequestDialog({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double screenWidth = MediaQuery.of(context).size.width;
+    final double screenHeight = MediaQuery.of(context).size.height;
+    final double dialogWidth = screenWidth > 600 ? 450 : screenWidth * 0.9;
+    final double dialogHeight = screenHeight > 800 ? 450 : screenHeight * 0.6;
+
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
+        borderRadius: BorderRadius.circular(16),
         side: BorderSide(color: AppColors.purple, width: 2),
       ),
       child: SizedBox(
-        width: 0.75.sw,
-        height: 0.65.sh,
+        width: dialogWidth,
+        height: dialogHeight,
         child: Stack(
           children: [
             Padding(
-              padding: EdgeInsets.symmetric(horizontal: 15.w),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
               child: Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -31,28 +35,29 @@ class WithdrawRequestDialog extends StatelessWidget {
                     Image.asset(
                       Assets.withDrawIcon,
                       color: AppColors.purple,
-                      height: 70.h,
-                      width: 70.w,
+                      height: 70,
+                      width: 70,
                     ),
-                    Text(
+                    const SizedBox(height: 12),
+                    const Text(
                       'Withdraw Request',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 12.sp,
+                        fontSize: 16,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
+                    const SizedBox(height: 10),
+                    const Text(
                       'You\'re about to request a withdrawal of \$30 against community help that you rendered wrt Amazon AZ-900. This will be processed manually via a refund.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.black,
+                        fontSize: 13,
+                        color: Colors.black87,
                         fontWeight: FontWeight.w500,
                       ),
                     ),
-                    SizedBox(height: 10.h),
+                    const SizedBox(height: 20),
                     RewardButton(
                       onPressed: () async {
                         Navigator.pop(context);
@@ -63,7 +68,7 @@ class WithdrawRequestDialog extends StatelessWidget {
                       },
                       txt: "Continue",
                     ),
-                    SizedBox(height: 8.h),
+                    const SizedBox(height: 10),
                     TextButton(
                       onPressed: () async {
                         Navigator.pop(context, 'coupon');
@@ -72,10 +77,10 @@ class WithdrawRequestDialog extends StatelessWidget {
                           builder: (context) => const CheckEmailDialogue(),
                         );
                       },
-                      child: Text(
+                      child: const Text(
                         'Give me equivalent coupon instead',
                         style: TextStyle(
-                          fontSize: 8.sp,
+                          fontSize: 13,
                           color: Colors.black,
                           decoration: TextDecoration.underline,
                         ),
@@ -92,7 +97,7 @@ class WithdrawRequestDialog extends StatelessWidget {
               right: 8,
               child: GestureDetector(
                 onTap: () => Navigator.pop(context),
-                child: Icon(Icons.close, size: 20.r, color: Colors.grey),
+                child: const Icon(Icons.close, size: 24, color: Colors.grey),
               ),
             ),
           ],

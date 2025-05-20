@@ -3,6 +3,7 @@ import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../reward_dependency_injection.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
@@ -33,13 +34,22 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
         builder: (context, state) {
           return state.loading == true
               ? Center(child: CircularProgressIndicator())
+              : (state.rewardData?.isEmpty ?? false)
+              ? Center(
+                child: Text(
+                  "No Reward Found",
+                  style: TextStyle(
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              )
               : ListView.builder(
                 itemCount: state.rewardData?.length,
                 itemBuilder: (context, index) {
                   return ReportSummaryCard(
                     rewardData: state.rewardData?[index],
-                    index : index
-
+                    index: index,
                   );
                 },
               );

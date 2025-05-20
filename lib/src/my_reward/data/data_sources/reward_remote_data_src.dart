@@ -40,10 +40,9 @@ class MyRewardDataSrc {
     return result.when(
       onSuccess:
           (res) => ApiResult.success(
-            APIResponse.fromJson(
-              res,
-              (data) => WithdrawRewardModel.fromJson(res),
-            ),
+            APIResponse.fromJson(res, (data) {
+              return WithdrawRewardModel.fromJson(res);
+            }),
           ),
       onFailure: (message) => ApiResult.failure(message),
     );

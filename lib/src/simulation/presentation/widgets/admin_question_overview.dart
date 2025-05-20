@@ -124,6 +124,7 @@ class _AdminQuestionOverviewWidgetState
                               (context) => ReportQuestionDialog(
                                 fileId: AppStrings.fileId,
                                 questionId: widget.question.id ?? 0,
+                                questionIndex: widget.questionIndex,
                               ),
                         );
                       },
@@ -176,6 +177,7 @@ class _AdminQuestionOverviewWidgetState
                                 color: AppColors.black,
                               ),
                             ),
+                            Spacer(),
                             TextButton(
                               onPressed: () {
                                 context

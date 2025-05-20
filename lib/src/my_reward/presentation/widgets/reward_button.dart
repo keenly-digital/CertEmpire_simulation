@@ -27,7 +27,7 @@ class RewardButton extends StatelessWidget {
       ),
       child: Text(
         txt ?? "",
-        style: TextStyle(fontSize: 10.sp, color: txtColor ??AppColors.purple),
+        style: TextStyle(fontSize: 14 , color: txtColor ??AppColors.purple),
       ),
     );
   }

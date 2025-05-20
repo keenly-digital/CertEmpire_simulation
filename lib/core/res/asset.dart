@@ -2,7 +2,7 @@ class Assets {
   static const String svg = "assets/svgs";
   static const String png = "assets/images";
   static const String icons = "assets/icons";
-
+  static const String images = "assets/images";
 
   static const String withDrawIcon = "${Assets.icons}/withDraw.png";
   static const String error = "${Assets.icons}/error.png";
@@ -12,4 +12,5 @@ class Assets {
   static const String topic = "${Assets.icons}/topic.png";
   static const String task = "${Assets.icons}/task.png";
 
+  static const String cross = "${Assets.images}/cross.png";
 }

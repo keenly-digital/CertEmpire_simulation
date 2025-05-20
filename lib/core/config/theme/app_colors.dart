@@ -78,4 +78,5 @@ class AppColors {
   static const Color reportColor = Color(0xFFED2349);
   static const Color lightPurple = Color(0xFF6946b1);
   static const Color cyan = Color(0xFF79E0DC);
+  static const Color darkPurple = Color(0xFF5126A2);
 }

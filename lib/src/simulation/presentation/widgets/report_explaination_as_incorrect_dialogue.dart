@@ -15,98 +15,102 @@ class ReportExplanationDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    TextEditingController _controller = TextEditingController();
+    final TextEditingController _controller = TextEditingController();
 
-    return Dialog(
-      backgroundColor: Colors.white,
-      shape: RoundedRectangleBorder(
-        side: BorderSide(color: Colors.red, width: 1.5.w),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: SizedBox(
-        width: ScreenUtil().screenWidth * 0.6,
-        child: Padding(
-          padding: EdgeInsets.all(10.w),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Text(
-                  AppStrings.reportExplanation,
-                  style: TextStyle(
-                    color: Colors.red,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 10.sp,
-                    decoration: TextDecoration.underline,
-                    decorationColor: Colors.red, // underline color
-                  ),
-                ),
-                SizedBox(height: 15.h),
-                Text(
-                  AppStrings.explanationBelow,
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                SizedBox(height: 10),
-                Container(
-                  height: 150.h,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(4.r),
-                  ),
-                  child: TextField(
-                    controller: _controller,
-                    maxLines: null,
-                    expands: true,
-                    style: TextStyle(fontSize: 15),
-                    decoration: InputDecoration(
-                      contentPadding: EdgeInsets.all(3.w),
-                      border: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      errorBorder: InputBorder.none,
-                      disabledBorder: InputBorder.none,
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final screenWidth = MediaQuery.of(context).size.width;
+        final screenHeight = MediaQuery.of(context).size.height;
+
+        final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.9;
+
+        return Dialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            side: const BorderSide(color: Colors.red, width: 1.5),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: SizedBox(
+            width: dialogWidth,
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      AppStrings.reportExplanation,
+                      style: const TextStyle(
+                        color: Colors.red,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
+                        decorationColor: Colors.red,
+                      ),
                     ),
-                  ),
-                ),
-                SizedBox(height: 10.h),
-                SizedBox(
-                  width: double.infinity,
-                  child: OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      side: BorderSide(color: Colors.red, width: 1.5.w),
-                      foregroundColor: Colors.red,
+                    const SizedBox(height: 15),
+                    Text(
+                      AppStrings.explanationBelow,
+                      style: const TextStyle(
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    onPressed: () {
-                      SubmitQuestionReportParam submitReportParam =
-                          SubmitQuestionReportParam(
+                    const SizedBox(height: 10),
+                    Container(
+                      height: 150,
+                      decoration: BoxDecoration(
+                        color: Colors.grey.shade100,
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: TextField(
+                        controller: _controller,
+                        maxLines: null,
+                        expands: true,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.all(8),
+                          border: InputBorder.none,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          side: const BorderSide(color: Colors.red, width: 1.5),
+                          foregroundColor: Colors.red,
+                        ),
+                        onPressed: () {
+                          final submitReportParam = SubmitQuestionReportParam(
                             explanation: _controller.text,
                             type: ReportTypeEnum.Explanation.index,
                             userId: AppStrings.userId,
                             targetId: questionId ?? 0,
                             reason: "",
                             fileId: fileId ?? "",
-                            questionNumber: ""
+                            questionNumber: "",
                           );
-                      context.read<SimulationBloc>().submitExplanationReport(
-                        submitReportParam,
-                        context,
-                      );
-                      Navigator.pop(context);
-                    },
-                    child: Text(
-                      AppStrings.submit,
-                      style: TextStyle(fontSize: 14.sp),
+                          context.read<SimulationBloc>().submitExplanationReport(
+                            submitReportParam,
+                            context,
+                          );
+                          Navigator.pop(context);
+                        },
+                        child: const Text(
+                          AppStrings.submit,
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ),
                     ),
-                  ),
+                  ],
                 ),
-              ],
+              ),
             ),
           ),
-        ),
-      ),
+        );
+      },
     );
   }
 }

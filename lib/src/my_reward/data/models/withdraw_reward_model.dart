@@ -1,22 +1,18 @@
-
 class WithdrawRewardModel {
   bool? success;
   String? message;
   String? error;
-  double? data;
+  double? data = 0.0;
 
-  WithdrawRewardModel({
-    this.success,
-    this.message,
-    this.error,
-    this.data,
-  });
+  WithdrawRewardModel({this.success, this.message, this.error, this.data});
 
-  factory WithdrawRewardModel.fromJson(Map<String, dynamic> json) => WithdrawRewardModel(
+  factory WithdrawRewardModel.fromJson(
+    Map<String, dynamic> json,
+  ) => WithdrawRewardModel(
     success: json["Success"],
     message: json["Message"],
     error: json["Error"],
-    data: json["Data"],
+    data: json["Data"] is int ? (json["Data"] as int).toDouble() : json["Data"],
   );
 
   Map<String, dynamic> toJson() => {

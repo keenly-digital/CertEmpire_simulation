@@ -2,6 +2,7 @@ import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../my_task_depenency.dart';
 import '../bloc/get_all_task_bloc/get_all_task_bloc.dart';
@@ -33,10 +34,22 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
         builder: (context, state) {
           return state.isLoading == true
               ? Center(child: CircularProgressIndicator())
+              : (state.taskItem?.isEmpty ?? false) || (state.taskItem == null)
+              ? Center(
+                child: Text(
+                  "No Pending Task",
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black,
+                  ),
+                ),
+              )
               : ListView.builder(
-                itemCount: 5,
+                itemCount: state.taskItem?.length ?? 0,
                 itemBuilder: (context, index) {
-                  return TaskCard();
+                  final task = state.taskItem?[index];
+                  return TaskCard(task: task);
                 },
               );
         },

@@ -1,10 +1,16 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/asset.dart';
+import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
+import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
-  const TaskCard({super.key});
+  const TaskCard({super.key, this.task});
+
+  final TaskItem? task;
 
   @override
   Widget build(BuildContext context) {
@@ -20,35 +26,25 @@ class TaskCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Image.asset(
-              Assets.task,
-              width: 25.w,
-              height: 25.h,
-            ),
+            Image.asset(Assets.task, width: 25.w, height: 25.h),
             SizedBox(width: 5.w),
             Expanded(
               child: RichText(
                 text: TextSpan(
                   children: [
                     TextSpan(
-                      text: 'Out Dated Question  ',
+                      text: task?.reason ?? "",
                       style: TextStyle(
                         fontSize: 10.sp,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+
+                    if (task?.reason?.isNotEmpty ?? false)
+                      TextSpan(text: '  |', style: TextStyle(fontSize: 10.sp)),
                     TextSpan(
-                      text: '|',
-                      style: TextStyle(
-                        fontSize: 10.sp,
-                      ),
-                    ),
-                    TextSpan(
-                      text: '  This is the content of the question,This is the content of the question...',
-                      style: TextStyle(
-                        fontSize: 9.sp,
-                        color: Colors.black87,
-                      ),
+                      text: '  ${task?.questionContent ?? ""}',
+                      style: TextStyle(fontSize: 9.sp, color: Colors.black87),
                     ),
                   ],
                 ),
@@ -59,13 +55,16 @@ class TaskCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 Text(
-                  "Requested on: 22/04/2025",
+                  convertDate(task?.requestedAt ?? ""),
                   style: TextStyle(fontSize: 9.sp, color: Colors.grey[600]),
                 ),
                 SizedBox(height: 8.h),
                 OutlinedButton(
                   onPressed: () {
-                    // handle navigation
+                    context.read<GetAllTaskBloc>().dialogueSelection(
+                      task,
+                      context,
+                    );
                   },
                   style: OutlinedButton.styleFrom(
                     side: BorderSide(color: AppColors.purple),
@@ -88,5 +87,11 @@ class TaskCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  String convertDate(String isoTimestamp) {
+    DateTime dateTime = DateTime.parse(isoTimestamp);
+
+    return DateFormat('dd/MM/yyyy').format(dateTime);
   }
 }

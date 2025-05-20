@@ -76,6 +76,8 @@ class APIResponse<T> {
       parsedData = null; // Handle empty or null data
     } else if (rawData is String) {
       parsedData = fromJson(rawData);
+    } else if (rawData is double) {
+      parsedData = fromJson(rawData);
     } else if (T is int || T is double || T == bool) {
       parsedData = rawData as T;
     } else if (rawData is List) {

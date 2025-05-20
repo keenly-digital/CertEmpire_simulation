@@ -29,11 +29,9 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
     final res = await _reportRepo.getUserReward(event.userId);
     res.when(
       onSuccess: (data) {
-        data.data?.data?.add(data.data?.data?[0] ?? RewardData());
         emit(state.copyWith(loading: false, rewardData: data.data?.data));
       },
       onFailure: (message) {
-        LogUtil.debug("asdasdasd :$message");
         Snackbar.show(message);
         emit(state.copyWith(loading: false, errorMessage: message));
       },
