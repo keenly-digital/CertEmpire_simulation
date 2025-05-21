@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/config/theme/app_colors.dart';
 import '../../reward_dependency_injection.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
 import '../widgets/reward_summary_card.dart';
@@ -33,7 +34,9 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
       body: BlocBuilder<MyRewardBloc, RewardInitialState>(
         builder: (context, state) {
           return state.loading == true
-              ? Center(child: CircularProgressIndicator())
+              ? Center(
+                child: CircularProgressIndicator(color: AppColors.purple),
+              )
               : (state.rewardData?.isEmpty ?? false)
               ? Center(
                 child: Text(

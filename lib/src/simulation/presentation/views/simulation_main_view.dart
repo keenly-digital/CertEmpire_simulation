@@ -41,7 +41,8 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
             padding: const EdgeInsets.all(8.0),
             child:
                 simulationData.loading == true
-                    ? Center(child: CircularProgressIndicator())
+                    ? Center(child: CircularProgressIndicator(
+                  color: AppColors.purple,))
                     : Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: Column(

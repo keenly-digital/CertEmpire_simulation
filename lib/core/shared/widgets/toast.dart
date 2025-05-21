@@ -1,9 +1,10 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonHelper {
-static  showToast({String? message}) {
+  static showToast({String? message}) {
     Fluttertoast.showToast(
       msg: message ?? '',
       toastLength: Toast.LENGTH_SHORT,
@@ -28,7 +29,7 @@ static  showToast({String? message}) {
             child: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                CircularProgressIndicator(),
+                CircularProgressIndicator(color: AppColors.purple),
                 SizedBox(width: 16.w),
                 Text("Please wait...", style: TextStyle(fontSize: 16.sp)),
               ],

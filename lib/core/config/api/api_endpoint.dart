@@ -7,6 +7,7 @@ enum ApiEndpoint {
   getUserRewards,
   withdrawReward,
   getAllTasks,
+  submitVote,
 }
 
 extension ApiEndpointPath on ApiEndpoint {
@@ -28,6 +29,8 @@ extension ApiEndpointPath on ApiEndpoint {
         return 'MyReward/Withdraw';
       case ApiEndpoint.getAllTasks:
         return 'MyTask/GetAllTasks';
+        case ApiEndpoint.submitVote:
+        return 'MyTask/SubmitVote';
     }
   }
 }

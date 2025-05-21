@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/res/asset.dart';
 import '../../my_task_depenency.dart';
 import '../bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import '../bloc/get_all_task_bloc/get_all_task_event.dart';
@@ -33,7 +35,8 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
       body: BlocBuilder<GetAllTaskBloc, GetAllTaskState>(
         builder: (context, state) {
           return state.isLoading == true
-              ? Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator(
+                  color: AppColors.purple,))
               : (state.taskItem?.isEmpty ?? false) || (state.taskItem == null)
               ? Center(
                 child: Text(
@@ -45,13 +48,21 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
                   ),
                 ),
               )
-              : ListView.builder(
-                itemCount: state.taskItem?.length ?? 0,
-                itemBuilder: (context, index) {
-                  final task = state.taskItem?[index];
-                  return TaskCard(task: task);
-                },
-              );
+              :
+                  Expanded(
+                    child: ListView.builder(
+                      itemCount: state.taskItem?.length ?? 0,
+                      itemBuilder: (context, index) {
+                        final task = state.taskItem?[index];
+                        return Column(
+                          children: [
+                            if(index == 0)Image.asset(Assets.taskTop),
+                            TaskCard(task: task),
+                          ],
+                        );
+                      },
+                    ),
+                  );
         },
       ),
     );

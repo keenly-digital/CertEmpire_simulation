@@ -141,7 +141,8 @@ class _ReportMainViewState extends State<ReportMainView> {
               ),
             );
           } else {
-            return const Center(child: CircularProgressIndicator());
+            return const Center(child: CircularProgressIndicator(
+                  color: AppColors.purple,));
           }
         },
       ),

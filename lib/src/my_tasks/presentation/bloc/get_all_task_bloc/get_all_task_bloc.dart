@@ -1,11 +1,13 @@
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/core/di/dependency_injection.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
+import 'package:certempiree/src/my_tasks/data/models/vote_task_param_model.dart';
 import 'package:certempiree/src/my_tasks/domain/task/task_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../../core/config/theme/app_colors.dart';
+import '../../widgets/explanation_report_task.dart';
 import '../../widgets/question_report_task.dart';
 import 'get_all_task_event.dart';
 import 'get_all_task_state.dart';
@@ -38,10 +40,27 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
       showDialog(
         context: context,
         barrierDismissible: false,
-        // set true if you want to dismiss by tapping outside
         builder: (BuildContext context) {
           return Dialog(
-            insetPadding: EdgeInsets.symmetric(horizontal: 16.w),
+            insetPadding: EdgeInsets.symmetric(horizontal: 10.w),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.r),
+            ),
+            child: QuestionReportTask(taskItem: task),
+          );
+        },
+      );
+    } else if (task?.reportType == "Explanation" ||
+        task?.reportType == "Answer") {
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            insetPadding: EdgeInsets.symmetric(
+              horizontal: 10.w,
+              vertical: 24.h,
+            ),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
@@ -49,19 +68,13 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
               builder: (context, constraints) {
                 double width = constraints.maxWidth;
                 double dialogWidth = width > 600 ? 500 : width * 0.9;
+
                 return ConstrainedBox(
                   constraints: BoxConstraints(
                     maxHeight: 0.90.sh,
                     maxWidth: dialogWidth,
                   ),
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      border: Border.all(color: AppColors.purple, width: 2),
-                    ),
-                    child: QuestionReportTask(taskItem: task),
-                  ),
+                  child: ExplanationReportTask(taskItem: task),
                 );
               },
             ),
@@ -69,5 +82,27 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
         },
       );
     }
+  }
+
+  Future<void> voteTask(
+    BuildContext context,
+    VoteTaskParamModel voteTaskParamModel,
+  ) async {
+    print("asjsaldjlsakd ${voteTaskParamModel.toJson()}");
+    CommonHelper.showLoader(context);
+    final res = await _taskRepo.voteTask(voteTaskParamModel);
+    res.when(
+      onSuccess: (s) {
+        CommonHelper.hideLoader(context);
+
+        Navigator.pop(context);
+      },
+      onFailure: (f) {
+        CommonHelper.hideLoader(context);
+        CommonHelper.showToast(message: f.toString());
+
+        Navigator.pop(context);
+      },
+    );
   }
 }

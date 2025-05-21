@@ -99,7 +99,8 @@ class ReportSummaryCard extends StatelessWidget {
                   return (state.withDrawLoading == false &&
                           index == context.read<MyRewardBloc>().cardIndex)
                       ?
-                       CircularProgressIndicator():OutlinedButton(
+                       CircularProgressIndicator(
+                  color: AppColors.purple,):OutlinedButton(
                     style: OutlinedButton.styleFrom(
                       foregroundColor: Colors.purple,
                       side: BorderSide(color: AppColors.borderColor),

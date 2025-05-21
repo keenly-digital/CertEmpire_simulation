@@ -3,6 +3,7 @@ import 'package:certempiree/src/report_history/presentation/bloc/report_bloc/get
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/config/theme/app_colors.dart';
 import '../bloc/report_bloc/get_all_report_state.dart';
 
 class ViewReasonDialog extends StatelessWidget {
@@ -114,7 +115,8 @@ class ViewReasonDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: state.reasonLoading == true
-                          ? const Center(child: CircularProgressIndicator())
+                          ? const Center(child: CircularProgressIndicator(
+                  color: AppColors.purple,))
                           : Text(
                         state.explanation ?? "",
                         style: const TextStyle(fontSize: 14),

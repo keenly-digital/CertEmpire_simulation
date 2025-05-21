@@ -11,7 +11,7 @@ class ReportExplanationDialogue extends StatelessWidget {
   final int? questionId;
   final String? fileId;
 
-  const ReportExplanationDialogue({super.key, this.questionId, this.fileId});
+   ReportExplanationDialogue({super.key, this.questionId, this.fileId});
 
   @override
   Widget build(BuildContext context) {
@@ -27,20 +27,20 @@ class ReportExplanationDialogue extends StatelessWidget {
         return Dialog(
           backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            side: const BorderSide(color: Colors.red, width: 1.5),
+            side:  BorderSide(color: Colors.red, width: 1.5),
             borderRadius: BorderRadius.circular(10),
           ),
           child: SizedBox(
             width: dialogWidth,
             child: Padding(
-              padding: const EdgeInsets.all(16.0),
+              padding:  EdgeInsets.all(16.0),
               child: SingleChildScrollView(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Text(
                       AppStrings.reportExplanation,
-                      style: const TextStyle(
+                      style:  TextStyle(
                         color: Colors.red,
                         fontWeight: FontWeight.bold,
                         fontSize: 14,
@@ -48,15 +48,15 @@ class ReportExplanationDialogue extends StatelessWidget {
                         decorationColor: Colors.red,
                       ),
                     ),
-                    const SizedBox(height: 15),
+                     SizedBox(height: 15),
                     Text(
                       AppStrings.explanationBelow,
-                      style: const TextStyle(
+                      style:  TextStyle(
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
                     ),
-                    const SizedBox(height: 10),
+                     SizedBox(height: 10),
                     Container(
                       height: 150,
                       decoration: BoxDecoration(
@@ -67,19 +67,19 @@ class ReportExplanationDialogue extends StatelessWidget {
                         controller: _controller,
                         maxLines: null,
                         expands: true,
-                        style: const TextStyle(fontSize: 14),
-                        decoration: const InputDecoration(
+                        style:  TextStyle(fontSize: 14),
+                        decoration:  InputDecoration(
                           contentPadding: EdgeInsets.all(8),
                           border: InputBorder.none,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 12),
+                     SizedBox(height: 12),
                     SizedBox(
                       width: double.infinity,
                       child: OutlinedButton(
                         style: OutlinedButton.styleFrom(
-                          side: const BorderSide(color: Colors.red, width: 1.5),
+                          side:  BorderSide(color: Colors.red, width: 1.5),
                           foregroundColor: Colors.red,
                         ),
                         onPressed: () {
@@ -98,7 +98,7 @@ class ReportExplanationDialogue extends StatelessWidget {
                           );
                           Navigator.pop(context);
                         },
-                        child: const Text(
+                        child:  Text(
                           AppStrings.submit,
                           style: TextStyle(fontSize: 14),
                         ),

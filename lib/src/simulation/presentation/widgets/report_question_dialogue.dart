@@ -4,7 +4,6 @@ import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/sim
 import 'package:certempiree/src/simulation/presentation/widgets/report_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/submit_report_param.dart';
 
@@ -76,7 +75,8 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                       child: Radio<String>(
                         value: 'Outdated',
                         groupValue: _selectedReason,
-                        onChanged: (val) => setState(() => _selectedReason = val),
+                        onChanged:
+                            (val) => setState(() => _selectedReason = val),
                       ),
                     ),
                     const Text(
@@ -89,7 +89,8 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                       child: Radio<String>(
                         value: 'Framed Wrong',
                         groupValue: _selectedReason,
-                        onChanged: (val) => setState(() => _selectedReason = val),
+                        onChanged:
+                            (val) => setState(() => _selectedReason = val),
                       ),
                     ),
                     const Text(
@@ -110,21 +111,13 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Container(
-                  height: 120,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(4),
-                  ),
-                  child: TextField(
-                    controller: _explanationController,
-                    maxLines: null,
-                    expands: true,
-                    style: const TextStyle(fontSize: 14),
-                    decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.all(8),
-                      border: InputBorder.none,
-                    ),
+                TextField(
+                  controller: _explanationController,
+                  maxLines: 6,
+                  style: const TextStyle(fontSize: 14),
+                  decoration: const InputDecoration(
+                    contentPadding: EdgeInsets.all(8),
+                    border: InputBorder.none,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -159,10 +152,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                         context,
                       );
                     },
-                    child: const Text(
-                      'SUBMIT',
-                      style: TextStyle(fontSize: 14),
-                    ),
+                    child: const Text('SUBMIT', style: TextStyle(fontSize: 14)),
                   ),
                 ),
               ],

@@ -2,12 +2,14 @@ class AppStrings {
   static const String appName = 'CertEmpire';
   static const String submissionComplete = 'Submission Complete';
   static const String explanationBelow = 'Write your own explanation below:';
+  static const String submissionText = 'Submission Completed';
   static const String submit = 'SUBMIT';
   static const String reportQue = '!Report Question';
   static const String showAnswer = 'Show Answer';
   static const String hideAnswer = 'Hide Answer';
   static const String correctAnswer = 'Correct Answer';
   static const String explanation = 'Explanation: ';
+  static const String goBack = 'Go Back';
   static const String reportExplanation = '!Report Explanation as Incorrect';
   static const String chooseCriteria =
       'Choose The Criteria That Fits Best For This Report *';
@@ -20,7 +22,7 @@ class AppStrings {
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = '! Report Answer as Incorrect';
   static  String fileId = '91f185a0-bb28-48c4-a849-790ecab72d5a';
-  static String userId = '97f4c350-b0d6-41ec-84a5-8e6a6210484b';
+  static String userId = '95e34ac9-899b-44a4-8187-fe443c3b37d3';
   static String screenName = '/';
   static String data = 'sd';
 }

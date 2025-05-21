@@ -3,29 +3,36 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Light Theme Colors
 
-  static const Color orangeColor =
-      Color(0xFFc0590a);
-  static const Color darkBlue =
-      Color(0xFF0b0838); // Teal primary (darker teal)
-  static const Color lightPrimary =
-      Color(0xFF008AA0); // Teal primary (darker teal)
-  static const Color lightOnPrimary =
-      Color(0xFFFFFFFF); // Text/icons on primary
-  static const Color lightSecondary =
-      Color(0xFF47BEB9); // Lighter Teal for secondary
-  static const Color lightOnSecondary =
-      Color(0xFF000000); // Text/icons on secondary
-  static const Color lightBackground =
-      Color(0xFFFAFAFA); // Very light grey/white background
-  static const Color lightOnBackground =
-      Color(0xFF212121); // Dark grey for text/icons
-  static const Color lightSurface =
-      Color(0xFFFFFFFF); // Pure white for surfaces (cards, sheets)
-  static const Color lightOnSurface =
-      Color(0xFF212121); // Dark grey for text/icons on surface
+  static const Color orangeColor = Color(0xFFc0590a);
+  static const Color darkBlue = Color(0xFF0b0838); // Teal primary (darker teal)
+  static const Color lightPrimary = Color(
+    0xFF008AA0,
+  ); // Teal primary (darker teal)
+  static const Color lightOnPrimary = Color(
+    0xFFFFFFFF,
+  ); // Text/icons on primary
+  static const Color lightSecondary = Color(
+    0xFF47BEB9,
+  ); // Lighter Teal for secondary
+  static const Color lightOnSecondary = Color(
+    0xFF000000,
+  ); // Text/icons on secondary
+  static const Color lightBackground = Color(
+    0xFFFAFAFA,
+  ); // Very light grey/white background
+  static const Color lightOnBackground = Color(
+    0xFF212121,
+  ); // Dark grey for text/icons
+  static const Color lightSurface = Color(
+    0xFFFFFFFF,
+  ); // Pure white for surfaces (cards, sheets)
+  static const Color lightOnSurface = Color(
+    0xFF212121,
+  ); // Dark grey for text/icons on surface
   static const Color lightError = Color(0xFFD32F2F); // Bright red for errors
-  static const Color lightOnError =
-      Color(0xFFFFFFFF); // White text/icons on errors
+  static const Color lightOnError = Color(
+    0xFFFFFFFF,
+  ); // White text/icons on errors
 
   // Dark Theme Colors
   static const Color darkPrimary = Color(0xFF008AA0);
@@ -44,7 +51,7 @@ class AppColors {
   static const Color bottomNavBar = Color(0xFF16BCC3);
   static const Color blue = Color(0xFF0c018b);
 
-//Other
+  //Other
   static const Color redButton = Color(0xFFE76D6F);
   static const Color activeSubscription = Color(0xFF12C4E0);
   static const Color divider = Color(0xFFDCD9D9);
@@ -66,17 +73,16 @@ class AppColors {
   static const Color incorrect = Color(0xFFFFF6F7);
   static const Color correct = Color(0xFFEFFFF4);
 
-
   static const Color passBackground = Color(0xFFEAFCE4);
   static const Color scoreBackground = Color(0xFFE8F8FB);
   static const Color passTextColour = Color(0xFF13A000);
   static const Color black = Color(0xFF000000);
-  static const Color purple = Color(0xFF600987);
+  static const Color purple = Color(0xFF2002af);
   static const Color dividerColor = Color(0xFFf0e5f6);
   static const Color borderColor = Color(0xFF2c0186);
   static const Color greenBorder = Color(0xFF48de5a);
   static const Color reportColor = Color(0xFFED2349);
-  static const Color lightPurple = Color(0xFF6946b1);
+  static const Color lightPurple = purple;
   static const Color cyan = Color(0xFF79E0DC);
-  static const Color darkPurple = Color(0xFF5126A2);
+  static const Color darkPurple = purple;
 }

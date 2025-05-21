@@ -13,4 +13,5 @@ class Assets {
   static const String task = "${Assets.icons}/task.png";
 
   static const String cross = "${Assets.images}/cross.png";
+  static const String taskTop = "${Assets.images}/task_top.png";
 }
