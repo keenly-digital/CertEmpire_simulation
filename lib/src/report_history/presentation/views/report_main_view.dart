@@ -96,7 +96,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                                   color: AppColors.lightGrey,
                                   child: reportRow(
                                     reportName: report.reportName ?? "",
-                                    examName: report.examName ?? "",
+                                    examName: report.examName?.replaceAll("%", "") ?? "",
                                     status: report.status ?? "",
                                     viewReason: report.status == "Unapproved",
                                     report: report,

@@ -112,10 +112,16 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                 ),
                 const SizedBox(height: 8),
                 TextField(
+
                   controller: _explanationController,
                   maxLines: 6,
                   style: const TextStyle(fontSize: 14),
-                  decoration: const InputDecoration(
+                  decoration:  InputDecoration(
+                    focusedBorder: OutlineInputBorder(
+                      borderSide:  BorderSide(color: Colors.red, width: 2),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+
                     contentPadding: EdgeInsets.all(8),
                     border: InputBorder.none,
                   ),

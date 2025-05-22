@@ -20,7 +20,6 @@ class ReportExplanationDialogue extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
-        final screenHeight = MediaQuery.of(context).size.height;
 
         final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.9;
 
@@ -69,6 +68,10 @@ class ReportExplanationDialogue extends StatelessWidget {
                         expands: true,
                         style:  TextStyle(fontSize: 14),
                         decoration:  InputDecoration(
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:  BorderSide(color: Colors.red, width: 2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
                           contentPadding: EdgeInsets.all(8),
                           border: InputBorder.none,
                         ),
