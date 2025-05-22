@@ -90,6 +90,7 @@ class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
     final doc = Document.fromJson(parseStringToDeltaJson(widget.jsonContent ?? ''));
     final controller = QuillController(
       document: doc,
+      readOnly: true,
       selection: const TextSelection.collapsed(offset: 0),
     );
 

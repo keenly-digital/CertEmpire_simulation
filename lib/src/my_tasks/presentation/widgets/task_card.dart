@@ -18,7 +18,6 @@ class TaskCard extends StatelessWidget {
         double width = constraints.maxWidth;
 
         double iconSize = width * 0.04;
-        double fontSizeTitle = width * 0.03;
         double fontSizeContent = width * 0.012;
         double dateFontSize = width * 0.013;
         double buttonFontSize = width * 0.025;
@@ -37,7 +36,7 @@ class TaskCard extends StatelessWidget {
               children: [
                 Image.asset(Assets.task, width: iconSize, height: iconSize),
                 const SizedBox(width: 8),
-                Expanded(
+                Flexible(
                   child: RichText(
                     text: TextSpan(
                       children: [
@@ -102,7 +101,6 @@ class TaskCard extends StatelessWidget {
                         style: TextStyle(
                           color: AppColors.purple,
                           fontSize: buttonFontSize,
-                          backgroundColor: Colors.white
                         ),
                       ),
                     ),

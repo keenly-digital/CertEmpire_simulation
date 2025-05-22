@@ -92,7 +92,7 @@ class ThemeConfig {
     return ThemeData(
       brightness: Brightness.light,
       colorScheme: ColorScheme.light(
-        primary: AppColors.lightPrimary,
+        primary: AppColors.purple,
         onPrimary: AppColors.lightOnPrimary,
         secondary: AppColors.lightSecondary,
         surface: AppColors.lightSurface,

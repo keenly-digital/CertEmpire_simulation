@@ -9,12 +9,13 @@ import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/get_all_reward_data_model.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
 import '../bloc/report_bloc/get_all_reward_state.dart';
+import 'failed_dialogue.dart';
 
 class ReportSummaryCard extends StatelessWidget {
   final RewardData? rewardData;
-   int index = -1;
+  int index = -1;
 
-   ReportSummaryCard({super.key, this.rewardData,  required this.index});
+  ReportSummaryCard({super.key, this.rewardData, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -43,7 +44,7 @@ class ReportSummaryCard extends StatelessWidget {
                 ),
                 SizedBox(height: 4.h),
                 Text(
-                  rewardData?.fileName ?? "",
+                  rewardData?.fileName?.replaceAll("%", "") ?? "",
                   style: TextStyle(fontSize: 10.sp, color: Colors.black87),
                 ),
                 SizedBox(height: 14.h),
@@ -90,7 +91,7 @@ class ReportSummaryCard extends StatelessWidget {
               ),
               const SizedBox(height: 4),
               Text(
-                '\$${rewardData?.filePrice} USD',
+                '\$${rewardData?.currentBalance} USD',
                 style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
               ),
               const SizedBox(height: 12),
@@ -98,38 +99,30 @@ class ReportSummaryCard extends StatelessWidget {
                 builder: (context, state) {
                   return (state.withDrawLoading == false &&
                           index == context.read<MyRewardBloc>().cardIndex)
-                      ?
-                       CircularProgressIndicator(
-                  color: AppColors.purple,):OutlinedButton(
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: Colors.purple,
-                      side: BorderSide(color: AppColors.borderColor),
-                    ),
-                    onPressed: () async {
-                      await showDialog<String>(
-                        context: context,
-                        builder: (context) => const WithdrawRequestDialog(),
-                      );
-                    },
-                    child: TextButton(
-                      onPressed: () {
-                        context.read<MyRewardBloc>().add(
-                          WithDrawRewardEvent(
-                            context: context,
-                            fileId: AppStrings.fileId,
-                            userId: AppStrings.userId,
-                          ),
-                        );
-                      },
-                      child: Text(
-                        'Withdraw',
-                        style: TextStyle(
-                          color: AppColors.borderColor,
-                          fontWeight: FontWeight.w500,
+                      ? CircularProgressIndicator(color: AppColors.purple)
+                      : OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.purple,
+                          side: BorderSide(color: AppColors.borderColor),
                         ),
-                      ),
-                    ),
-                  );
+                        onPressed: () async {
+                          await showDialog<String>(
+                            context: context,
+                            builder:
+                                (context) =>
+                                    (rewardData?.currentBalance ?? 0) < 0.0
+                                        ? FailedDialogue()
+                                        : WithdrawRequestDialog(),
+                          );
+                        },
+                        child: Text(
+                          'Withdraw',
+                          style: TextStyle(
+                            color: AppColors.borderColor,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      );
                 },
               ),
             ],

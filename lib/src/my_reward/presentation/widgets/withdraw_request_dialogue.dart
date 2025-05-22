@@ -4,7 +4,13 @@ import 'package:certempiree/src/my_reward/presentation/widgets/check_email_dialo
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/success_dialogue.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+
+import '../../../../core/res/app_strings.dart';
+import '../bloc/report_bloc/get_all_reward_bloc.dart';
+import '../bloc/report_bloc/get_all_reward_events.dart';
+
 class WithdrawRequestDialog extends StatelessWidget {
   const WithdrawRequestDialog({super.key});
 
@@ -60,10 +66,12 @@ class WithdrawRequestDialog extends StatelessWidget {
                     const SizedBox(height: 20),
                     RewardButton(
                       onPressed: () async {
-                        Navigator.pop(context);
-                        await showDialog<String>(
-                          context: context,
-                          builder: (context) => const SuccessDialogue(),
+                        context.read<MyRewardBloc>().add(
+                          WithDrawRewardEvent(
+                            context: context,
+                            fileId: AppStrings.fileId,
+                            userId: AppStrings.userId,
+                          ),
                         );
                       },
                       txt: "Continue",

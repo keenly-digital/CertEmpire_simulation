@@ -5,12 +5,8 @@ class AppColors {
 
   static const Color orangeColor = Color(0xFFc0590a);
   static const Color darkBlue = Color(0xFF0b0838); // Teal primary (darker teal)
-  static const Color lightPrimary = Color(
-    0xFF008AA0,
-  ); // Teal primary (darker teal)
-  static const Color lightOnPrimary = Color(
-    0xFFFFFFFF,
-  ); // Text/icons on primary
+  static const Color lightPrimary = purple; // Teal primary (darker teal)
+  static const Color lightOnPrimary =purple; // Text/icons on primary
   static const Color lightSecondary = Color(
     0xFF47BEB9,
   ); // Lighter Teal for secondary

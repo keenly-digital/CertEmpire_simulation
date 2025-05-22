@@ -1,6 +1,5 @@
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/res/asset.dart';
 
@@ -11,67 +10,84 @@ class FailedDialogue extends StatelessWidget {
   Widget build(BuildContext context) {
     return Dialog(
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-        side: BorderSide(color: Colors.red, width: 2),
+        borderRadius: BorderRadius.circular(16),
+        side: const BorderSide(color: Colors.red, width: 2),
       ),
-      child: SizedBox(
-        width: 0.75.sw,
-        height: 0.65.sh,
-        child: Stack(
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(vertical: 15.h, horizontal: 15.w),
-              child: Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Image.asset(Assets.error, height: 70.h, width: 70.w),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final screenWidth = MediaQuery.of(context).size.width;
+          final screenHeight = MediaQuery.of(context).size.height;
 
-                    Text(
-                      'Withdrawal failed ',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 12.sp,
-                        fontWeight: FontWeight.bold,
-                      ),
+          final dialogWidth = screenWidth * 0.65;
+          final dialogHeight = screenHeight * 0.65;
+
+          return SizedBox(
+            width: dialogWidth,
+            height: dialogHeight,
+            child: Stack(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 15),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Image.asset(
+                          Assets.error,
+                          height: 70,
+                          width: 70,
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Withdrawal failed',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        const Text(
+                          'Your current balance is insufficient for withdrawal, or your withdrawal has already been made.',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        RewardButton(
+                          onPressed: () {
+                            Navigator.pop(context);
+                          },
+                          txt: "Close",
+                          borderColor: Colors.red,
+                          txtColor: Colors.red,
+                        ),
+                      ],
                     ),
-                    SizedBox(height: 10.h),
-                    Text(
-                      'Your current balance is insufficient for withdrawal, or your withdrawal has already been made.',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 8.sp,
-                        color: Colors.black,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    SizedBox(height: 10.h),
-                    RewardButton(
-                      onPressed: () {
-                        Navigator.pop(context);
-                      },
-                      txt: "Close",
-                      borderColor: Colors.red,
-                      txtColor: Colors.red,
-                    ),
-                    SizedBox(height: 8.h),
-                  ],
+                  ),
                 ),
-              ),
-            ),
 
-            // Close button
-            Positioned(
-              top: 8,
-              right: 8,
-              child: GestureDetector(
-                onTap: () => Navigator.pop(context),
-                child: Icon(Icons.close, size: 20.r, color: Colors.grey),
-              ),
+                // Close button
+                Positioned(
+                  top: 8,
+                  right: 8,
+                  child: GestureDetector(
+                    onTap: () => Navigator.pop(context),
+                    child: const Icon(
+                      Icons.close,
+                      size: 20,
+                      color: Colors.grey,
+                    ),
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }

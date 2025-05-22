@@ -35,114 +35,125 @@ class _ReportMainViewState extends State<ReportMainView> {
         builder: (context, state) {
           if (state is GetAllReportState) {
             final reports = state.reportData ?? [];
+            return (state.reportData?.isEmpty ??
+                    false || state.reportData == null)
+                ? Center(
+                  child: Text(
+                    "No Report Found",
+                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 14
 
-            return Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Header Row
-                  Row(
+                    ),
+                  ),
+                )
+                : Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(
-                        width: ScreenUtil().screenWidth * 0.25,
-                        child: Text(
-                          "Report Name",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
+                      Row(
+                        children: [
+                          SizedBox(
+                            width: ScreenUtil().screenWidth * 0.25,
+                            child: Text(
+                              "Report Name",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
                           ),
+                          SizedBox(
+                            width: ScreenUtil().screenWidth * 0.50,
+                            child: Text(
+                              "Exam Name",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                          SizedBox(
+                            width: ScreenUtil().screenWidth * 0.20,
+                            child: Text(
+                              "Status",
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Divider(color: AppColors.blue, thickness: 2),
+                      Expanded(
+                        child: ListView.builder(
+                          itemCount: reports.length,
+                          itemBuilder: (context, index) {
+                            final report = reports[index];
+                            return Column(
+                              children: [
+                                Container(
+                                  color: AppColors.lightGrey,
+                                  child: reportRow(
+                                    reportName: report.reportName ?? "",
+                                    examName: report.examName ?? "",
+                                    status: report.status ?? "",
+                                    viewReason: report.status == "Unapproved",
+                                    report: report,
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
+                              ],
+                            );
+                          },
                         ),
                       ),
-                      SizedBox(
-                        width: ScreenUtil().screenWidth * 0.50,
-                        child: Text(
-                          "Exam Name",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
+                      Container(
+                        height: 50.h,
+                        width: ScreenUtil().screenWidth,
+                        decoration: const BoxDecoration(
+                          shape: BoxShape.rectangle,
                         ),
-                      ),
-                      SizedBox(
-                        width: ScreenUtil().screenWidth * 0.20,
-                        child: Text(
-                          "Status",
-                          style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.w600,
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Showing $pageNumber to ${reports.length} ${state.results ?? 0} results",
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    if (pageNumber > 1) {
+                                      setState(() {
+                                        pageNumber--;
+                                      });
+                                      fetchReports();
+                                    }
+                                  },
+                                  icon: const Icon(Icons.arrow_back),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      pageNumber++;
+                                    });
+                                    fetchReports();
+                                  },
+                                  icon: const Icon(Icons.arrow_forward),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
                       ),
                     ],
                   ),
-                  Divider(color: AppColors.blue, thickness: 2),
-                  Expanded(
-                    child: ListView.builder(
-                      itemCount: reports.length,
-                      itemBuilder: (context, index) {
-                        final report = reports[index];
-                        return Column(
-                          children: [
-                            Container(
-                              color: AppColors.lightGrey,
-                              child: reportRow(
-                                reportName: report.reportName ?? "",
-                                examName: report.examName ?? "",
-                                status: report.status ?? "",
-                                viewReason: report.status == "Unapproved",
-                                report: report,
-                              ),
-                            ),
-                            SizedBox(height: 10.h),
-                          ],
-                        );
-                      },
-                    ),
-                  ),
-                  Container(
-                    height: 50.h,
-                    width: ScreenUtil().screenWidth,
-                    decoration: const BoxDecoration(shape: BoxShape.rectangle),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          "Showing $pageNumber to ${reports.length} ${state.results ?? 0} results",
-                        ),
-                        Row(
-                          children: [
-                            IconButton(
-                              onPressed: () {
-                                if (pageNumber > 1) {
-                                  setState(() {
-                                    pageNumber--;
-                                  });
-                                  fetchReports();
-                                }
-                              },
-                              icon: const Icon(Icons.arrow_back),
-                            ),
-                            IconButton(
-                              onPressed: () {
-                                setState(() {
-                                  pageNumber++;
-                                });
-                                fetchReports();
-                              },
-                              icon: const Icon(Icons.arrow_forward),
-                            ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            );
+                );
           } else {
-            return const Center(child: CircularProgressIndicator(
-                  color: AppColors.purple,));
+            return const Center(
+              child: CircularProgressIndicator(color: AppColors.purple),
+            );
           }
         },
       ),

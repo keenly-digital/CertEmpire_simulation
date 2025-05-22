@@ -51,9 +51,9 @@ class GetAllReportsBloc extends Bloc<ReportInitEvent, ReportInitialState> {
         if (res.success && res.data != null) {
           emit(
             (state as GetAllReportState).copyWith(
-              reportData: res.data?.data,
+              reportData: res.data?.data?.data,
               loading: false,
-              results: res.data?.results ?? 0,
+              results: res.data?.data?.results ?? 0,
             ),
           );
         } else {

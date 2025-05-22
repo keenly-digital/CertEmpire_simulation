@@ -13,6 +13,7 @@ import '../../../../core/shared/widgets/spaces.dart';
 class QuestionExplanationTask extends StatelessWidget {
   const QuestionExplanationTask({super.key, this.taskItem, this.approved});
 
+
   final TaskItem? taskItem;
   final bool? approved;
 
@@ -148,8 +149,8 @@ class QuestionExplanationTask extends StatelessWidget {
                                     explanation: controller.text,
                                     decision:
                                         approved == true
-                                            ? "Approved "
-                                            : "Disapproved",
+                                            ? "Approved"
+                                            : "Unapproved",
                                   );
                               context.read<GetAllTaskBloc>().voteTask(
                                 context,

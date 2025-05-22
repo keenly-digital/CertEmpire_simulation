@@ -31,7 +31,7 @@ class CommonHelper {
               children: [
                 CircularProgressIndicator(color: AppColors.purple),
                 SizedBox(width: 16.w),
-                Text("Please wait...", style: TextStyle(fontSize: 16.sp)),
+                Text("Please wait...", style: TextStyle(fontSize: 16)),
               ],
             ),
           ),

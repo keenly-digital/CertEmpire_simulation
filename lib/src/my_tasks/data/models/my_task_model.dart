@@ -50,9 +50,13 @@ class TaskItem {
   String? reason;
   String? questionNumber;
 
+  List<String>? options;
+
+
   TaskItem({
     this.taskId,
     this.examName,
+    this.options,
     this.questionId,
     this.questionContent,
     this.currentAnswer,
@@ -78,6 +82,8 @@ class TaskItem {
     requestedAt: json["requestedAt"],
     reason: json["reason"],
     questionNumber: json["questionNumber"],
+    options: json["options"] == null ? [] : List<String>.from(json["options"]!.map((x) => x)),
+
   );
 
   Map<String, dynamic> toJson() => {
@@ -93,5 +99,7 @@ class TaskItem {
     "requestedAt": requestedAt,
     "reason": reason,
     "questionNumber": questionNumber,
+    "options": options == null ? [] : List<dynamic>.from(options!.map((x) => x)),
+
   };
 }

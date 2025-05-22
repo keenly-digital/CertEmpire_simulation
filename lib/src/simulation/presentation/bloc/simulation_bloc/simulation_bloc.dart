@@ -69,7 +69,7 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
           context: context,
 
           builder: (context) => ThankYouDialogue(),
-          barrierDismissible: false,
+          barrierDismissible: true,
         );
 
         Snackbar.show(data.message);
@@ -96,7 +96,7 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
         showDialog(
           context: context,
           builder: (context) => ThankYouDialogue(),
-          barrierDismissible: false,
+          barrierDismissible: true,
         );
 
         Snackbar.show(data.message);

@@ -2,6 +2,7 @@ import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/shared/widgets/spaces.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
 import 'package:certempiree/src/my_tasks/presentation/widgets/question_explanation_task.dart';
+import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -33,7 +34,9 @@ class ExplanationReportTask extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       Text(
-                        'Incorrect Explanation',
+                        taskItem?.reportType != "Answer"
+                            ? 'Incorrect Explanation'
+                            : 'Incorrect Answer',
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -125,23 +128,13 @@ class ExplanationReportTask extends StatelessWidget {
                         ),
                         verticalSpace(6),
                         ListView.builder(
-                          itemCount: 3,
+                          itemCount: taskItem?.options?.length,
                           shrinkWrap: true,
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
-                            return Row(
-                              children: [
-                                Text(
-                                  "B. ",
-                                  style: TextStyle(fontWeight: FontWeight.bold),
-                                ),
-                                Expanded(
-                                  child: Text(
-                                    'backend service Pods.',
-                                    style: TextStyle(color: AppColors.green),
-                                  ),
-                                ),
-                              ],
+                            return Text(
+                              taskItem?.options?[index]??"",
+                              style: TextStyle(color: AppColors.green),
                             );
                           },
                         ),
@@ -157,13 +150,14 @@ class ExplanationReportTask extends StatelessWidget {
                           ),
                         ),
                         verticalSpace(6),
-                        Text(taskItem?.currentExplanation ?? ""),
+                        EditorView(initialContent:taskItem?.currentExplanation ?? ""),
                       ],
                     ),
                   ),
 
                   /// Suggested Explanation
                   Container(
+                    width: 1.sw,
                     color: AppColors.optionBackground,
                     padding: const EdgeInsets.symmetric(horizontal: 10),
                     child: Column(

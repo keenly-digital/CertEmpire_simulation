@@ -54,7 +54,7 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
         task?.reportType == "Answer") {
       showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: true,
         builder: (BuildContext context) {
           return Dialog(
             insetPadding: EdgeInsets.symmetric(
@@ -88,13 +88,12 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     BuildContext context,
     VoteTaskParamModel voteTaskParamModel,
   ) async {
-    print("asjsaldjlsakd ${voteTaskParamModel.toJson()}");
     CommonHelper.showLoader(context);
     final res = await _taskRepo.voteTask(voteTaskParamModel);
     res.when(
       onSuccess: (s) {
         CommonHelper.hideLoader(context);
-
+        CommonHelper.showToast(message: s.data?.message ?? "");
         Navigator.pop(context);
       },
       onFailure: (f) {

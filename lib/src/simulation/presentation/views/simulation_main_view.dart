@@ -49,10 +49,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            simulationState.simulationData?.fileName.replaceAll(
-                                  "%",
-                                  "",
-                                ) ??
+                            simulationState.simulationData?.fileName.replaceAll("%", "") ??
                                 "",
                             style: context.textTheme.headlineSmall?.copyWith(
                               color: AppColors.blue,
@@ -61,6 +58,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                   AppColors.blue, // underline color
                             ),
                           ),
+                          verticalSpace(6),
                           BlocBuilder<SearchQuestionCubit, String>(
                             builder: (context, query) {
                               return Row(
@@ -72,6 +70,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                               .read<SearchQuestionCubit>()
                                               .setQuery(value),
                                       decoration: InputDecoration(
+
                                         contentPadding: EdgeInsets.symmetric(
                                           horizontal: 15.w,
                                         ),
@@ -96,8 +95,8 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                     onPressed: () {},
                                     text: "Download",
                                     textColor: Colors.white,
-                                    borderColor: AppColors.lightBlue,
-                                    background: AppColors.lightBlue,
+                                    borderColor: AppColors.purple,
+                                    background: AppColors.purple,
                                   ),
                                 ],
                               );

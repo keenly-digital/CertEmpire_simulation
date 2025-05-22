@@ -1,34 +1,58 @@
+// To parse this JSON data, do
+//
+//     final getAllReportsModel = getAllReportsModelFromJson(jsonString);
+
+import 'dart:convert';
+
+GetAllReportsModel getAllReportsModelFromJson(String str) => GetAllReportsModel.fromJson(json.decode(str));
+
+String getAllReportsModelToJson(GetAllReportsModel data) => json.encode(data.toJson());
 
 class GetAllReportsModel {
   bool? success;
   String? message;
   String? error;
-  int? results;
-
-  List<ReportData>? data;
+  Data? data;
 
   GetAllReportsModel({
     this.success,
     this.message,
     this.error,
     this.data,
-    this.results,
   });
 
   factory GetAllReportsModel.fromJson(Map<String, dynamic> json) => GetAllReportsModel(
     success: json["Success"],
     message: json["Message"],
-    results: json["results"],
     error: json["Error"],
-    data: json["Data"] == null ? [] : List<ReportData>.from(json["Data"]!.map((x) => ReportData.fromJson(x))),
+    data: json["Data"] == null ? null : Data.fromJson(json["Data"]),
   );
 
   Map<String, dynamic> toJson() => {
     "Success": success,
     "Message": message,
-    "results": results,
     "Error": error,
-    "Data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
+    "Data": data?.toJson(),
+  };
+}
+
+class Data {
+  int? results;
+  List<ReportData>? data;
+
+  Data({
+    this.results,
+    this.data,
+  });
+
+  factory Data.fromJson(Map<String, dynamic> json) => Data(
+    results: json["results"],
+    data: json["data"] == null ? [] : List<ReportData>.from(json["data"]!.map((x) => ReportData.fromJson(x))),
+  );
+
+  Map<String, dynamic> toJson() => {
+    "results": results,
+    "data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }
 
