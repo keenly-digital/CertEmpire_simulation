@@ -1,6 +1,7 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
+import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -16,7 +17,7 @@ class QuestionReportTask extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double width = constraints.maxWidth;
-        double dialogWidth = width > 600 ? 500 : width * 0.9;
+        double dialogWidth = width > 600 ? 500 : width * 0.75;
 
         double padding = width > 600 ? 20 : 12;
         double fontSizeSmall = width > 600 ? 14 : 12;
@@ -145,10 +146,7 @@ class QuestionReportTask extends StatelessWidget {
                           color: Colors.grey[200],
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: Text(
-                          taskItem?.questionContent ?? "",
-                          style: TextStyle(fontSize: fontSizeSmall),
-                        ),
+                        child: EditorView(initialContent: taskItem?.questionContent ?? "",)
                       ),
 
                       SizedBox(height: 10),

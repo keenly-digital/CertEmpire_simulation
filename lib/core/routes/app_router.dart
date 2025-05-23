@@ -9,7 +9,7 @@ import 'app_route.dart';
 
 class AppRouter {
   static final GoRouter router = GoRouter(
-    initialLocation: '/Report',
+    initialLocation: '/MyRewards',
     routes: [
       GoRoute(
         path: '/Simulation',

@@ -35,8 +35,9 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
       body: BlocBuilder<GetAllTaskBloc, GetAllTaskState>(
         builder: (context, state) {
           return state.isLoading == true
-              ? Center(child: CircularProgressIndicator(
-                  color: AppColors.purple,))
+              ? Center(
+                child: CircularProgressIndicator(color: AppColors.purple),
+              )
               : (state.taskItem?.isEmpty ?? false) || (state.taskItem == null)
               ? Center(
                 child: Text(
@@ -48,19 +49,18 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
                   ),
                 ),
               )
-              :
-                  ListView.builder(
-                    itemCount: state.taskItem?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final task = state.taskItem?[index];
-                      return Column(
-                        children: [
-                          if(index == 0)Image.asset(Assets.taskTop),
-                          TaskCard(task: task),
-                        ],
-                      );
-                    },
+              : ListView.builder(
+                itemCount: state.taskItem?.length ?? 0,
+                itemBuilder: (context, index) {
+                  final task = state.taskItem?[index];
+                  return Column(
+                    children: [
+                      if (index == 0) Image.asset(Assets.taskTop),
+                      TaskCard(task: task),
+                    ],
                   );
+                },
+              );
         },
       ),
     );

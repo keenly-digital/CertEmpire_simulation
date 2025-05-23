@@ -2,8 +2,10 @@ import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
@@ -18,9 +20,7 @@ class TaskCard extends StatelessWidget {
         double width = constraints.maxWidth;
 
         double iconSize = width * 0.04;
-        double fontSizeContent = width * 0.012;
-        double dateFontSize = width * 0.013;
-        double buttonFontSize = width * 0.025;
+        double dateFontSize = width * 0.014;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -36,36 +36,25 @@ class TaskCard extends StatelessWidget {
               children: [
                 Image.asset(Assets.task, width: iconSize, height: iconSize),
                 const SizedBox(width: 8),
-                Flexible(
-                  child: RichText(
-                    text: TextSpan(
-                      children: [
-                        TextSpan(
-                          text: task?.reason ?? "",
-                          style: TextStyle(
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
+                Expanded(
+                  child: Wrap(
+                    crossAxisAlignment: WrapCrossAlignment.start,
+                    children: [
+                      Text(
+                        task?.reason ?? "",
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          color: Colors.black,
+                          fontSize: 8.sp,
                         ),
-                        if (task?.reason?.isNotEmpty ?? false)
-                          TextSpan(
-                            text: '  |',
-                            style: TextStyle(
-                              color: Colors.black,
-                            ),
-                          ),
-                        TextSpan(
-                          text: '  ${task?.questionContent ?? ""}',
-                          style: TextStyle(
-                            fontSize: fontSizeContent,
-                            color: Colors.black87,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
+                      if (task?.reason?.isNotEmpty ?? false)
+                        Text('  |  ', style: TextStyle(color: Colors.black)),
+                      EditorView(initialContent: task?.questionContent ?? ""),
+                    ],
                   ),
                 ),
-                const SizedBox(width: 8),
+
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.end,
                   children: [
@@ -98,10 +87,7 @@ class TaskCard extends StatelessWidget {
                       ),
                       child: Text(
                         "View",
-                        style: TextStyle(
-                          color: AppColors.purple,
-                          fontSize: buttonFontSize,
-                        ),
+                        style: TextStyle(color: AppColors.purple, fontSize: 13),
                       ),
                     ),
                   ],

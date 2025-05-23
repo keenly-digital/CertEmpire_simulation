@@ -40,8 +40,10 @@ class _ReportMainViewState extends State<ReportMainView> {
                 ? Center(
                   child: Text(
                     "No Report Found",
-                    style: TextStyle(color: Colors.black,fontWeight: FontWeight.bold,fontSize: 14
-
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
                     ),
                   ),
                 )
@@ -96,7 +98,9 @@ class _ReportMainViewState extends State<ReportMainView> {
                                   color: AppColors.lightGrey,
                                   child: reportRow(
                                     reportName: report.reportName ?? "",
-                                    examName: report.examName?.replaceAll("%", "") ?? "",
+                                    examName:
+                                        report.examName?.replaceAll("%", "") ??
+                                        "",
                                     status: report.status ?? "",
                                     viewReason: report.status == "Unapproved",
                                     report: report,
@@ -109,42 +113,70 @@ class _ReportMainViewState extends State<ReportMainView> {
                         ),
                       ),
                       Container(
-                        height: 50.h,
+                        height: 60.h,
                         width: ScreenUtil().screenWidth,
-                        decoration: const BoxDecoration(
+                        decoration: BoxDecoration(
                           shape: BoxShape.rectangle,
+                          border: Border.all(color: Colors.black),
                         ),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text(
-                              "Showing $pageNumber to ${reports.length} ${state.results ?? 0} results",
-                            ),
-                            Row(
-                              children: [
-                                IconButton(
-                                  onPressed: () {
-                                    if (pageNumber > 1) {
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                "Showing $pageNumber to ${reports.length} ${state.results ?? 0} results",
+                              ),
+                              Row(
+                                children: [
+                                  IconButton(
+                                    onPressed: () {
+                                      if (pageNumber > 1) {
+                                        setState(() {
+                                          pageNumber--;
+                                        });
+                                        fetchReports();
+                                      }
+                                    },
+                                    icon: Container(
+                                      width: 30,
+                                      // Set a fixed width
+                                      height: 60,
+                                      // Set a fixed height
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        border: Border.all(color: Colors.black),
+                                      ),
+                                      alignment: Alignment.center,
+                                      // Centers the child inside
+                                      child: Icon(Icons.arrow_back,size: 20,),
+                                    ),
+                                  ),
+                                  IconButton(
+                                    onPressed: () {
                                       setState(() {
-                                        pageNumber--;
+                                        pageNumber++;
                                       });
                                       fetchReports();
-                                    }
-                                  },
-                                  icon: const Icon(Icons.arrow_back),
-                                ),
-                                IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      pageNumber++;
-                                    });
-                                    fetchReports();
-                                  },
-                                  icon: const Icon(Icons.arrow_forward),
-                                ),
-                              ],
-                            ),
-                          ],
+                                    },
+                                    icon: Container(
+                                      width: 30,
+                                      // Set a fixed width
+                                      height: 60,
+                                      // Set a fixed height
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.rectangle,
+                                        border: Border.all(color: Colors.black),
+                                      ),
+                                      alignment: Alignment.center,
+                                      // Centers the child inside
+                                      child: Icon(Icons.arrow_forward,size: 20,),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ],
@@ -177,7 +209,7 @@ class _ReportMainViewState extends State<ReportMainView> {
             child: Text(
               reportName,
               style: TextStyle(
-                fontSize: 7.sp,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -187,7 +219,7 @@ class _ReportMainViewState extends State<ReportMainView> {
             child: Text(
               examName,
               style: TextStyle(
-                fontSize: 7.sp,
+                fontSize: 11,
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
               ),
@@ -200,7 +232,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                 Text(
                   status,
                   style: TextStyle(
-                    fontSize: 7.sp,
+                    fontSize: 11,
                     fontWeight: FontWeight.w600,
                     color: Colors.black,
                   ),

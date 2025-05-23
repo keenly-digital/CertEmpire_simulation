@@ -39,7 +39,7 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     if (task?.reportType == "Question") {
       showDialog(
         context: context,
-        barrierDismissible: false,
+        barrierDismissible: true,
         builder: (BuildContext context) {
           return Dialog(
             insetPadding: EdgeInsets.symmetric(horizontal: 10.w),
@@ -67,7 +67,7 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
             child: LayoutBuilder(
               builder: (context, constraints) {
                 double width = constraints.maxWidth;
-                double dialogWidth = width > 600 ? 500 : width * 0.9;
+                double dialogWidth = width > 600 ? 500 : width * 0.75;
 
                 return ConstrainedBox(
                   constraints: BoxConstraints(

@@ -18,14 +18,13 @@ class MyRewardMainView extends StatefulWidget {
 }
 
 class _MyRewardMainViewState extends State<MyRewardMainView> {
+  int pageNumber = 1;
+
   @override
   void initState() {
     super.initState();
     rewardDependency();
-
-    context.read<MyRewardBloc>().add(
-      GetRewardsEvent(userId: AppStrings.userId),
-    );
+    fetchReward();
   }
 
   @override
@@ -47,17 +46,111 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                   ),
                 ),
               )
-              : ListView.builder(
-                itemCount: state.rewardData?.length,
-                itemBuilder: (context, index) {
-                  return ReportSummaryCard(
-                    rewardData: state.rewardData?[index],
-                    index: index,
-                  );
-                },
+              : Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      style: TextStyle(fontWeight: FontWeight.w500),
+                      "My Rewards module is based on the rewards that you have earned by helping our community. Please note that you can send only one withdrawal request per order. Therefore, only apply for withdrawal when you believe that you cannot earn  more credits. Please remember that withdrawal credits cannot exceed the initial order amount as the withdrawal are issued in the form of refunds.",
+                    ),
+                    Expanded(
+                      child: ListView.builder(
+                        itemCount: state.rewardData?.length,
+                        itemBuilder: (context, index) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              ReportSummaryCard(
+                                rewardData: state.rewardData?[index],
+                                index: index,
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                    Container(
+                      height: 60.h,
+                      width: ScreenUtil().screenWidth,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        border: Border.all(color: Colors.black),
+                      ),
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Text(
+                              "Showing $pageNumber to ${state.rewardData?.length}",
+                            ),
+                            Row(
+                              children: [
+                                IconButton(
+                                  onPressed: () {
+                                    if (pageNumber > 1) {
+                                      setState(() {
+                                        pageNumber--;
+                                      });
+                                      fetchReward();
+                                    }
+                                  },
+                                  icon: Container(
+                                    width: 30,
+                                    // Set a fixed width
+                                    height: 60,
+                                    // Set a fixed height
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    alignment: Alignment.center,
+                                    // Centers the child inside
+                                    child: Icon(Icons.arrow_back, size: 20),
+                                  ),
+                                ),
+                                IconButton(
+                                  onPressed: () {
+                                    setState(() {
+                                      pageNumber++;
+                                    });
+                                    fetchReward();
+                                  },
+                                  icon: Container(
+                                    width: 30,
+                                    // Set a fixed width
+                                    height: 60,
+                                    // Set a fixed height
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    alignment: Alignment.center,
+                                    // Centers the child inside
+                                    child: Icon(Icons.arrow_forward, size: 20),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               );
         },
       ),
+    );
+  }
+
+  void fetchReward() {
+    context.read<MyRewardBloc>().add(
+      GetRewardsEvent(userId: AppStrings.userId),
     );
   }
 }

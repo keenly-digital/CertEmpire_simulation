@@ -1,4 +1,3 @@
-import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/withdraw_request_dialogue.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/get_all_reward_data_model.dart';
-import '../bloc/report_bloc/get_all_reward_events.dart';
 import '../bloc/report_bloc/get_all_reward_state.dart';
 import 'failed_dialogue.dart';
 
@@ -38,37 +36,44 @@ class ReportSummaryCard extends StatelessWidget {
                   'Order Number #40235',
                   style: TextStyle(
                     color: AppColors.purple,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12.sp,
+                    fontWeight: FontWeight.w500,
+                    fontSize: 13,
                   ),
                 ),
                 SizedBox(height: 4.h),
                 Text(
                   rewardData?.fileName?.replaceAll("%", "") ?? "",
-                  style: TextStyle(fontSize: 10.sp, color: Colors.black87),
+                  style: TextStyle(fontSize: 11, color: Colors.black87),
                 ),
                 SizedBox(height: 14.h),
-                Wrap(
-                  spacing: 5.w,
-                  runSpacing: 5.h,
-                  children: [
-                    _StatBox(
-                      label: 'Reports Submitted',
-                      value: "${rewardData?.reportsSubmitted ?? 0}",
+                SizedBox(
+                  width: ScreenUtil().screenWidth,
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: Row(
+                      children: [
+                        _StatBox(
+                          label: 'Reports Submitted',
+                          value: "${rewardData?.reportsSubmitted ?? 0}",
+                        ),
+                        SizedBox(width: 8.w),
+                        _StatBox(
+                          label: 'Reports Approved',
+                          value: "${rewardData?.reportsApproved ?? 0}",
+                        ),
+                        SizedBox(width: 8.w),
+                        _StatBox(
+                          label: 'Voted Reports',
+                          value: "${rewardData?.votedReports ?? 0}",
+                        ),
+                        SizedBox(width: 8.w),
+                        _StatBox(
+                          label: 'Voted Reports Approved',
+                          value: "${rewardData?.votedReportsApproved ?? 0}",
+                        ),
+                      ],
                     ),
-                    _StatBox(
-                      label: 'Reports Approved',
-                      value: "${rewardData?.votedReportsApproved ?? 0}",
-                    ),
-                    _StatBox(
-                      label: 'Voted Reports',
-                      value: "${rewardData?.votedReports ?? 0}",
-                    ),
-                    _StatBox(
-                      label: 'Voted Reports Approved',
-                      value: "${rewardData?.votedReportsApproved ?? 0}",
-                    ),
-                  ],
+                  ),
                 ),
               ],
             ),
@@ -81,7 +86,6 @@ class ReportSummaryCard extends StatelessWidget {
               color: AppColors.dividerColor,
             ),
           ),
-          // Right section: Balance and button
           Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
@@ -92,7 +96,7 @@ class ReportSummaryCard extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '\$${rewardData?.currentBalance} USD',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                style: TextStyle(fontSize: 16),
               ),
               const SizedBox(height: 12),
               BlocBuilder<MyRewardBloc, RewardInitialState>(
@@ -142,7 +146,7 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8.w),
+      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8),
       decoration: BoxDecoration(
         color: const Color(0xFFF2EEF7),
         borderRadius: BorderRadius.circular(8),
@@ -152,14 +156,14 @@ class _StatBox extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 10.sp, color: Colors.black87),
+            style: TextStyle(fontSize: 11, color: Colors.black87),
           ),
           SizedBox(height: 6.h),
           Text(
             value,
             style: TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 12.sp,
+              fontSize: 12,
               color: Colors.black87,
             ),
           ),
