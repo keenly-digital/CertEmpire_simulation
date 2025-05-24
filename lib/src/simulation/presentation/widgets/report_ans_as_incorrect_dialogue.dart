@@ -122,10 +122,13 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                         controller: explanationController,
                         maxLines: 6,
                         decoration: InputDecoration(
-                          hintText: "Write here...",
                           hintStyle:
                           const TextStyle(fontSize: 13, color: Colors.grey),
                           border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide:  BorderSide(color: Colors.red, width: 2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),

@@ -95,8 +95,8 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                     onPressed: () {},
                                     text: "Download",
                                     textColor: Colors.white,
-                                    borderColor: AppColors.purple,
-                                    background: AppColors.purple,
+                                    borderColor: AppColors.lightBlue,
+                                    background: AppColors.lightBlue,
                                   ),
                                 ],
                               );

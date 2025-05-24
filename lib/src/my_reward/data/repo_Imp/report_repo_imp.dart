@@ -12,9 +12,11 @@ class RewardRepoImp extends RewardRepo {
 
   @override
   Future<ApiResult<APIResponse<GetAllRewardDataModel?>>> getUserReward(
-    String reportId,
+      String userId,
+      int pageSize,
+      int pageNumber,
   ) async {
-    return await _remoteDataSrc.getUserReward(reportId);
+    return await _remoteDataSrc.getUserReward(userId,pageSize,pageNumber);
   }
 
   @override

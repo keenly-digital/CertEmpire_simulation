@@ -12,10 +12,16 @@ class MyRewardDataSrc {
 
   Future<ApiResult<APIResponse<GetAllRewardDataModel>>> getUserReward(
     String userId,
+      int pageSize,
+      int pageNumber,
   ) async {
     final result = await _apiManager.get(
       ApiEndpoint.getUserRewards,
-      queryParameters: {'userId': userId},
+      queryParameters: {
+        'UserId': userId,
+        "PageNumber": pageNumber,
+        "PageSize": pageSize,
+      },
     );
     return result.when(
       onSuccess:

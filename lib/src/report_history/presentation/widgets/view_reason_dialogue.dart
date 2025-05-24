@@ -35,10 +35,7 @@ class ViewReasonDialog extends StatelessWidget {
                 children: [
                   const Text(
                     "View Reason",
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                   ),
                   GestureDetector(
                     onTap: () => Navigator.pop(context),
@@ -55,10 +52,7 @@ class ViewReasonDialog extends StatelessWidget {
                 children: [
                   const Text(
                     "Exam Name: ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                   Expanded(
                     child: Text(
@@ -75,10 +69,7 @@ class ViewReasonDialog extends StatelessWidget {
                 children: [
                   const Text(
                     "Status: ",
-                    style: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: 14,
-                    ),
+                    style: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
                   ),
                   Text(
                     reportData.status ?? "",
@@ -95,10 +86,7 @@ class ViewReasonDialog extends StatelessWidget {
                 alignment: Alignment.centerLeft,
                 child: Text(
                   "Explanation",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    fontSize: 15,
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.w600, fontSize: 15),
                 ),
               ),
               const SizedBox(height: 8),
@@ -114,13 +102,17 @@ class ViewReasonDialog extends StatelessWidget {
                         color: Colors.blue.shade50,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: state.reasonLoading == true
-                          ? const Center(child: CircularProgressIndicator(
-                  color: AppColors.purple,))
-                          : Text(
-                        state.explanation ?? "",
-                        style: const TextStyle(fontSize: 14),
-                      ),
+                      child:
+                          state.reasonLoading == true
+                              ? const Center(
+                                child: CircularProgressIndicator(
+                                  color: AppColors.purple,
+                                ),
+                              )
+                              : Text(
+                                state.explanation ?? "",
+                                style: const TextStyle(fontSize: 14),
+                              ),
                     );
                   }
                   return const SizedBox.shrink();

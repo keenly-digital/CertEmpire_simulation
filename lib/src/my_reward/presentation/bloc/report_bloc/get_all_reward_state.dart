@@ -7,6 +7,7 @@ class RewardInitialState extends Equatable {
   final bool? loading;
   final String? errorMessage;
   final bool? withDrawLoading;
+  final int? itemLength;
 
   @override
   List<Object?> get props => [
@@ -14,10 +15,12 @@ class RewardInitialState extends Equatable {
     loading,
     errorMessage,
     withDrawLoading,
+    itemLength,
   ];
 
   const RewardInitialState({
     this.rewardData,
+    this.itemLength=1,
     this.loading,
     this.errorMessage,
     this.withDrawLoading,
@@ -27,10 +30,11 @@ class RewardInitialState extends Equatable {
     List<RewardData>? rewardData,
     bool? loading,
     String? errorMessage,
-
+    int? itemLength,
     bool? withDrawLoading,
   }) {
     return RewardInitialState(
+      itemLength: itemLength ?? this.itemLength,
       rewardData: rewardData ?? this.rewardData,
       withDrawLoading: withDrawLoading ?? this.withDrawLoading,
       loading: loading ?? this.loading,

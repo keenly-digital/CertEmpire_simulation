@@ -1,7 +1,9 @@
 import 'package:bloc/bloc.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../domain/repos/report_repo.dart';
+import '../../widgets/view_reason_dialogue.dart';
 import 'get_all_report_events.dart';
 import 'get_all_report_state.dart';
 
@@ -27,6 +29,11 @@ class GetAllReportsBloc extends Bloc<ReportInitEvent, ReportInitialState> {
             reasonLoading: false,
             explanation: data.data?.data?.explanation ?? "",
           ),
+        );
+
+        showDialog(
+          context: event.context,
+          builder: (_) => ViewReasonDialog(reportData: event.report),
         );
       },
       onFailure: (message) {

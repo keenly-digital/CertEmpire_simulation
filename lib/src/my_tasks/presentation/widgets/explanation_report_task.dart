@@ -57,7 +57,7 @@ class ExplanationReportTask extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Exam Name : ',
+                        'Exam Name :',
                         style: TextStyle(fontWeight: FontWeight.bold),
                       ),
                       horizontalSpace(5),
@@ -98,15 +98,15 @@ class ExplanationReportTask extends StatelessWidget {
                                 style: TextStyle(
                                   color: AppColors.purple,
                                   decoration: TextDecoration.underline,
+                                  fontWeight: FontWeight.w600,
                                 ),
                               ),
                             ),
                           ],
                         ),
                         verticalSpace(8),
-                        Text(
-                          taskItem?.questionContent ?? "",
-                          style: TextStyle(fontWeight: FontWeight.w500),
+                        EditorView(
+                          initialContent: taskItem?.questionContent ?? "",
                         ),
                       ],
                     ),
@@ -124,7 +124,12 @@ class ExplanationReportTask extends StatelessWidget {
                         verticalSpace(10),
                         Text(
                           'Current Answer:',
-                          style: TextStyle(fontWeight: FontWeight.bold),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.purple,
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.purple,
+                          ),
                         ),
                         verticalSpace(6),
                         ListView.builder(
@@ -133,7 +138,7 @@ class ExplanationReportTask extends StatelessWidget {
                           physics: NeverScrollableScrollPhysics(),
                           itemBuilder: (context, index) {
                             return Text(
-                              taskItem?.options?[index]??"",
+                              taskItem?.options?[index] ?? "",
                               style: TextStyle(color: AppColors.green),
                             );
                           },
@@ -150,7 +155,9 @@ class ExplanationReportTask extends StatelessWidget {
                           ),
                         ),
                         verticalSpace(6),
-                        EditorView(initialContent:taskItem?.currentExplanation ?? ""),
+                        EditorView(
+                          initialContent: taskItem?.currentExplanation ?? "",
+                        ),
                       ],
                     ),
                   ),
@@ -169,6 +176,9 @@ class ExplanationReportTask extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.purple,
+
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.purple,
                           ),
                         ),
                         verticalSpace(6),

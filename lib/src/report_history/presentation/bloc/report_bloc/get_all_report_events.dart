@@ -1,3 +1,7 @@
+import 'package:flutter/cupertino.dart';
+
+import '../../../data/models/get_all_reports.dart';
+
 abstract class ReportInitEvent {}
 
 class GetAllReportsEvent extends ReportInitEvent {
@@ -15,5 +19,12 @@ class GetAllReportsEvent extends ReportInitEvent {
 class GetReasonEvent extends ReportInitEvent {
   String reportId;
 
-  GetReasonEvent({required this.reportId});
+  ReportData report;
+  BuildContext context;
+
+  GetReasonEvent({
+    required this.reportId,
+    required this.context,
+    required this.report,
+  });
 }

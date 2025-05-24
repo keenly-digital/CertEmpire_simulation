@@ -86,7 +86,7 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              "Showing $pageNumber to ${state.rewardData?.length}",
+                              "Showing $pageNumber to ${state.rewardData?.length} of ${state.itemLength}",
                             ),
                             Row(
                               children: [
@@ -101,15 +101,12 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                                   },
                                   icon: Container(
                                     width: 30,
-                                    // Set a fixed width
                                     height: 60,
-                                    // Set a fixed height
                                     decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
                                       border: Border.all(color: Colors.black),
                                     ),
                                     alignment: Alignment.center,
-                                    // Centers the child inside
                                     child: Icon(Icons.arrow_back, size: 20),
                                   ),
                                 ),
@@ -122,15 +119,12 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                                   },
                                   icon: Container(
                                     width: 30,
-                                    // Set a fixed width
                                     height: 60,
-                                    // Set a fixed height
                                     decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
                                       border: Border.all(color: Colors.black),
                                     ),
                                     alignment: Alignment.center,
-                                    // Centers the child inside
                                     child: Icon(Icons.arrow_forward, size: 20),
                                   ),
                                 ),
@@ -150,7 +144,11 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
 
   void fetchReward() {
     context.read<MyRewardBloc>().add(
-      GetRewardsEvent(userId: AppStrings.userId),
+      GetRewardsEvent(
+        userId: AppStrings.userId,
+        pageNumber: pageNumber,
+        pageSize: 10,
+      ),
     );
   }
 }

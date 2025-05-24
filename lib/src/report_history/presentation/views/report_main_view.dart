@@ -5,11 +5,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/spacer_utility.dart';
 import '../../report_history_dependencies.dart';
 import '../bloc/report_bloc/get_all_report_bloc.dart';
 import '../bloc/report_bloc/get_all_report_events.dart';
 import '../bloc/report_bloc/get_all_report_state.dart';
-import '../widgets/view_reason_dialogue.dart';
 
 class ReportMainView extends StatefulWidget {
   const ReportMainView({super.key});
@@ -48,14 +48,16 @@ class _ReportMainViewState extends State<ReportMainView> {
                   ),
                 )
                 : Padding(
-                  padding: const EdgeInsets.all(12.0),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 12,
+                  ),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          SizedBox(
-                            width: ScreenUtil().screenWidth * 0.25,
+                          Expanded(
                             child: Text(
                               "Report Name",
                               style: TextStyle(
@@ -64,8 +66,9 @@ class _ReportMainViewState extends State<ReportMainView> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: ScreenUtil().screenWidth * 0.50,
+                          SpacerUtil.horizontalSmall(),
+                          Expanded(
+                            flex: 2,
                             child: Text(
                               "Exam Name",
                               style: TextStyle(
@@ -74,8 +77,8 @@ class _ReportMainViewState extends State<ReportMainView> {
                               ),
                             ),
                           ),
-                          SizedBox(
-                            width: ScreenUtil().screenWidth * 0.20,
+                          SpacerUtil.horizontalSmall(),
+                          Expanded(
                             child: Text(
                               "Status",
                               style: TextStyle(
@@ -103,6 +106,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                                         "",
                                     status: report.status ?? "",
                                     viewReason: report.status == "Unapproved",
+                                    // viewReason: index % 2 == 0,
                                     report: report,
                                   ),
                                 ),
@@ -125,7 +129,8 @@ class _ReportMainViewState extends State<ReportMainView> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                "Showing $pageNumber to ${reports.length} ${state.results ?? 0} results",
+                                "Showing $pageNumber to ${reports.length} of ${state.results ?? 0} results",
+                                style: TextStyle(color: Colors.black),
                               ),
                               Row(
                                 children: [
@@ -140,16 +145,14 @@ class _ReportMainViewState extends State<ReportMainView> {
                                     },
                                     icon: Container(
                                       width: 30,
-                                      // Set a fixed width
                                       height: 60,
-                                      // Set a fixed height
                                       decoration: BoxDecoration(
                                         shape: BoxShape.rectangle,
                                         border: Border.all(color: Colors.black),
                                       ),
                                       alignment: Alignment.center,
                                       // Centers the child inside
-                                      child: Icon(Icons.arrow_back,size: 20,),
+                                      child: Icon(Icons.arrow_back, size: 20),
                                     ),
                                   ),
                                   IconButton(
@@ -161,16 +164,16 @@ class _ReportMainViewState extends State<ReportMainView> {
                                     },
                                     icon: Container(
                                       width: 30,
-                                      // Set a fixed width
                                       height: 60,
-                                      // Set a fixed height
                                       decoration: BoxDecoration(
                                         shape: BoxShape.rectangle,
                                         border: Border.all(color: Colors.black),
                                       ),
                                       alignment: Alignment.center,
-                                      // Centers the child inside
-                                      child: Icon(Icons.arrow_forward,size: 20,),
+                                      child: Icon(
+                                        Icons.arrow_forward,
+                                        size: 20,
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -200,12 +203,11 @@ class _ReportMainViewState extends State<ReportMainView> {
     required ReportData report,
   }) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          SizedBox(
-            width: ScreenUtil().screenWidth * 0.20,
+          Expanded(
             child: Text(
               reportName,
               style: TextStyle(
@@ -216,6 +218,7 @@ class _ReportMainViewState extends State<ReportMainView> {
             ),
           ),
           Expanded(
+            flex: 2,
             child: Text(
               examName,
               style: TextStyle(
@@ -225,47 +228,38 @@ class _ReportMainViewState extends State<ReportMainView> {
               ),
             ),
           ),
-          SizedBox(
-            width: ScreenUtil().screenWidth * 0.15,
-            child: Row(
-              children: [
-                Text(
-                  status,
-                  style: TextStyle(
-                    fontSize: 11,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                  ),
-                ),
-              ],
-            ),
-          ),
-          Visibility(
-            visible: viewReason,
-            maintainSize: true,
-            maintainAnimation: true,
-            maintainState: true,
-            child: TextButton(
-              onPressed: () {
-                context.read<GetAllReportsBloc>().add(
-                  GetReasonEvent(reportId: report.id ?? ""),
-                );
-                showDialog(
-                  context: context,
-                  builder: (_) => ViewReasonDialog(reportData: report),
-                );
-              },
-              child: Text(
-                "View Reason",
-                style: TextStyle(
-                  fontSize: 8.sp,
-                  color: Colors.blue,
-                  fontWeight: FontWeight.w500,
-                  decoration: TextDecoration.underline,
-                ),
+          Expanded(
+            child: Text(
+              status,
+              style: TextStyle(
+                fontSize: 11,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
               ),
             ),
           ),
+          viewReason
+              ? TextButton(
+                onPressed: () {
+                  context.read<GetAllReportsBloc>().add(
+                    GetReasonEvent(
+                      reportId: report.id ?? "",
+                      context: context,
+                      report: report,
+                    ),
+                  );
+                },
+                child: Text(
+                  "View Reason",
+                  style: TextStyle(
+                    fontSize: 8,
+                    color: Colors.blue,
+                    fontWeight: FontWeight.w500,
+                    decoration: TextDecoration.underline,
+                  ),
+                ),
+              )
+              : SizedBox(height: 20),
         ],
       ),
     );

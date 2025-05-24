@@ -4,8 +4,9 @@ import '../../data/models/withdraw_reward_model.dart';
 
 abstract class RewardRepo {
   Future<ApiResult<APIResponse<GetAllRewardDataModel?>>> getUserReward(
-    String reportId,
-  );
+      String userId,
+      int pageSize,
+      int pageNumber,  );
 
   Future<ApiResult<APIResponse<WithdrawRewardModel?>>> withDrawReward(
     String userId,

@@ -4,17 +4,20 @@ class GetAllRewardDataModel {
   String? message;
   String? error;
   List<RewardData>? data;
+  int? results;
 
   GetAllRewardDataModel({
     this.success,
     this.message,
     this.error,
     this.data,
+    this.results
   });
 
   factory GetAllRewardDataModel.fromJson(Map<String, dynamic> json) => GetAllRewardDataModel(
     success: json["Success"],
     message: json["Message"],
+    results: json["Results"],
     error: json["Error"],
     data: json["Data"] == null ? [] : List<RewardData>.from(json["Data"]!.map((x) => RewardData.fromJson(x))),
   );
@@ -23,6 +26,7 @@ class GetAllRewardDataModel {
     "Success": success,
     "Message": message,
     "Error": error,
+    "Results": results,
     "Data": data == null ? [] : List<dynamic>.from(data!.map((x) => x.toJson())),
   };
 }

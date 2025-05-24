@@ -4,8 +4,14 @@ abstract class RewardInitEvent {}
 
 class GetRewardsEvent extends RewardInitEvent {
   String userId;
+  int pageSize;
+  int pageNumber;
 
-  GetRewardsEvent({required this.userId});
+  GetRewardsEvent({
+    required this.userId,
+    required this.pageNumber,
+    required this.pageSize,
+  });
 }
 
 class WithDrawRewardEvent extends RewardInitEvent {

@@ -8,9 +8,7 @@ import 'package:certempiree/src/my_reward/presentation/widgets/success_dialogue.
 import 'package:flutter/material.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
-import '../../../data/models/get_all_reward_data_model.dart';
 import '../../../domain/repos/report_repo.dart';
-import '../../widgets/withdraw_request_dialogue.dart';
 import 'get_all_reward_events.dart';
 import 'get_all_reward_state.dart';
 
@@ -28,10 +26,26 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
     Emitter<RewardInitialState> emit,
   ) async {
     emit(state.copyWith(loading: true, withDrawLoading: false));
-    final res = await _reportRepo.getUserReward(event.userId);
+    final res = await _reportRepo.getUserReward(
+      event.userId,
+      event.pageSize,
+      event.pageNumber,
+    );
     res.when(
       onSuccess: (data) {
-        emit(state.copyWith(loading: false, rewardData: data.data?.data));
+        // List<RewardData> currentList = state.rewardData ?? [];
+        // List<RewardData> newList = data.data?.data ?? [];
+        // if (newList.isEmpty && event.pageNumber > 1) {
+        //   CommonHelper.showToast(message: "No More Reward");
+        // }
+        // final updatedList = [...currentList, ...newList];
+        emit(
+          state.copyWith(
+            loading: false,
+            rewardData: data.data?.data ?? [],
+            itemLength: data.data?.results,
+          ),
+        );
       },
       onFailure: (message) {
         Snackbar.show(message);

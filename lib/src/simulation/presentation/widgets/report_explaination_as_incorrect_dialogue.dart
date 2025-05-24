@@ -64,8 +64,7 @@ class ReportExplanationDialogue extends StatelessWidget {
                       ),
                       child: TextField(
                         controller: _controller,
-                        maxLines: null,
-                        expands: true,
+                        maxLines: 7,
                         style:  TextStyle(fontSize: 14),
                         decoration:  InputDecoration(
                           focusedBorder: OutlineInputBorder(

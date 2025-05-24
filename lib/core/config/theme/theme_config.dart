@@ -194,7 +194,9 @@ class ThemeConfig {
   static TextButtonThemeData _textButtonTheme(TextTheme textTheme) {
     return TextButtonThemeData(
       style: TextButton.styleFrom(
-
+        shape: const RoundedRectangleBorder(
+          borderRadius: BorderRadius.zero, // Makes the border rectangular
+        ),
         textStyle: textTheme.labelLarge!.copyWith(color: AppColors.lightPrimary), // Use labelLarge for buttons
       ),
     );
