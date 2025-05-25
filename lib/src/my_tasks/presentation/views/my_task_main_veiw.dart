@@ -60,7 +60,7 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
                       itemCount: state.taskItem?.length ?? 0,
                       itemBuilder: (context, index) {
                         final task = state.taskItem?[index];
-                        return Column(children: [TaskCard(task: task)]);
+                        return TaskCard(task: task);
                       },
                     ),
                   ),
