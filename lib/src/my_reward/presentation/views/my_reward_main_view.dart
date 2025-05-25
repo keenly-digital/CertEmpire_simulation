@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/shared/widgets/toast.dart';
 import '../../reward_dependency_injection.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
 import '../widgets/reward_summary_card.dart';
@@ -32,6 +33,8 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
     return Scaffold(
       body: BlocBuilder<MyRewardBloc, RewardInitialState>(
         builder: (context, state) {
+          final moveNext =
+              (state.rewardData?.length ?? 0) < (state.itemLength ?? 0);
           return state.loading == true
               ? Center(
                 child: CircularProgressIndicator(color: AppColors.purple),
@@ -111,21 +114,40 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () {
-                                    setState(() {
-                                      pageNumber++;
-                                    });
-                                    fetchReward();
-                                  },
+                                  onPressed:
+                                      moveNext
+                                          ? () {
+                                            setState(() {
+                                              pageNumber++;
+                                            });
+                                            fetchReward();
+                                          }
+                                          : () {
+                                            CommonHelper.showToast(
+                                              message: "No More Reward",
+                                            );
+                                          },
                                   icon: Container(
                                     width: 30,
                                     height: 60,
                                     decoration: BoxDecoration(
                                       shape: BoxShape.rectangle,
-                                      border: Border.all(color: Colors.black),
+                                      border: Border.all(
+                                        color:
+                                            !moveNext
+                                                ? Colors.black45
+                                                : Colors.black,
+                                      ),
                                     ),
                                     alignment: Alignment.center,
-                                    child: Icon(Icons.arrow_forward, size: 20),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      size: 20,
+                                      color:
+                                          !moveNext
+                                              ? Colors.black45
+                                              : Colors.black,
+                                    ),
                                   ),
                                 ),
                               ],

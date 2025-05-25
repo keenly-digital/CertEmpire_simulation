@@ -1,5 +1,6 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/app_strings.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/report_history/data/models/get_all_reports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -34,20 +35,10 @@ class _ReportMainViewState extends State<ReportMainView> {
       body: BlocBuilder<GetAllReportsBloc, ReportInitialState>(
         builder: (context, state) {
           if (state is GetAllReportState) {
+            final moveNext =
+                (state.reportData?.length ?? 0) < (state.results ?? 0);
             final reports = state.reportData ?? [];
-            return (state.reportData?.isEmpty ??
-                    false || state.reportData == null)
-                ? Center(
-                  child: Text(
-                    "No Report Found",
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14,
-                    ),
-                  ),
-                )
-                : Padding(
+            return Padding(
                   padding: const EdgeInsets.symmetric(
                     horizontal: 12,
                     vertical: 12,
@@ -151,28 +142,43 @@ class _ReportMainViewState extends State<ReportMainView> {
                                         border: Border.all(color: Colors.black),
                                       ),
                                       alignment: Alignment.center,
-                                      // Centers the child inside
                                       child: Icon(Icons.arrow_back, size: 20),
                                     ),
                                   ),
                                   IconButton(
-                                    onPressed: () {
-                                      setState(() {
-                                        pageNumber++;
-                                      });
-                                      fetchReports();
-                                    },
+                                    onPressed:
+                                        moveNext
+                                            ? () {
+                                              setState(() {
+                                                pageNumber++;
+                                              });
+                                              fetchReports();
+                                            }
+                                            : () {
+                                              CommonHelper.showToast(
+                                                message: "No More Reports",
+                                              );
+                                            },
                                     icon: Container(
                                       width: 30,
                                       height: 60,
                                       decoration: BoxDecoration(
                                         shape: BoxShape.rectangle,
-                                        border: Border.all(color: Colors.black),
+                                        border: Border.all(
+                                          color:
+                                              !moveNext
+                                                  ? Colors.black45
+                                                  : Colors.black,
+                                        ),
                                       ),
                                       alignment: Alignment.center,
                                       child: Icon(
                                         Icons.arrow_forward,
                                         size: 20,
+                                        color:
+                                            !moveNext
+                                                ? Colors.black45
+                                                : Colors.black,
                                       ),
                                     ),
                                   ),
@@ -230,7 +236,7 @@ class _ReportMainViewState extends State<ReportMainView> {
           ),
           Expanded(
             child: Text(
-              status,
+              "    $status",
               style: TextStyle(
                 fontSize: 11,
                 fontWeight: FontWeight.w600,

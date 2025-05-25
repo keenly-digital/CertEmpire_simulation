@@ -44,7 +44,7 @@ class TaskCard extends StatelessWidget {
                 Text('  |  ', style: TextStyle(color: Colors.black)),
                 Expanded(
                   child: Text(
-                    "This is the content of the question. This is the content of the question...",
+                    "View the question content here...",
                   ),
                 ),
                 Text(

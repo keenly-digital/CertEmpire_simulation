@@ -108,6 +108,11 @@ class ReportSummaryCard extends StatelessWidget {
                         style: OutlinedButton.styleFrom(
                           foregroundColor: Colors.purple,
                           side: BorderSide(color: AppColors.borderColor),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(
+                              2,
+                            ), // Less round
+                          ),
                         ),
                         onPressed: () async {
                           await showDialog<String>(
@@ -156,7 +161,11 @@ class _StatBox extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 11, color: Colors.black87),
+            style: TextStyle(
+              fontSize: 11,
+              color: Colors.black87,
+              fontWeight: FontWeight.bold,
+            ),
           ),
           SizedBox(height: 6.h),
           Text(

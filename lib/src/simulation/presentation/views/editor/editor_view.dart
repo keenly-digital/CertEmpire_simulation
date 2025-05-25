@@ -35,19 +35,18 @@ class _EditorViewState extends State<EditorView> {
   }
 
   void _initializeController() {
-    final originalDelta = Delta.fromJson(
-      parseStringToDeltaJson(widget.initialContent ?? ""),
-    );
+    final cleanedContent = cleanNewLines(widget.initialContent ?? "");
+    final originalDelta = Delta.fromJson(parseStringToDeltaJson(cleanedContent));
 
     _controller =
         widget.quillController ??
-        QuillController(
-          readOnly: true,
-          document: Document.fromDelta(
-            _applyTextColorToDelta(originalDelta, widget.textColor),
-          ),
-          selection: const TextSelection.collapsed(offset: 0),
-        );
+            QuillController(
+              readOnly: true,
+              document: Document.fromDelta(
+                _applyTextColorToDelta(originalDelta, widget.textColor),
+              ),
+              selection: const TextSelection.collapsed(offset: 0),
+            );
   }
 
   @override
@@ -67,7 +66,7 @@ class _EditorViewState extends State<EditorView> {
     if (color == null) return delta;
 
     final colorHex =
-        '#${color.value.toRadixString(16).substring(2)}'.toLowerCase();
+    '#${color.value.toRadixString(16).substring(2)}'.toLowerCase();
     final newDelta = Delta();
 
     for (var op in delta.toList()) {
@@ -118,5 +117,31 @@ class _EditorViewState extends State<EditorView> {
     _editorScrollController.dispose();
     _editorFocusNode.dispose();
     super.dispose();
+  }
+
+  /// Removes all \n except those that are directly followed by an image or link
+  String cleanNewLines(String input) {
+    final buffer = StringBuffer();
+    final regex = RegExp(
+      r"^(<img\s+src='.*?'>|https?:\/\/\S+\.(jpg|png)|https?:\/\/\S+)",
+      caseSensitive: false,
+    );
+
+    int i = 0;
+    while (i < input.length) {
+      if (input[i] == '\n') {
+        final remaining = input.substring(i + 1);
+        final match = regex.firstMatch(remaining);
+        if (match != null && match.start == 0) {
+          buffer.write('\n'); // Keep \n only if directly before a valid match
+        }
+        // else skip this \n
+      } else {
+        buffer.write(input[i]);
+      }
+      i++;
+    }
+
+    return buffer.toString();
   }
 }

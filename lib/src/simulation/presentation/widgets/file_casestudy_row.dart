@@ -74,7 +74,7 @@ class FileCaseStudyRowWidget extends StatelessWidget {
   }
 }
 class ExpandableQuillViewer extends StatefulWidget {
-  final String? jsonContent; // Quill Delta in JSON string
+  final String? jsonContent; // Raw input content
 
   const ExpandableQuillViewer({super.key, required this.jsonContent});
 
@@ -87,7 +87,8 @@ class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
 
   @override
   Widget build(BuildContext context) {
-    final doc = Document.fromJson(parseStringToDeltaJson(widget.jsonContent ?? ''));
+    final cleanedContent = cleanNewLines(widget.jsonContent ?? '');
+    final doc = Document.fromJson(parseStringToDeltaJson(cleanedContent));
     final controller = QuillController(
       document: doc,
       readOnly: true,
@@ -98,8 +99,8 @@ class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         AnimatedContainer(
-          duration: Duration(milliseconds: 300),
-          height: _expanded ? null : 150, // collapsed height
+          duration: const Duration(milliseconds: 300),
+          height: _expanded ? null : 150,
           child: QuillEditor(
             controller: controller,
             focusNode: FocusNode(),
@@ -117,4 +118,31 @@ class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
       ],
     );
   }
+
+  /// Removes all \n except those that are directly followed by an image or link
+  String cleanNewLines(String input) {
+    final buffer = StringBuffer();
+    final regex = RegExp(
+      r"^(<img\s+src='.*?'>|https?:\/\/\S+\.(jpg|png)|https?:\/\/\S+)",
+      caseSensitive: false,
+    );
+
+    int i = 0;
+    while (i < input.length) {
+      if (input[i] == '\n') {
+        final remaining = input.substring(i + 1);
+        final match = regex.firstMatch(remaining);
+        if (match != null && match.start == 0) {
+          buffer.write('\n'); // Keep \n only if followed by image/link
+        }
+        // else skip this \n
+      } else {
+        buffer.write(input[i]);
+      }
+      i++;
+    }
+
+    return buffer.toString();
+  }
 }
+
