@@ -5,6 +5,13 @@ import '../../data/models/vote_task_param_model.dart';
 import '../../data/models/vote_task_res_model.dart';
 
 abstract class TaskRepo {
-  Future<ApiResult<APIResponse<GetAllTaskModel?>>> getAllTask(String reportId);
-  Future<ApiResult<APIResponse<VoteTaskResModel?>>> voteTask(VoteTaskParamModel voteTaskParamModel);
+  Future<ApiResult<APIResponse<GetAllTaskModel?>>> getAllTask(
+    String reportId,
+    int pageNumber,
+    int pageSize,
+  );
+
+  Future<ApiResult<APIResponse<VoteTaskResModel?>>> voteTask(
+    VoteTaskParamModel voteTaskParamModel,
+  );
 }

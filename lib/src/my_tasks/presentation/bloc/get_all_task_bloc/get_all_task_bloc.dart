@@ -24,10 +24,20 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     Emitter<GetAllTaskState> emit,
   ) async {
     emit(state.copyWith(isLoading: true));
-    final res = await _taskRepo.getAllTask(event.userId);
+    final res = await _taskRepo.getAllTask(
+      event.userId,
+      event.pageNumber,
+      event.pageSize,
+    );
     res.when(
       onSuccess: (dataa) {
-        emit(state.copyWith(isLoading: false, taskItem: dataa.data?.data));
+        emit(
+          state.copyWith(
+            isLoading: false,
+            taskItem: dataa.data?.data?.data,
+            totalItemLength: dataa.data?.data?.results,
+          ),
+        );
       },
       onFailure: (message) {
         emit(state.copyWith(isLoading: false, errorMessage: message));

@@ -14,8 +14,10 @@ class TaskRepoImp extends TaskRepo {
   @override
   Future<ApiResult<APIResponse<GetAllTaskModel?>>> getAllTask(
     String reportId,
+      int pageNumber,
+      int pageSize,
   ) async {
-    return await _myTaskDataSrc.getMyTask(reportId);
+    return await _myTaskDataSrc.getMyTask(reportId,pageNumber,pageSize);
   }
 
   @override

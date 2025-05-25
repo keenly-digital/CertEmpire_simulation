@@ -14,10 +14,16 @@ class MyTaskDataSrc {
 
   Future<ApiResult<APIResponse<GetAllTaskModel>>> getMyTask(
     String userId,
+    int pageNumber,
+    int pageSize,
   ) async {
     final result = await _apiManager.get(
       ApiEndpoint.getAllTasks,
-      queryParameters: {'userId': userId},
+      queryParameters: {
+        'UserId': userId,
+        "PageNumber": pageNumber,
+        "PageSize": pageSize,
+      },
     );
     return result.when(
       onSuccess:
