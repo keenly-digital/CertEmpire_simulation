@@ -16,7 +16,7 @@ class TaskCard extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double width = constraints.maxWidth;
-        double iconSize = width * 0.02;
+        double iconSize = width * 0.025;
 
         return Padding(
           padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 12),
@@ -44,7 +44,12 @@ class TaskCard extends StatelessWidget {
                 Text('  |  ', style: TextStyle(color: Colors.black)),
                 Expanded(
                   child: Text(
-                    "View the question content here...",
+                    maxLines: 8,
+                    "View the question content here...",style: TextStyle(
+                    fontSize: 12,
+                    overflow: TextOverflow.ellipsis
+
+                  ),
                   ),
                 ),
                 Text(
@@ -52,6 +57,8 @@ class TaskCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontStyle: FontStyle.italic,
+                    fontSize: 12,
+
                   ),
                 ),
                 Text(
@@ -59,9 +66,11 @@ class TaskCard extends StatelessWidget {
                   style: TextStyle(
                     color: Colors.grey[600],
                     fontStyle: FontStyle.italic,
+                    fontSize: 12,
+
                   ),
                 ),
-                SizedBox(width: 30,),
+                SizedBox(width: 10,),
                 OutlinedButton(
                   onPressed: () {
                     context.read<GetAllTaskBloc>().dialogueSelection(

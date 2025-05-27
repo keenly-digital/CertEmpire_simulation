@@ -55,56 +55,50 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
     );
   }
 
-  Future submitQuestionReport(
+  Future<void> submitQuestionReport(
     SubmitQuestionReportParam submitReportParam,
     BuildContext context,
   ) async {
     CommonHelper.showLoader(context);
 
     final res = await _simulationRepo.reportQuestion(submitReportParam);
-    return res.when(
+    await res.when(
       onSuccess: (data) async {
         CommonHelper.hideLoader(context);
         showDialog(
           context: context,
-
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-
         Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
         CommonHelper.hideLoader(context);
-        return message;
       },
     );
   }
 
-  Future submitExplanationReport(
+  Future<void> submitExplanationReport(
     SubmitQuestionReportParam submitReportParam,
     BuildContext context,
   ) async {
     CommonHelper.showLoader(context);
 
     final res = await _simulationRepo.reportQuestion(submitReportParam);
-    return res.when(
-      onSuccess: (data)  {
+    await res.when(
+      onSuccess: (data) async {
         Navigator.pop(context);
-
         showDialog(
           context: context,
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-
         Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
         CommonHelper.hideLoader(context);
-        return message;
       },
     );
   }

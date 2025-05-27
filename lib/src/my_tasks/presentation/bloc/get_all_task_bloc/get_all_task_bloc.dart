@@ -1,12 +1,14 @@
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/core/di/dependency_injection.dart';
 import 'package:certempiree/core/shared/widgets/toast.dart';
+import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
 import 'package:certempiree/src/my_tasks/data/models/vote_task_param_model.dart';
 import 'package:certempiree/src/my_tasks/domain/task/task_repo.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../../core/res/app_strings.dart';
 import '../../widgets/explanation_report_task.dart';
 import '../../widgets/question_report_task.dart';
 import 'get_all_task_event.dart';
@@ -103,7 +105,7 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     res.when(
       onSuccess: (s) {
         CommonHelper.hideLoader(context);
-        CommonHelper.showToast(message: s.data?.message ?? "");
+        // CommonHelper.showToast(message: s.data?.message ?? "");
         Navigator.pop(context);
       },
       onFailure: (f) {
@@ -112,6 +114,9 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
 
         Navigator.pop(context);
       },
+    );
+    add(
+      GetAllTaskEvent(userId: AppStrings.userId, pageNumber: 1, pageSize: 10),
     );
   }
 }

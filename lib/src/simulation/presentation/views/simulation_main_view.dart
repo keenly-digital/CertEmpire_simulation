@@ -40,34 +40,41 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: simulationState.loading
-                ? const Center(
-              child: CircularProgressIndicator(
-                color: AppColors.purple,
-              ),
-            )
-                : LayoutBuilder(
-              builder: (context, constraints) {
-                final isWideScreen = constraints.maxWidth > 852;
+            child:
+                simulationState.loading
+                    ? const Center(
+                      child: CircularProgressIndicator(color: AppColors.purple),
+                    )
+                    : simulationState.simulationData == null
+                    ? Center(child: Text(simulationState.errorMessage ?? ""))
+                    : LayoutBuilder(
+                      builder: (context, constraints) {
+                        final isWideScreen = constraints.maxWidth > 852;
 
-                return Column(
-                  children: [
-                    _buildHeader(context, simulationState, isWideScreen),
-                    verticalSpace(6),
-                    BlocBuilder<SearchQuestionCubit, String>(
-                      builder: (context, query) {
-                        return Expanded(
-                          child: FileContentWidget(
-                            fileContent: simulationState.simulationData ?? FileContent(),
-                            searchQuery: query,
-                          ),
+                        return Column(
+                          children: [
+                            _buildHeader(
+                              context,
+                              simulationState,
+                              isWideScreen,
+                            ),
+                            verticalSpace(6),
+                            BlocBuilder<SearchQuestionCubit, String>(
+                              builder: (context, query) {
+                                return Expanded(
+                                  child: FileContentWidget(
+                                    fileContent:
+                                        simulationState.simulationData ??
+                                        FileContent(),
+                                    searchQuery: query,
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         );
                       },
                     ),
-                  ],
-                );
-              },
-            ),
           ),
         );
       },
@@ -75,8 +82,12 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   }
 
   Widget _buildHeader(
-      BuildContext context, SimulationState simulationState, bool isWideScreen) {
-    final fileName = simulationState.simulationData?.fileName.replaceAll("%", "") ?? "";
+    BuildContext context,
+    SimulationState simulationState,
+    bool isWideScreen,
+  ) {
+    final fileName =
+        simulationState.simulationData?.fileName.replaceAll("%", "") ?? "";
 
     final fileNameText = Text(
       fileName,
@@ -90,7 +101,8 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     final searchField = SizedBox(
       width: 400,
       child: TextFormField(
-        onChanged: (value) => context.read<SearchQuestionCubit>().setQuery(value),
+        onChanged:
+            (value) => context.read<SearchQuestionCubit>().setQuery(value),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
           labelText: 'Search',

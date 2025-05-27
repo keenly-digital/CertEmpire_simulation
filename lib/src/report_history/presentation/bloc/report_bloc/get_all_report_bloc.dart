@@ -28,11 +28,14 @@ class GetAllReportsBloc extends Bloc<ReportInitEvent, ReportInitialState> {
           GetAllReportState(
             reasonLoading: false,
             explanation: data.data?.data?.explanation ?? "",
+            reportData: (state as GetAllReportState).reportData,
+            results: (state as GetAllReportState).results,
           ),
         );
 
         showDialog(
           context: event.context,
+          barrierColor: Colors.transparent,
           builder: (_) => ViewReasonDialog(reportData: event.report),
         );
       },
