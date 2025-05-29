@@ -194,6 +194,8 @@ class QuestionReportTask extends StatelessWidget {
                           OutlinedButton(
                             onPressed: () {
                               showDialog(
+
+                                barrierColor: Colors.transparent,
                                 context: context,
                                 barrierDismissible: false,
                                 builder: (BuildContext context) {
@@ -244,6 +246,8 @@ class QuestionReportTask extends StatelessWidget {
 
                             onPressed: () {
                               showDialog(
+
+                                barrierColor: Colors.transparent,
                                 context: context,
                                 barrierDismissible: false,
                                 builder: (BuildContext context) {

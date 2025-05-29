@@ -66,6 +66,8 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
       onSuccess: (data) async {
         CommonHelper.hideLoader(context);
         showDialog(
+
+          barrierColor: Colors.transparent,
           context: context,
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
@@ -90,6 +92,8 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
       onSuccess: (data) async {
         Navigator.pop(context);
         showDialog(
+
+          barrierColor: Colors.transparent,
           context: context,
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,

@@ -116,6 +116,8 @@ class ReportSummaryCard extends StatelessWidget {
                         ),
                         onPressed: () async {
                           await showDialog<String>(
+
+                            barrierColor: Colors.transparent,
                             context: context,
                             builder:
                                 (context) =>

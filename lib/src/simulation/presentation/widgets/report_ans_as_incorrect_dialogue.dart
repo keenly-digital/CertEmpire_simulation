@@ -2,6 +2,7 @@ import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_cubit.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_state.dart';
+import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -68,11 +69,11 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount:
-                        reportAndQuestionState.question?.options?.length ??
+                            reportAndQuestionState.question?.options.length ??
                             0,
                         itemBuilder: (context, index) {
-                          final optionText = reportAndQuestionState
-                              .question?.options?[index] ??
+                          final optionText =
+                              reportAndQuestionState.question?.options[index] ??
                               "";
                           final isSelected = reportAndQuestionState
                               .selectedOptionIndices
@@ -86,17 +87,23 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6),
-                              child: Text(
-                                optionText,
-                                style: TextStyle(
-                                  color:
-                                  isSelected ? Colors.green : Colors.black,
-                                  fontSize: 13,
-                                  fontWeight: isSelected
-                                      ? FontWeight.bold
-                                      : FontWeight.normal,
-                                ),
-                              ),
+                              child:
+                                EditorView(
+                                  initialContent: optionText,
+                                  textColor:  isSelected  ? Colors.green : null,
+                                )
+                              // Text(
+                              //   optionText,
+                              //   style: TextStyle(
+                              //     color:
+                              //         isSelected ? Colors.green : Colors.black,
+                              //     fontSize: 13,
+                              //     fontWeight:
+                              //         isSelected
+                              //             ? FontWeight.bold
+                              //             : FontWeight.normal,
+                              //   ),
+                              // ),
                             ),
                           );
                         },
@@ -122,13 +129,15 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                         controller: explanationController,
                         maxLines: 6,
                         decoration: InputDecoration(
-                          hintStyle:
-                          const TextStyle(fontSize: 13, color: Colors.grey),
+                          hintStyle: const TextStyle(
+                            fontSize: 13,
+                            color: Colors.grey,
+                          ),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(8),
                           ),
                           focusedBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(color: Colors.red, width: 2),
+                            borderSide: BorderSide(color: Colors.red, width: 2),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -140,8 +149,10 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                           child: ElevatedButton(
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.red,
-                              side:
-                              const BorderSide(color: Colors.red, width: 1.5),
+                              side: const BorderSide(
+                                color: Colors.red,
+                                width: 1.5,
+                              ),
                               backgroundColor: Colors.white,
                               shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(8),
@@ -153,31 +164,41 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                                   message: "Please provide an explanation",
                                 );
                                 return;
-                              } else if (reportAndQuestionState
-                                  .selectedOptionIndices
-                                  .isEmpty) {
+                              } else if ((reportAndQuestionState
+                                          .question
+                                          ?.options
+                                          .isNotEmpty ??
+                                      false) &&
+                                  reportAndQuestionState
+                                      .selectedOptionIndices
+                                      .isEmpty) {
                                 CommonHelper.showToast(
                                   message: "Select an option from Answers",
                                 );
                                 return;
                               }
 
-                              ReportAnsParamsModel reportAnsParamsModel =
-                              ReportAnsParamsModel(
+                              ReportAnsParamsModel
+                              reportAnsParamsModel = ReportAnsParamsModel(
+                                indexes:
+                                    reportAndQuestionState
+                                        .selectedOptionIndices,
                                 submitQuestionReportParam:
-                                SubmitQuestionReportParam(
-                                  explanation: explanationController.text,
-                                  type: ReportTypeEnum.Answer.index,
-                                  userId: AppStrings.userId,
-                                  targetId: questionId ?? 0,
-                                  reason: "",
-                                  fileId: AppStrings.fileId,
-                                ),
+                                    SubmitQuestionReportParam(
+                                      explanation: explanationController.text,
+                                      type: ReportTypeEnum.Answer.index,
+                                      userId: AppStrings.userId,
+                                      targetId: questionId ?? 0,
+                                      reason: "Answer is Incorrect",
+                                      fileId: AppStrings.fileId,
+                                      questionNumber: "Question $questionId",
+                                    ),
                               );
 
-                              await context
-                                  .read<ReportAnsCubit>()
-                                  .submitReport(reportAnsParamsModel, context);
+                              await context.read<ReportAnsCubit>().submitReport(
+                                reportAnsParamsModel,
+                                context,
+                              );
 
                               Navigator.of(context).pop();
                             },

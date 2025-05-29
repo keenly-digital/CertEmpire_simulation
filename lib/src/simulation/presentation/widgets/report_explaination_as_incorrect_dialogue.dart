@@ -90,7 +90,7 @@ class ReportExplanationDialogue extends StatelessWidget {
                             type: ReportTypeEnum.Explanation.index,
                             userId: AppStrings.userId,
                             targetId: questionId ?? 0,
-                            reason: "",
+                            reason: "Wrong Explanation",
                             fileId: fileId ?? "",
                             questionNumber: "",
                           );

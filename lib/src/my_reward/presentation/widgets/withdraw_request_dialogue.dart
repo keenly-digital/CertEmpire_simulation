@@ -81,6 +81,8 @@ class WithdrawRequestDialog extends StatelessWidget {
                       onPressed: () async {
                         Navigator.pop(context, 'coupon');
                         await showDialog<String>(
+
+                          barrierColor: Colors.transparent,
                           context: context,
                           builder: (context) => const CheckEmailDialogue(),
                         );

@@ -8,8 +8,9 @@ import '../bloc/report_bloc/get_all_report_state.dart';
 
 class ViewReasonDialog extends StatelessWidget {
   final ReportData reportData;
+  final String explantion;
 
-  const ViewReasonDialog({super.key, required this.reportData});
+  const ViewReasonDialog({super.key, required this.reportData,required this.explantion});
 
   @override
   Widget build(BuildContext context) {
@@ -110,7 +111,7 @@ class ViewReasonDialog extends StatelessWidget {
                                 ),
                               )
                               : Text(
-                                state.explanation ?? "",
+                                explantion ?? "",
                                 style: const TextStyle(fontSize: 14),
                               ),
                     );

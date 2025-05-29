@@ -18,6 +18,8 @@ class CommonHelper {
 
   static void showLoader(BuildContext context) {
     showDialog(
+
+      barrierColor: Colors.transparent,
       context: context,
       barrierDismissible: false,
       builder: (BuildContext context) {

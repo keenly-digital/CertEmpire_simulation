@@ -13,6 +13,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+import '../../../../core/utils/log_util.dart';
+
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
 
@@ -36,7 +38,6 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     return BlocBuilder<SimulationBloc, SimulationInitState>(
       builder: (context, state) {
         final simulationState = state as SimulationState;
-
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -45,8 +46,6 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                     ? const Center(
                       child: CircularProgressIndicator(color: AppColors.purple),
                     )
-                    : simulationState.simulationData == null
-                    ? Center(child: Text(simulationState.errorMessage ?? ""))
                     : LayoutBuilder(
                       builder: (context, constraints) {
                         final isWideScreen = constraints.maxWidth > 852;

@@ -3,7 +3,6 @@ import 'package:certempiree/core/di/dependency_injection.dart';
 import 'package:certempiree/core/shared/widgets/snakbar.dart';
 import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/data/models/report_ans_param_model.dart';
-import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/domain/repos/simulation_repo.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_state.dart';
 import 'package:flutter/cupertino.dart';
@@ -16,7 +15,9 @@ class ReportAnsCubit extends Cubit<ReportAnswerState> {
 
   ReportAnsCubit() : super(ReportAnswerState());
 
-  void reportAnswerAsIncorrect(Question? question) {
+  void reportAnswerAsIncorrect(Question? question) async {
+    emit(state.copyWith(question: Question(id: 0)));
+    await Future.delayed(Duration(milliseconds: 200));
     emit(state.copyWith(question: question));
   }
 

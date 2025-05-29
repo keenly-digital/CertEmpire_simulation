@@ -50,6 +50,8 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
   void dialogueSelection(TaskItem? task, BuildContext context) {
     if (task?.reportType == "Question") {
       showDialog(
+
+        barrierColor: Colors.transparent,
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {
@@ -65,6 +67,8 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     } else if (task?.reportType == "Explanation" ||
         task?.reportType == "Answer") {
       showDialog(
+
+        barrierColor: Colors.transparent,
         context: context,
         barrierDismissible: true,
         builder: (BuildContext context) {

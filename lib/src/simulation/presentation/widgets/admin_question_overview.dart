@@ -119,6 +119,8 @@ class _AdminQuestionOverviewWidgetState
                     TextButton(
                       onPressed: () {
                         showDialog(
+
+                          barrierColor: Colors.transparent,
                           context: context,
                           builder:
                               (context) => ReportQuestionDialog(
@@ -184,6 +186,7 @@ class _AdminQuestionOverviewWidgetState
                                     .read<ReportAnsCubit>()
                                     .reportAnswerAsIncorrect(widget.question);
                                 showDialog(
+                                  barrierColor: Colors.transparent,
                                   context: context,
                                   builder:
                                       (c) => ReportIncorrectAnswerDialog(
@@ -222,6 +225,8 @@ class _AdminQuestionOverviewWidgetState
                           child: TextButton(
                             onPressed: () {
                               showDialog(
+
+                                barrierColor: Colors.transparent,
                                 context: context,
                                 builder:
                                     (c) => ReportExplanationDialogue(

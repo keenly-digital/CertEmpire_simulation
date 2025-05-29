@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
@@ -19,15 +20,22 @@ class GetAllReportsBloc extends Bloc<ReportInitEvent, ReportInitialState> {
     GetReasonEvent event,
     Emitter<ReportInitialState> emit,
   ) async {
-    emit((state as GetAllReportState).copyWith(reasonLoading: true));
-
+    CommonHelper.showLoader(event.context);
+    emit(
+      (state as GetAllReportState).copyWith(
+        reasonLoading: true,
+        explanation: "",
+      ),
+    );
     final res = await _reportRepo.getReportsReason(event.reportId);
+    CommonHelper.hideLoader(event.context);
     res.when(
       onSuccess: (data) {
+        final explanationText = data.data?.data?.explanation ?? "";
         emit(
           GetAllReportState(
             reasonLoading: false,
-            explanation: data.data?.data?.explanation ?? "",
+            explanation: explanationText,
             reportData: (state as GetAllReportState).reportData,
             results: (state as GetAllReportState).results,
           ),
@@ -36,11 +44,22 @@ class GetAllReportsBloc extends Bloc<ReportInitEvent, ReportInitialState> {
         showDialog(
           context: event.context,
           barrierColor: Colors.transparent,
-          builder: (_) => ViewReasonDialog(reportData: event.report),
+          builder:
+              (_) => ViewReasonDialog(
+                reportData: event.report,
+                explantion: explanationText, // Don't use state here
+              ),
         );
       },
       onFailure: (message) {
-        emit(GetAllReportState(reasonLoading: false, explanation: message));
+        emit(
+          GetAllReportState(
+            reasonLoading: false,
+            explanation: message,
+            reportData: (state as GetAllReportState).reportData,
+            results: (state as GetAllReportState).results,
+          ),
+        );
       },
     );
   }

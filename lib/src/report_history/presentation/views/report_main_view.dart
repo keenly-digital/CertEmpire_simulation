@@ -91,10 +91,10 @@ class _ReportMainViewState extends State<ReportMainView> {
                               child: reportRow(
                                 reportName: report.reportName ?? "",
                                 examName:
-                                    report.examName?.replaceAll("%", "") ?? "",
+                                    report.examName?? "",
                                 status: report.status ?? "",
-                                // viewReason: report.status == "Unapproved",
-                                viewReason: index % 2 == 0,
+                                viewReason: report.status == "Unapproved",
+                                // viewReason: index % 2 == 0,
                                 report: report,
                               ),
                             ),
@@ -246,7 +246,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                 Spacer(),
                 viewReason
                     ? Expanded(
-                      child: GestureDetector(
+                      child: InkWell(
                         onTap: () {
                           context.read<GetAllReportsBloc>().add(
                             GetReasonEvent(
@@ -260,7 +260,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                           "View Reason",
                           style: TextStyle(
                             fontSize: 10,
-                            color: Colors.blue,
+                            color: AppColors.purple,
                             fontWeight: FontWeight.w500,
                             decoration: TextDecoration.underline,
                           ),
