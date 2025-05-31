@@ -9,6 +9,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
 import '../../../domain/repos/report_repo.dart';
+import '../../widgets/check_email_dialogue.dart';
 import 'get_all_reward_events.dart';
 import 'get_all_reward_state.dart';
 
@@ -19,6 +20,7 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
   MyRewardBloc() : super(RewardInitialState()) {
     on<GetRewardsEvent>(_getRewards);
     on<WithDrawRewardEvent>(_withdrawReward);
+    on<GetCouponEvent>(_getCoupon);
   }
 
   Future<void> _getRewards(
@@ -33,12 +35,6 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
     );
     res.when(
       onSuccess: (data) {
-        // List<RewardData> currentList = state.rewardData ?? [];
-        // List<RewardData> newList = data.data?.data ?? [];
-        // if (newList.isEmpty && event.pageNumber > 1) {
-        //   CommonHelper.showToast(message: "No More Reward");
-        // }
-        // final updatedList = [...currentList, ...newList];
         emit(
           state.copyWith(
             loading: false,
@@ -71,6 +67,33 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
           context: event.context,
           builder: (context) => SuccessDialogue(),
           barrierDismissible: true,
+          barrierColor: Colors.transparent,
+        );
+      },
+      onFailure: (message) {
+        CommonHelper.hideLoader(event.context);
+
+        LogUtil.debug(message);
+        emit(state.copyWith(withDrawLoading: false, errorMessage: message));
+      },
+    );
+  }
+
+  Future<void> _getCoupon(
+    GetCouponEvent event,
+    Emitter<RewardInitialState> emit,
+  ) async {
+    CommonHelper.showLoader(event.context);
+    final res = await _reportRepo.getCoupon(event.userId, event.fileId);
+    res.when(
+      onSuccess: (data) async {
+        CommonHelper.hideLoader(event.context);
+        CommonHelper.showToast(message: data.message);
+        Navigator.pop(event.context);
+        await showDialog<String>(
+          barrierColor: Colors.transparent,
+          context: event.context,
+          builder: (context) => const CheckEmailDialogue(),
         );
       },
       onFailure: (message) {

@@ -4,6 +4,7 @@ import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:intl/intl.dart';
 
 class TaskCard extends StatelessWidget {
@@ -33,12 +34,17 @@ class TaskCard extends StatelessWidget {
               children: [
                 Image.asset(Assets.task, width: iconSize, height: iconSize),
                 const SizedBox(width: 8),
-                Text(
-                  task?.reason ?? "",
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black,
-                    fontSize: 13,
+                Container(
+                  constraints: BoxConstraints(
+                    maxWidth: 125.w
+                  ),
+                  child: Text(
+                    task?.reason ?? "",
+                    style: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      color: Colors.black,
+                      fontSize: 13,
+                    ),
                   ),
                 ),
                 Text('  |  ', style: TextStyle(color: Colors.black)),

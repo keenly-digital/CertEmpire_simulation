@@ -52,18 +52,6 @@ class FileCaseStudyRowWidget extends StatelessWidget {
                   caseStudy.description.isEmpty || caseStudy.description == ""
                       ? Container()
                       :ExpandableQuillViewer(jsonContent: caseStudy.description,)
-                  // ReadMoreText(
-                  //       caseStudy.description,
-                  //       trimMode: TrimMode.Line,
-                  //       trimLines: 5,
-                  //       colorClickableText: AppColors.darkPrimary,
-                  //       trimCollapsedText: 'Show more',
-                  //       trimExpandedText: '...Show less',
-                  //       moreStyle: TextStyle(
-                  //         fontSize: 14,
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
                 ],
               ),
             ),
@@ -101,13 +89,17 @@ class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
         AnimatedContainer(
           duration: const Duration(milliseconds: 300),
           height: _expanded ? null : 150,
-          child: QuillEditor(
-            controller: controller,
-            focusNode: FocusNode(),
-            scrollController: ScrollController(),
-            config: QuillEditorConfig(
-              placeholder: '',
-              embedBuilders: FlutterQuillEmbeds.editorBuilders(),
+          child: ClipRect(
+            child: QuillEditor(
+              controller: controller,
+              focusNode: FocusNode(),
+              scrollController: ScrollController(),
+              config: QuillEditorConfig(
+                scrollable: false,
+                placeholder: '',
+                embedBuilders: FlutterQuillEmbeds.editorBuilders(),
+                showCursor: false,
+              ),
             ),
           ),
         ),

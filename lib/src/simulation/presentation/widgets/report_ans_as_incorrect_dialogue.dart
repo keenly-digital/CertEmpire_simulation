@@ -9,23 +9,39 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../data/models/report_ans_param_model.dart';
 import '../../data/models/submit_report_param.dart';
-
-class ReportIncorrectAnswerDialog extends StatelessWidget {
+class ReportIncorrectAnswerDialog extends StatefulWidget {
   final int? questionId;
 
   const ReportIncorrectAnswerDialog({super.key, this.questionId});
 
   @override
-  Widget build(BuildContext context) {
-    TextEditingController explanationController = TextEditingController();
+  State<ReportIncorrectAnswerDialog> createState() => _ReportIncorrectAnswerDialogState();
+}
 
+class _ReportIncorrectAnswerDialogState extends State<ReportIncorrectAnswerDialog> {
+  late final TextEditingController explanationController;
+
+  @override
+  void initState() {
+    super.initState();
+    explanationController = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    explanationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
         final screenHeight = MediaQuery.of(context).size.height;
 
-        final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.9;
-        final dialogHeight = screenHeight * 0.95;
+        final dialogWidth = screenWidth > 600 ? 450.0 : screenWidth * 0.75;
+        final dialogHeight = screenHeight * 0.90;
 
         return Dialog(
           shape: RoundedRectangleBorder(
@@ -69,41 +85,21 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                         shrinkWrap: true,
                         physics: const NeverScrollableScrollPhysics(),
                         itemCount:
-                            reportAndQuestionState.question?.options.length ??
-                            0,
+                        reportAndQuestionState.question?.options.length ?? 0,
                         itemBuilder: (context, index) {
-                          final optionText =
-                              reportAndQuestionState.question?.options[index] ??
-                              "";
-                          final isSelected = reportAndQuestionState
-                              .selectedOptionIndices
-                              .contains(index);
+                          final optionText = reportAndQuestionState.question?.options[index] ?? "";
+                          final isSelected = reportAndQuestionState.selectedOptionIndices.contains(index);
 
                           return GestureDetector(
                             onTap: () {
-                              context
-                                  .read<ReportAnsCubit>()
-                                  .toggleOptionSelection(index);
+                              context.read<ReportAnsCubit>().toggleOptionSelection(index);
                             },
                             child: Padding(
                               padding: const EdgeInsets.symmetric(vertical: 6),
-                              child:
-                                EditorView(
-                                  initialContent: optionText,
-                                  textColor:  isSelected  ? Colors.green : null,
-                                )
-                              // Text(
-                              //   optionText,
-                              //   style: TextStyle(
-                              //     color:
-                              //         isSelected ? Colors.green : Colors.black,
-                              //     fontSize: 13,
-                              //     fontWeight:
-                              //         isSelected
-                              //             ? FontWeight.bold
-                              //             : FontWeight.normal,
-                              //   ),
-                              // ),
+                              child: EditorView(
+                                initialContent: optionText,
+                                textColor: isSelected ? Colors.green : null,
+                              ),
                             ),
                           );
                         },
@@ -164,35 +160,25 @@ class ReportIncorrectAnswerDialog extends StatelessWidget {
                                   message: "Please provide an explanation",
                                 );
                                 return;
-                              } else if ((reportAndQuestionState
-                                          .question
-                                          ?.options
-                                          .isNotEmpty ??
-                                      false) &&
-                                  reportAndQuestionState
-                                      .selectedOptionIndices
-                                      .isEmpty) {
+                              } else if ((reportAndQuestionState.question?.options.isNotEmpty ?? false) &&
+                                  reportAndQuestionState.selectedOptionIndices.isEmpty) {
                                 CommonHelper.showToast(
                                   message: "Select an option from Answers",
                                 );
                                 return;
                               }
 
-                              ReportAnsParamsModel
-                              reportAnsParamsModel = ReportAnsParamsModel(
-                                indexes:
-                                    reportAndQuestionState
-                                        .selectedOptionIndices,
-                                submitQuestionReportParam:
-                                    SubmitQuestionReportParam(
-                                      explanation: explanationController.text,
-                                      type: ReportTypeEnum.Answer.index,
-                                      userId: AppStrings.userId,
-                                      targetId: questionId ?? 0,
-                                      reason: "Answer is Incorrect",
-                                      fileId: AppStrings.fileId,
-                                      questionNumber: "Question $questionId",
-                                    ),
+                              ReportAnsParamsModel reportAnsParamsModel = ReportAnsParamsModel(
+                                indexes: reportAndQuestionState.selectedOptionIndices,
+                                submitQuestionReportParam: SubmitQuestionReportParam(
+                                  explanation: explanationController.text,
+                                  type: ReportTypeEnum.Answer.index,
+                                  userId: AppStrings.userId,
+                                  targetId: widget.questionId ?? 0,
+                                  reason: "Answer is Incorrect",
+                                  fileId: AppStrings.fileId,
+                                  questionNumber: "Question ${widget.questionId}",
+                                ),
                               );
 
                               await context.read<ReportAnsCubit>().submitReport(

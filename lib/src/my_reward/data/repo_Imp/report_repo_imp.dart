@@ -3,6 +3,7 @@ import 'package:certempiree/core/config/api/api_result.dart';
 import '../../domain/repos/report_repo.dart';
 import '../data_sources/reward_remote_data_src.dart';
 import '../models/get_all_reward_data_model.dart';
+import '../models/get_coupon_model.dart';
 import '../models/withdraw_reward_model.dart';
 
 class RewardRepoImp extends RewardRepo {
@@ -12,11 +13,11 @@ class RewardRepoImp extends RewardRepo {
 
   @override
   Future<ApiResult<APIResponse<GetAllRewardDataModel?>>> getUserReward(
-      String userId,
-      int pageSize,
-      int pageNumber,
+    String userId,
+    int pageSize,
+    int pageNumber,
   ) async {
-    return await _remoteDataSrc.getUserReward(userId,pageSize,pageNumber);
+    return await _remoteDataSrc.getUserReward(userId, pageSize, pageNumber);
   }
 
   @override
@@ -25,5 +26,13 @@ class RewardRepoImp extends RewardRepo {
     String fileId,
   ) async {
     return await _remoteDataSrc.withDrawReward(userId, fileId);
+  }
+
+  @override
+  Future<ApiResult<APIResponse<GetCouponModel?>>> getCoupon(
+    String userId,
+    String fileId,
+  ) async {
+    return await _remoteDataSrc.getCoupon(userId, fileId);
   }
 }

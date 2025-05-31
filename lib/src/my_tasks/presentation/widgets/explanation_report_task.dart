@@ -38,7 +38,7 @@ class ExplanationReportTask extends StatelessWidget {
                             ? 'Incorrect Explanation'
                             : 'Incorrect Answer',
                         style: TextStyle(
-                          fontSize: 20,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: AppColors.black,
                         ),
@@ -112,7 +112,7 @@ class ExplanationReportTask extends StatelessWidget {
                     ),
                   ),
 
-                  verticalSpace(16),
+                  verticalSpace(10),
 
                   /// Current Answer + Explanation
                   Container(
@@ -121,7 +121,7 @@ class ExplanationReportTask extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        verticalSpace(10),
+                        verticalSpace(5),
                         Text(
                           'Current Answer:',
                           style: TextStyle(
@@ -211,7 +211,7 @@ class ExplanationReportTask extends StatelessWidget {
 
                             barrierColor: Colors.transparent,
                             context: context,
-                            barrierDismissible: false,
+                            barrierDismissible: true,
                             builder: (BuildContext context) {
                               return Dialog(
                                 insetPadding: EdgeInsets.symmetric(
@@ -243,7 +243,7 @@ class ExplanationReportTask extends StatelessWidget {
 
                             barrierColor: Colors.transparent,
                             context: context,
-                            barrierDismissible: false,
+                            barrierDismissible: true,
                             builder: (BuildContext context) {
                               return Dialog(
                                 insetPadding: EdgeInsets.symmetric(

@@ -21,7 +21,8 @@ class AppStrings {
       'Thank you for your report. This helps us and our community.';
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = '! Report Answer as Incorrect';
-  static String fileId = '91f185a0-bb28-48c4-a849-790ecab72d5a';
-  static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
-  // static String userId = '97f4c350-b0d6-41ec-84a5-8e6a6210484b';
+  // static String fileId = '';
+  // static String userId = '';
+static String fileId = '91f185a0-bb28-48c4-a849-790ecab72d5a';
+static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
 }

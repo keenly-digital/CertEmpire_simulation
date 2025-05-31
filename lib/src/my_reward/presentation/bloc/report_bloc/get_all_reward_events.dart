@@ -25,3 +25,15 @@ class WithDrawRewardEvent extends RewardInitEvent {
     required this.context,
   });
 }
+
+class GetCouponEvent extends RewardInitEvent {
+  String userId;
+  String fileId;
+  BuildContext context;
+
+  GetCouponEvent({
+    required this.userId,
+    required this.fileId,
+    required this.context,
+  });
+}

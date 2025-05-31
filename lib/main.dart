@@ -79,6 +79,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => GetAllTaskBloc()),
           ],
           child: MaterialApp.router(
+
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
             debugShowCheckedModeBanner: false,
             title: AppStrings.appName,

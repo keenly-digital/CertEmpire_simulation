@@ -21,7 +21,7 @@ class CommonHelper {
 
       barrierColor: Colors.transparent,
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.white,

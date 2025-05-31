@@ -30,7 +30,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
   @override
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
-    final double dialogWidth = screenWidth > 600 ? 500 : screenWidth * 0.9;
+    final double dialogWidth = screenWidth > 600 ? 400 : screenWidth * 0.75;
 
     return Dialog(
       backgroundColor: Colors.white,
@@ -71,7 +71,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                 Row(
                   children: [
                     Transform.scale(
-                      scale: 1.2,
+                      scale: 1.0,
                       child: Radio<String>(
                         value: 'Outdated',
                         groupValue: _selectedReason,
@@ -81,11 +81,11 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                     ),
                     const Text(
                       'Question is Outdated',
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 11),
                     ),
-                    const SizedBox(width: 16),
+                    const SizedBox(width: 6),
                     Transform.scale(
-                      scale: 1.2,
+                      scale: 1.0,
                       child: Radio<String>(
                         value: 'Framed Wrong',
                         groupValue: _selectedReason,
@@ -95,7 +95,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                     ),
                     const Text(
                       'Question is framed wrong',
-                      style: TextStyle(fontSize: 12),
+                      style: TextStyle(fontSize: 11),
                     ),
                   ],
                 ),

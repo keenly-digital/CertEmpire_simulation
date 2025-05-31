@@ -23,7 +23,7 @@ class QuestionExplanationTask extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         double width = constraints.maxWidth;
-        double dialogWidth = width > 600 ? 500 : width * 0.9;
+        double dialogWidth = width > 600 ? 450 : width * 0.7;
 
         double padding = width > 600 ? 20 : 12;
         double fontSizeSmall = width > 600 ? 14 : 12;

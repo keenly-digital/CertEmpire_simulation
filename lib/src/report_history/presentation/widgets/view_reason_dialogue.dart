@@ -15,7 +15,7 @@ class ViewReasonDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
-    final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.9;
+    final dialogWidth = screenWidth > 600 ? 450.0 : screenWidth * 0.7;
 
     return Dialog(
       shape: RoundedRectangleBorder(

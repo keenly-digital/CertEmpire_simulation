@@ -197,7 +197,7 @@ class QuestionReportTask extends StatelessWidget {
 
                                 barrierColor: Colors.transparent,
                                 context: context,
-                                barrierDismissible: false,
+                                barrierDismissible: true,
                                 builder: (BuildContext context) {
                                   return Dialog(
                                     insetPadding: EdgeInsets.symmetric(
@@ -249,7 +249,7 @@ class QuestionReportTask extends StatelessWidget {
 
                                 barrierColor: Colors.transparent,
                                 context: context,
-                                barrierDismissible: false,
+                                barrierDismissible: true,
                                 builder: (BuildContext context) {
                                   return Dialog(
                                     insetPadding: EdgeInsets.symmetric(

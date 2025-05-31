@@ -1,5 +1,6 @@
 import '../../../../core/config/api/api_result.dart';
 import '../../data/models/get_all_reward_data_model.dart';
+import '../../data/models/get_coupon_model.dart';
 import '../../data/models/withdraw_reward_model.dart';
 
 abstract class RewardRepo {
@@ -9,6 +10,10 @@ abstract class RewardRepo {
       int pageNumber,  );
 
   Future<ApiResult<APIResponse<WithdrawRewardModel?>>> withDrawReward(
+    String userId,
+    String fileId,
+  );
+  Future<ApiResult<APIResponse<GetCouponModel?>>> getCoupon(
     String userId,
     String fileId,
   );

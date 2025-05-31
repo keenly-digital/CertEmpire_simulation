@@ -86,7 +86,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     bool isWideScreen,
   ) {
     final fileName =
-        simulationState.simulationData?.fileName.replaceAll("%", "") ?? "";
+        simulationState.simulationData?.fileName?? "";
 
     final fileNameText = Text(
       fileName,
@@ -116,7 +116,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     final downloadButton = appButton(
       withIcon: true,
       onPressed: () {
-        // Add download functionality here
+
       },
       text: "Download",
       textColor: Colors.white,

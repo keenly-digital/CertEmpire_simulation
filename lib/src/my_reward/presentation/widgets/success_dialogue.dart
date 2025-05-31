@@ -12,7 +12,7 @@ class SuccessDialogue extends StatelessWidget {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
 
-    final double dialogWidth = screenWidth > 600 ? 380 : screenWidth * 0.85;
+    final double dialogWidth = screenWidth > 600 ? 400 : screenWidth * 0.70;
     final double dialogHeight = screenHeight > 700 ? 380 : screenHeight * 0.55;
 
     return Dialog(

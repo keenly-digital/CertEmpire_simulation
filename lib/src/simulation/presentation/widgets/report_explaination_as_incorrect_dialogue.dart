@@ -21,7 +21,7 @@ class ReportExplanationDialogue extends StatelessWidget {
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
 
-        final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.9;
+        final dialogWidth = screenWidth > 600 ? 450.0 : screenWidth * 0.7;
 
         return Dialog(
           backgroundColor: Colors.white,

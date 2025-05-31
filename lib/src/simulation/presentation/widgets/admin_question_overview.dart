@@ -125,7 +125,7 @@ class _AdminQuestionOverviewWidgetState
                           builder:
                               (context) => ReportQuestionDialog(
                                 fileId: AppStrings.fileId,
-                                questionId: widget.question.id ?? 0,
+                                questionId: widget.question.id,
                                 questionIndex: widget.questionIndex,
                               ),
                         );

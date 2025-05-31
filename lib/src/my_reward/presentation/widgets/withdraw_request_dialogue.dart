@@ -1,11 +1,8 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/asset.dart';
-import 'package:certempiree/src/my_reward/presentation/widgets/check_email_dialogue.dart';
 import 'package:certempiree/src/my_reward/presentation/widgets/reward_button.dart';
-import 'package:certempiree/src/my_reward/presentation/widgets/success_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/res/app_strings.dart';
 import '../bloc/report_bloc/get_all_reward_bloc.dart';
@@ -18,8 +15,8 @@ class WithdrawRequestDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final double screenWidth = MediaQuery.of(context).size.width;
     final double screenHeight = MediaQuery.of(context).size.height;
-    final double dialogWidth = screenWidth > 600 ? 450 : screenWidth * 0.9;
-    final double dialogHeight = screenHeight > 800 ? 450 : screenHeight * 0.6;
+    final double dialogWidth = screenWidth > 600 ? 400 : screenWidth * 0.7;
+    final double dialogHeight = screenHeight > 800 ? 430 : screenHeight * 0.55;
 
     return Dialog(
       shape: RoundedRectangleBorder(
@@ -79,12 +76,12 @@ class WithdrawRequestDialog extends StatelessWidget {
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: () async {
-                        Navigator.pop(context, 'coupon');
-                        await showDialog<String>(
-
-                          barrierColor: Colors.transparent,
-                          context: context,
-                          builder: (context) => const CheckEmailDialogue(),
+                        context.read<MyRewardBloc>().add(
+                          GetCouponEvent(
+                            context: context,
+                            userId: AppStrings.userId,
+                            fileId: AppStrings.fileId,
+                          ),
                         );
                       },
                       child: const Text(
