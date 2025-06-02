@@ -26,7 +26,6 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
   void initState() {
     super.initState();
     taskDependencies();
-
     fetchTasks();
   }
 
@@ -55,7 +54,7 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
               : Column(
                 children: [
                   Image.asset(Assets.taskTop),
-                  Expanded(
+                  Flexible(
                     child: ListView.builder(
                       itemCount: state.taskItem?.length ?? 0,
                       itemBuilder: (context, index) {

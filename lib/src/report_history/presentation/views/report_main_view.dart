@@ -79,7 +79,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                     ],
                   ),
                   Divider(color: AppColors.blue, thickness: 2),
-                  Expanded(
+                  Flexible(
                     child: ListView.builder(
                       itemCount: reports.length,
                       itemBuilder: (context, index) {
