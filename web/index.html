@@ -16,24 +16,70 @@
 
     <title>certempiree</title>
     <link rel="manifest" href="manifest.json">
-    <script>
-        function sendHeightToParent() {
-          const height = document.documentElement.scrollHeight || document.body.scrollHeight;
-          window.parent.postMessage({ iframeHeight: height }, "https://staging2.certempire.com/"); // 🔒 Replace * with your WordPress domain if needed
-        }
-        window.addEventListener("load", function () {
-          setTimeout(sendHeightToParent, 500); // Give Flutter layout time to render
-        });
-        window.addEventListener('flutter-initialized', function () {
-          setTimeout(sendHeightToParent, 500);
-        });
-        window.addEventListener("resize", function () {
-          setTimeout(sendHeightToParent, 500);
-        });
-    </script>
-
 </head>
 <body>
 <script src="flutter_bootstrap.js" async></script>
+<script>
+    function getContentHeight() {
+      const body = document.body;
+      const html = document.documentElement;
+      return Math.max(
+        body.scrollHeight,
+        html.scrollHeight,
+        body.offsetHeight,
+        html.offsetHeight,
+        html.clientHeight
+      );
+    }
+
+    function sendHeightToParent(height) {
+      console.log("[Iframe] Sending height:", height);
+      window.parent.postMessage(
+        { iframeHeight: height },
+        "*" // change to your production domain when needed
+      );
+    }
+
+    function startMutationObserver() {
+      const observer = new MutationObserver(() => {
+        const height = getContentHeight();
+        sendHeightToParent(height);
+      });
+
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+      });
+      console.log("[Iframe] MutationObserver started.");
+    }
+
+    function startPeriodicCheck() {
+      let lastHeight = 0;
+      setInterval(() => {
+        const newHeight = getContentHeight();
+        if (newHeight !== lastHeight) {
+          lastHeight = newHeight;
+          sendHeightToParent(newHeight);
+        }
+      }, 500);
+    }
+
+    window.addEventListener("load", () => {
+      console.log("[Iframe] Load event fired");
+      startMutationObserver();
+      startPeriodicCheck();
+    });
+
+    window.addEventListener("resize", () => {
+      console.log("[Iframe] Resize event fired");
+      sendHeightToParent(getContentHeight());
+    });
+
+    window.addEventListener("flutter-initialized", () => {
+      console.log("[Iframe] Flutter initialized");
+      startMutationObserver();
+      startPeriodicCheck();
+    });
+</script>
 </body>
 </html>

@@ -119,7 +119,6 @@ class _AdminQuestionOverviewWidgetState
                     TextButton(
                       onPressed: () {
                         showDialog(
-
                           barrierColor: Colors.transparent,
                           context: context,
                           builder:
@@ -172,8 +171,9 @@ class _AdminQuestionOverviewWidgetState
                             ),
                             horizontalSpace(5.w),
                             Text(
-                              widget.question.correctAnswerIndices.join(", "),
-
+                              convertIndicesToLetters(
+                                widget.question.correctAnswerIndices,
+                              ),
                               style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.black,
@@ -205,6 +205,7 @@ class _AdminQuestionOverviewWidgetState
                           ],
                         ),
                         Row(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
                               AppStrings.explanation,
@@ -225,7 +226,6 @@ class _AdminQuestionOverviewWidgetState
                           child: TextButton(
                             onPressed: () {
                               showDialog(
-
                                 barrierColor: Colors.transparent,
                                 context: context,
                                 builder:
@@ -253,5 +253,9 @@ class _AdminQuestionOverviewWidgetState
         ),
       ),
     );
+  }
+
+  String convertIndicesToLetters(List<int> indices) {
+    return indices.map((index) => String.fromCharCode(65 + index)).join(", ");
   }
 }
