@@ -18,8 +18,6 @@ import 'core/res/app_strings.dart';
 import 'core/routes/app_router.dart';
 import 'core/shared/widgets/snakbar.dart';
 
-String? screenName, userId, fileId;
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupDependencies();
@@ -48,10 +46,7 @@ class _MyAppState extends State<MyApp> {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
         AppStrings.fileId = data['fileId'];
-        fileId = data['fileId'];
         AppStrings.userId = data['userId'];
-        userId = data['userId'];
-        setState(() {});
       } catch (e) {
         debugPrint("Error decoding data: $e");
       }
@@ -79,7 +74,6 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => GetAllTaskBloc()),
           ],
           child: MaterialApp.router(
-
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
             debugShowCheckedModeBanner: false,
             title: AppStrings.appName,

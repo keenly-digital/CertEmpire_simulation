@@ -130,12 +130,6 @@ class ThemeConfig {
       elevatedButtonTheme: _elevatedButtonTheme(textTheme),
       outlinedButtonTheme: _outlinedButtonTheme(textTheme),
       textButtonTheme: _textButtonTheme(textTheme),
-        cardTheme: CardTheme(
-          color: AppColors.lightSurface,
-          elevation: 2,
-          shadowColor: Colors.grey[300],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        )
     );
   }
 
