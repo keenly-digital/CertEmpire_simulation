@@ -1,85 +1,26 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <base href="$FLUTTER_BASE_HREF">
+  <base href="$FLUTTER_BASE_HREF">
 
-    <meta charset="UTF-8">
-    <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-    <meta name="description" content="A new Flutter project.">
+  <meta charset="UTF-8">
+  <meta content="IE=Edge" http-equiv="X-UA-Compatible">
+  <meta name="description" content="A new Flutter project.">
 
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black">
-    <meta name="apple-mobile-web-app-title" content="certempiree">
-    <link rel="apple-touch-icon" href="icons/Icon-192.png">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="apple-mobile-web-app-title" content="certempiree">
+  <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
-    <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/png" href="favicon.png" />
 
-    <title>certempiree</title>
-    <link rel="manifest" href="manifest.json">
+  <title>certempiree</title>
+  <link rel="manifest" href="manifest.json">
 </head>
+
 <body>
-<script src="flutter_bootstrap.js" async></script>
-<script>
-    function getContentHeight() {
-      const body = document.body;
-      const html = document.documentElement;
-      return Math.max(
-        body.scrollHeight,
-        html.scrollHeight,
-        body.offsetHeight,
-        html.offsetHeight,
-        html.clientHeight
-      );
-    }
-
-    function sendHeightToParent(height) {
-      console.log("[Iframe] Sending height:", height);
-      window.parent.postMessage(
-        { iframeHeight: height },
-        "*" // change to your production domain when needed
-      );
-    }
-
-    function startMutationObserver() {
-      const observer = new MutationObserver(() => {
-        const height = getContentHeight();
-        sendHeightToParent(height);
-      });
-
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-      });
-      console.log("[Iframe] MutationObserver started.");
-    }
-
-    function startPeriodicCheck() {
-      let lastHeight = 0;
-      setInterval(() => {
-        const newHeight = getContentHeight();
-        if (newHeight !== lastHeight) {
-          lastHeight = newHeight;
-          sendHeightToParent(newHeight);
-        }
-      }, 500);
-    }
-
-    window.addEventListener("load", () => {
-      console.log("[Iframe] Load event fired");
-      startMutationObserver();
-      startPeriodicCheck();
-    });
-
-    window.addEventListener("resize", () => {
-      console.log("[Iframe] Resize event fired");
-      sendHeightToParent(getContentHeight());
-    });
-
-    window.addEventListener("flutter-initialized", () => {
-      console.log("[Iframe] Flutter initialized");
-      startMutationObserver();
-      startPeriodicCheck();
-    });
-</script>
+  <script src="flutter_bootstrap.js" async></script>
 </body>
+
 </html>

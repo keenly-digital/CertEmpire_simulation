@@ -12,8 +12,7 @@ import 'package:certempiree/src/simulation/presentation/widgets/app_button.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../core/utils/log_util.dart';
+import 'dart:html' as html;
 
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
@@ -23,14 +22,34 @@ class ExamQuestionPage extends StatefulWidget {
 }
 
 class _ExamQuestionPageState extends State<ExamQuestionPage> {
+  final GlobalKey _contentKey = GlobalKey();
+
   @override
   void initState() {
     super.initState();
-    if (!mounted) return;
-
     context.read<SimulationBloc>().add(
       FetchSimulationDataEvent(fieldId: AppStrings.fileId),
     );
+  }
+
+  /// Measures content height and sends to parent
+  void _sendHeight() {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
+      if (box != null) {
+        final logicalHeight = box.size.height;
+        final devicePixelRatio = html.window.devicePixelRatio;
+        final cssPixelHeight = logicalHeight * devicePixelRatio;
+        print('Logical height: $logicalHeight');
+        print('devicePixelRatio: $devicePixelRatio');
+        print('CSS pixel height sent: $cssPixelHeight');
+        html.window.parent?.postMessage({
+          'iframeHeight': cssPixelHeight,
+        }, 'https://staging2.certempire.com/');
+      } else {
+        print('Could not measure height: RenderBox or context is null');
+      }
+    });
   }
 
   @override
@@ -50,27 +69,35 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                       builder: (context, constraints) {
                         final isWideScreen = constraints.maxWidth > 852;
 
-                        return Column(
-                          children: [
-                            _buildHeader(
-                              context,
-                              simulationState,
-                              isWideScreen,
-                            ),
-                            verticalSpace(6),
-                            BlocBuilder<SearchQuestionCubit, String>(
-                              builder: (context, query) {
-                                return Expanded(
+                        // BlocBuilder for search query to update height after search as well
+                        return BlocBuilder<SearchQuestionCubit, String>(
+                          builder: (context, query) {
+                            // After every build, schedule height measurement
+                            Future.delayed(
+                              const Duration(milliseconds: 200),
+                              _sendHeight,
+                            );
+
+                            return Column(
+                              children: [
+                                _buildHeader(
+                                  context,
+                                  simulationState,
+                                  isWideScreen,
+                                ),
+                                verticalSpace(6),
+                                Expanded(
                                   child: FileContentWidget(
+                                    key: _contentKey,
                                     fileContent:
                                         simulationState.simulationData ??
                                         FileContent(),
                                     searchQuery: query,
                                   ),
-                                );
-                              },
-                            ),
-                          ],
+                                ),
+                              ],
+                            );
+                          },
                         );
                       },
                     ),
@@ -85,8 +112,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     SimulationState simulationState,
     bool isWideScreen,
   ) {
-    final fileName =
-        simulationState.simulationData?.fileName?? "";
+    final fileName = simulationState.simulationData?.fileName ?? "";
 
     final fileNameText = Text(
       fileName,
@@ -115,9 +141,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     final downloadButton = appButton(
       withIcon: true,
-      onPressed: () {
-
-      },
+      onPressed: () {},
       text: "Download",
       textColor: Colors.white,
       borderColor: AppColors.lightBlue,

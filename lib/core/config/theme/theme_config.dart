@@ -24,66 +24,80 @@ class ThemeConfig {
   static TextTheme responsiveTextTheme() {
     return TextTheme(
       displayLarge: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(57),
-          fontWeight: FontManager.bold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(57),
+        fontWeight: FontManager.bold,
+      ),
       displayMedium: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(45),
-          fontWeight: FontManager.bold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(45),
+        fontWeight: FontManager.bold,
+      ),
       displaySmall: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(36),
-          fontWeight: FontManager.bold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(36),
+        fontWeight: FontManager.bold,
+      ),
       headlineLarge: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(32),
-          fontWeight: FontManager.bold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(32),
+        fontWeight: FontManager.bold,
+      ),
       headlineMedium: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(28),
-          fontWeight: FontManager.semiBold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(28),
+        fontWeight: FontManager.semiBold,
+      ),
       headlineSmall: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(24),
-          fontWeight: FontManager.semiBold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(24),
+        fontWeight: FontManager.semiBold,
+      ),
       titleLarge: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(22),
-          fontWeight: FontManager.semiBold),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(22),
+        fontWeight: FontManager.semiBold,
+      ),
       titleMedium: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(16),
-          fontWeight: FontManager.medium),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(16),
+        fontWeight: FontManager.medium,
+      ),
       titleSmall: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(14),
-          fontWeight: FontManager.medium),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(14),
+        fontWeight: FontManager.medium,
+      ),
       bodyLarge: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(16),
-          fontWeight: FontManager.regular),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(16),
+        fontWeight: FontManager.regular,
+      ),
       bodyMedium: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(14),
-          fontWeight: FontManager.regular),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(14),
+        fontWeight: FontManager.regular,
+      ),
       bodySmall: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(12),
-          fontWeight: FontManager.regular),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(12),
+        fontWeight: FontManager.regular,
+      ),
       labelLarge: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(14),
-          fontWeight: FontManager.medium),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(14),
+        fontWeight: FontManager.medium,
+      ),
       labelMedium: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(12),
-          fontWeight: FontManager.medium),
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(12),
+        fontWeight: FontManager.medium,
+      ),
       labelSmall: TextStyle(
-          fontFamily: fontFamily,
-          fontSize: _responsiveFontSize(10),
-          fontWeight: FontManager.light),
-
+        fontFamily: fontFamily,
+        fontSize: _responsiveFontSize(10),
+        fontWeight: FontManager.light,
+      ),
     );
   }
 
@@ -130,12 +144,12 @@ class ThemeConfig {
       elevatedButtonTheme: _elevatedButtonTheme(textTheme),
       outlinedButtonTheme: _outlinedButtonTheme(textTheme),
       textButtonTheme: _textButtonTheme(textTheme),
-        cardTheme: CardTheme(
-          color: AppColors.lightSurface,
-          elevation: 2,
-          shadowColor: Colors.grey[300],
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        )
+      cardTheme: CardThemeData(
+        color: AppColors.lightSurface,
+        elevation: 2,
+        shadowColor: Colors.grey[300],
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      ),
     );
   }
 
@@ -143,13 +157,20 @@ class ThemeConfig {
     return InputDecorationTheme(
       fillColor: AppColors.grey, // Light grey fill color
       filled: true,
-      contentPadding:
-          const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
+      contentPadding: const EdgeInsets.symmetric(
+        vertical: 10.0,
+        horizontal: 10.0,
+      ),
       hintStyle: textTheme.bodySmall?.copyWith(color: AppColors.hint),
-      labelStyle: textTheme.titleMedium?.copyWith(color: AppColors.lightPrimary),
+      labelStyle: textTheme.titleMedium?.copyWith(
+        color: AppColors.lightPrimary,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: const BorderSide(color: AppColors.lightBackground, width: 1.5),
+        borderSide: const BorderSide(
+          color: AppColors.lightBackground,
+          width: 1.5,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
@@ -157,10 +178,11 @@ class ThemeConfig {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12.0),
-        borderSide: const BorderSide(color: AppColors.lightBackground, width: 1.0),
+        borderSide: const BorderSide(
+          color: AppColors.lightBackground,
+          width: 1.0,
+        ),
       ),
-
-
     );
   }
 
@@ -197,7 +219,9 @@ class ThemeConfig {
         shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.zero, // Makes the border rectangular
         ),
-        textStyle: textTheme.labelLarge!.copyWith(color: AppColors.lightPrimary), // Use labelLarge for buttons
+        textStyle: textTheme.labelLarge!.copyWith(
+          color: AppColors.lightPrimary,
+        ), // Use labelLarge for buttons
       ),
     );
   }
