@@ -16,7 +16,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
 
@@ -26,7 +25,6 @@ class ExamQuestionPage extends StatefulWidget {
 
 class _ExamQuestionPageState extends State<ExamQuestionPage> {
   int pageNumber = 1;
-
   final GlobalKey _contentKey = GlobalKey();
 
   @override
@@ -35,22 +33,18 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     fetchSimulationData();
   }
 
-  /// Measures content height and sends to parent
+  /// Measures the full content height and sends it to the parent iframe
   void _sendHeight() {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
       if (box != null) {
         final logicalHeight = box.size.height;
-        final devicePixelRatio = html.window.devicePixelRatio;
-        final cssPixelHeight = logicalHeight * devicePixelRatio;
-        print('Logical height: $logicalHeight');
-        print('devicePixelRatio: $devicePixelRatio');
-        print('CSS pixel height sent: $cssPixelHeight');
+        final dpr = html.window.devicePixelRatio;
+        final cssHeight = logicalHeight * dpr;
+        print('CSS Height : $cssHeight');
         html.window.parent?.postMessage({
-          'iframeHeight': cssPixelHeight,
+          'iframeHeight': cssHeight,
         }, 'https://staging2.certempire.com/');
-      } else {
-        print('Could not measure height: RenderBox or context is null');
       }
     });
   }
@@ -60,8 +54,10 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     return BlocBuilder<SimulationBloc, SimulationInitState>(
       builder: (context, state) {
         final simulationState = state as SimulationState;
-        final moveNext =
-            (simulationState.simulationData?.items.length?? 0) < (state.totalItemLength ?? 0);
+        final total = state.totalItemLength ?? 0;
+        final currentCount = simulationState.simulationData?.items.length ?? 0;
+        final canNext = currentCount < total;
+
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -72,128 +68,97 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                     )
                     : LayoutBuilder(
                       builder: (context, constraints) {
-                        final isWideScreen = constraints.maxWidth > 852;
-
-                        // BlocBuilder for search query to update height after search as well
+                        final isWide = constraints.maxWidth > 852;
                         return BlocBuilder<SearchQuestionCubit, String>(
                           builder: (context, query) {
-                            // After every build, schedule height measurement
+                            // initial height measure
                             Future.delayed(
                               const Duration(milliseconds: 200),
                               _sendHeight,
                             );
 
-                            return Column(
-                              children: [
-                                _buildHeader(
-                                  context,
-                                  simulationState,
-                                  isWideScreen,
-                                ),
-                                verticalSpace(6),
-                                Expanded(
-                                  child: FileContentWidget(
-                                    key: _contentKey,
+                            return SingleChildScrollView(
+                              child: Column(
+                                key: _contentKey,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  _buildHeader(
+                                    context,
+                                    simulationState,
+                                    isWide,
+                                  ),
+                                  verticalSpace(6),
+                                  FileContentWidget(
                                     fileContent:
                                         simulationState.simulationData ??
                                         FileContent(),
                                     searchQuery: query,
+                                    onContentChanged: _sendHeight,
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Container(
-                                    height: 60.h,
-                                    width: ScreenUtil().screenWidth,
-                                    decoration: BoxDecoration(
-                                      shape: BoxShape.rectangle,
-                                      border: Border.all(color: Colors.black),
-                                    ),
-                                    child: Padding(
-                                      padding: const EdgeInsets.all(8.0),
-                                      child: Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(
-                                            "Showing $pageNumber to ${simulationState.simulationData?.items.length} of ${simulationState.totalItemLength ?? 0} results",
-                                            style: TextStyle(
-                                              color: Colors.black,
+                                  const SizedBox(height: 16),
+                                  Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height: 60.h,
+                                      width: ScreenUtil().screenWidth,
+                                      decoration: BoxDecoration(
+                                        border: Border.all(color: Colors.black),
+                                      ),
+                                      child: Padding(
+                                        padding: const EdgeInsets.all(8.0),
+                                        child: Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              "Showing $pageNumber to $currentCount of $total results",
+                                              style: const TextStyle(
+                                                color: Colors.black,
+                                              ),
                                             ),
-                                          ),
-                                          Row(
-                                            children: [
-                                              IconButton(
-                                                onPressed: () {
-                                                  if (pageNumber > 1) {
-                                                    setState(() {
-                                                      pageNumber--;
-                                                    });
-                                                    fetchSimulationData();
-                                                  }
-                                                },
-                                                icon: Container(
-                                                  width: 30,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.rectangle,
-                                                    border: Border.all(
-                                                      color: Colors.black,
-                                                    ),
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  child: Icon(
+                                            Row(
+                                              children: [
+                                                IconButton(
+                                                  onPressed:
+                                                      pageNumber > 1
+                                                          ? () {
+                                                            setState(
+                                                              () =>
+                                                                  pageNumber--,
+                                                            );
+                                                            fetchSimulationData();
+                                                          }
+                                                          : null,
+                                                  icon: _buildPageButton(
                                                     Icons.arrow_back,
-                                                    size: 20,
+                                                    disabled: pageNumber <= 1,
                                                   ),
                                                 ),
-                                              ),
-                                              IconButton(
-                                                onPressed:
-                                                    moveNext
-                                                        ? () {
-                                                          setState(() {
-                                                            pageNumber++;
-                                                          });
-                                                          fetchSimulationData();
-                                                        }
-                                                        : () {
-                                                          CommonHelper.showToast(
-                                                            message:
-                                                                "No More Reports",
-                                                          );
-                                                        },
-                                                icon: Container(
-                                                  width: 30,
-                                                  height: 60,
-                                                  decoration: BoxDecoration(
-                                                    shape: BoxShape.rectangle,
-                                                    border: Border.all(
-                                                      color:
-                                                          !moveNext
-                                                              ? Colors.black45
-                                                              : Colors.black,
-                                                    ),
-                                                  ),
-                                                  alignment: Alignment.center,
-                                                  child: Icon(
+                                                IconButton(
+                                                  onPressed:
+                                                      canNext
+                                                          ? () {
+                                                            setState(
+                                                              () =>
+                                                                  pageNumber++,
+                                                            );
+                                                            fetchSimulationData();
+                                                          }
+                                                          : null,
+                                                  icon: _buildPageButton(
                                                     Icons.arrow_forward,
-                                                    size: 20,
-                                                    color:
-                                                        !moveNext
-                                                            ? Colors.black45
-                                                            : Colors.black,
+                                                    disabled: !canNext,
                                                   ),
                                                 ),
-                                              ),
-                                            ],
-                                          ),
-                                        ],
+                                              ],
+                                            ),
+                                          ],
+                                        ),
                                       ),
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             );
                           },
                         );
@@ -207,13 +172,12 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
   Widget _buildHeader(
     BuildContext context,
-    SimulationState simulationState,
-    bool isWideScreen,
+    SimulationState state,
+    bool isWide,
   ) {
-    final fileName = simulationState.simulationData?.fileName ?? "";
-
-    final fileNameText = Text(
-      fileName,
+    final name = state.simulationData?.fileName ?? '';
+    final title = Text(
+      name,
       style: context.textTheme.headlineSmall?.copyWith(
         color: AppColors.blue,
         decoration: TextDecoration.underline,
@@ -221,57 +185,57 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
       ),
     );
 
-    final searchField = SizedBox(
+    final search = SizedBox(
       width: 400,
       child: TextFormField(
-        onChanged:
-            (value) => context.read<SearchQuestionCubit>().setQuery(value),
+        onChanged: (val) => context.read<SearchQuestionCubit>().setQuery(val),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
           labelText: 'Search',
           labelStyle: const TextStyle(color: AppColors.black),
           border: const OutlineInputBorder(),
           prefixIcon: const Icon(Icons.search),
-          hintStyle: const TextStyle(color: Colors.black),
         ),
       ),
     );
 
-    final downloadButton = appButton(
+    final download = appButton(
       withIcon: true,
       onPressed: () {},
-      text: "Download",
+      text: 'Download',
       textColor: Colors.white,
       borderColor: AppColors.lightBlue,
       background: AppColors.lightBlue,
     );
 
-    if (isWideScreen) {
+    if (isWide) {
       return Row(
         children: [
-          fileNameText,
+          title,
           const Spacer(),
-          searchField,
-          horizontalSpace(5),
-          downloadButton,
+          search,
+          const SizedBox(width: 8),
+          download,
         ],
       );
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Wrap(
-          spacing: 4,
-          runSpacing: 4,
-          children: [
-            fileNameText,
-            searchField,
-            horizontalSpace(5),
-            downloadButton,
-          ],
-        ),
-      ],
+    return Wrap(spacing: 8, runSpacing: 8, children: [title, search, download]);
+  }
+
+  Widget _buildPageButton(IconData icon, {bool disabled = false}) {
+    return Container(
+      width: 30,
+      height: 60,
+      decoration: BoxDecoration(
+        border: Border.all(color: disabled ? Colors.black45 : Colors.black),
+      ),
+      alignment: Alignment.center,
+      child: Icon(
+        icon,
+        size: 20,
+        color: disabled ? Colors.black45 : Colors.black,
+      ),
     );
   }
 
