@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import '../../data/models/file_content_model.dart';
@@ -6,15 +5,18 @@ import '../widgets/admin_question_overview.dart';
 import '../widgets/file_casestudy_row.dart';
 import '../widgets/file_topic_row.dart';
 
+/// Renders file content items and notifies parent when inner content size changes.
 class FileContentWidget extends StatelessWidget {
   final FileContent fileContent;
   final String searchQuery;
+  final VoidCallback onContentChanged;
 
   const FileContentWidget({
-    super.key,
+    Key? key,
     required this.fileContent,
     this.searchQuery = '',
-  });
+    required this.onContentChanged,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -23,21 +25,22 @@ class FileContentWidget extends StatelessWidget {
           fileContent.items,
         ).where((item) => _matchesSearch(item, searchQuery)).toList();
 
-    return ListView.builder(
-      itemCount: flatItems.length,
-      itemBuilder: (context, index) {
-        var flatItem = flatItems[index];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: List.generate(flatItems.length, (index) {
+        final flatItem = flatItems[index];
         return flatItem.item.when(
           question:
               (question) => AdminQuestionOverviewWidget(
                 question: question,
                 questionIndex: question.q,
+                onContentChanged: onContentChanged,
               ),
           topic: (topic) => FileTopicRowWidget(topic: topic),
           caseStudy:
               (caseStudy) => FileCaseStudyRowWidget(caseStudy: caseStudy),
         );
-      },
+      }),
     );
   }
 
@@ -52,33 +55,32 @@ class FileContentWidget extends StatelessWidget {
   }
 
   List<FlatItem> _flattenItems(List<CommonItem> items, [int level = 0]) {
-    List<FlatItem> flatList = [];
-
-    for (var item in items) {
+    final List<FlatItem> flatList = [];
+    for (final item in items) {
       flatList.add(FlatItem(item: item, level: level));
       item.when(
-        question: (_) => {},
+        question: (_) {},
         topic: (topic) {
           flatList.addAll(_flattenItems(topic.topicItems ?? [], level + 1));
         },
         caseStudy: (caseStudy) {
+          final questions = caseStudy.questions ?? [];
           flatList.addAll(
             _flattenItems(
-              caseStudy.questions!.map((q) => CommonItem.question(q)).toList(),
+              questions.map((q) => CommonItem.question(q)).toList(),
               level + 1,
             ),
           );
         },
       );
     }
-
     return flatList;
   }
 }
 
+/// Wrapper for flattened items
 class FlatItem {
   final CommonItem item;
   final int level;
-
   FlatItem({required this.item, required this.level});
 }
