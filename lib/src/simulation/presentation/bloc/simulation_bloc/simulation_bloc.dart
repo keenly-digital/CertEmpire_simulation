@@ -25,19 +25,23 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
     Emitter<SimulationInitState> emit,
   ) async {
     emit((state as SimulationState).copyWith(loading: true, success: false));
-    final result = await _simulationRepo.getSimulationData(event.fieldId ?? "");
+    final result = await _simulationRepo.getSimulationData(
+      event.fieldId ?? "",
+      event.pageNumber,
+    );
     await result.when(
       onSuccess: (res) async {
         LogUtil.debug(
           "Simulation-onSuccess........... :${(res.data?.toJson())}",
         );
-
+        String newMessage = "20";
         if (res.success && res.data != null) {
           emit(
             (state as SimulationState).copyWith(
               simulationData: res.data!,
               loading: false,
               success: true,
+              totalItemLength: int.parse(newMessage),
             ),
           );
         } else {
@@ -66,7 +70,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
       onSuccess: (data) async {
         CommonHelper.hideLoader(context);
         showDialog(
-
           barrierColor: Colors.transparent,
           context: context,
           builder: (context) => ThankYouDialogue(),
@@ -92,7 +95,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
       onSuccess: (data) async {
         Navigator.pop(context);
         showDialog(
-
           barrierColor: Colors.transparent,
           context: context,
           builder: (context) => ThankYouDialogue(),

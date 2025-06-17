@@ -15,8 +15,9 @@ class SimulationRepoImp extends SimulationRepo {
   @override
   Future<ApiResult<APIResponse<FileContent?>>> getSimulationData(
     String fileId,
+    int pageNumber,
   ) async {
-    return await _simulationDataSrc.getSimulationData(fileId);
+    return await _simulationDataSrc.getSimulationData(fileId, pageNumber);
   }
 
   @override

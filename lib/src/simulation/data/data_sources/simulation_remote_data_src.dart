@@ -14,10 +14,12 @@ class SimulationDataSrc {
 
   Future<ApiResult<APIResponse<FileContent>>> getSimulationData(
     String fileId,
+    int pageNumber,
   ) async {
+
     final result = await _apiManager.get(
       ApiEndpoint.getSimulationData,
-      queryParameters: {'fileId': fileId},
+      queryParameters: {'fileId': fileId, 'pageNumber': pageNumber},
     );
     return result.when(
       onSuccess:

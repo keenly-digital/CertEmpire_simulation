@@ -1,7 +1,10 @@
+import 'dart:html' as html;
+
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/core/shared/widgets/spaces.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
@@ -12,7 +15,7 @@ import 'package:certempiree/src/simulation/presentation/widgets/app_button.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'dart:html' as html;
+
 
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
@@ -22,14 +25,14 @@ class ExamQuestionPage extends StatefulWidget {
 }
 
 class _ExamQuestionPageState extends State<ExamQuestionPage> {
+  int pageNumber = 1;
+
   final GlobalKey _contentKey = GlobalKey();
 
   @override
   void initState() {
     super.initState();
-    context.read<SimulationBloc>().add(
-      FetchSimulationDataEvent(fieldId: AppStrings.fileId),
-    );
+    fetchSimulationData();
   }
 
   /// Measures content height and sends to parent
@@ -57,6 +60,8 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     return BlocBuilder<SimulationBloc, SimulationInitState>(
       builder: (context, state) {
         final simulationState = state as SimulationState;
+        final moveNext =
+            (simulationState.simulationData?.items.length?? 0) < (state.totalItemLength ?? 0);
         return Scaffold(
           body: Padding(
             padding: const EdgeInsets.all(8.0),
@@ -93,6 +98,99 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                         simulationState.simulationData ??
                                         FileContent(),
                                     searchQuery: query,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Container(
+                                    height: 60.h,
+                                    width: ScreenUtil().screenWidth,
+                                    decoration: BoxDecoration(
+                                      shape: BoxShape.rectangle,
+                                      border: Border.all(color: Colors.black),
+                                    ),
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            "Showing $pageNumber to ${simulationState.simulationData?.items.length} of ${simulationState.totalItemLength ?? 0} results",
+                                            style: TextStyle(
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          Row(
+                                            children: [
+                                              IconButton(
+                                                onPressed: () {
+                                                  if (pageNumber > 1) {
+                                                    setState(() {
+                                                      pageNumber--;
+                                                    });
+                                                    fetchSimulationData();
+                                                  }
+                                                },
+                                                icon: Container(
+                                                  width: 30,
+                                                  height: 60,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.rectangle,
+                                                    border: Border.all(
+                                                      color: Colors.black,
+                                                    ),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
+                                                    Icons.arrow_back,
+                                                    size: 20,
+                                                  ),
+                                                ),
+                                              ),
+                                              IconButton(
+                                                onPressed:
+                                                    moveNext
+                                                        ? () {
+                                                          setState(() {
+                                                            pageNumber++;
+                                                          });
+                                                          fetchSimulationData();
+                                                        }
+                                                        : () {
+                                                          CommonHelper.showToast(
+                                                            message:
+                                                                "No More Reports",
+                                                          );
+                                                        },
+                                                icon: Container(
+                                                  width: 30,
+                                                  height: 60,
+                                                  decoration: BoxDecoration(
+                                                    shape: BoxShape.rectangle,
+                                                    border: Border.all(
+                                                      color:
+                                                          !moveNext
+                                                              ? Colors.black45
+                                                              : Colors.black,
+                                                    ),
+                                                  ),
+                                                  alignment: Alignment.center,
+                                                  child: Icon(
+                                                    Icons.arrow_forward,
+                                                    size: 20,
+                                                    color:
+                                                        !moveNext
+                                                            ? Colors.black45
+                                                            : Colors.black,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ],
+                                      ),
+                                    ),
                                   ),
                                 ),
                               ],
@@ -174,6 +272,15 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
           ],
         ),
       ],
+    );
+  }
+
+  void fetchSimulationData() {
+    context.read<SimulationBloc>().add(
+      FetchSimulationDataEvent(
+        fieldId: AppStrings.fileId,
+        pageNumber: pageNumber,
+      ),
     );
   }
 }

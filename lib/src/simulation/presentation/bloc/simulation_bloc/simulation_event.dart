@@ -1,11 +1,12 @@
-import '../../../data/models/file_content_model.dart';
+
 
 abstract class SimulationEvent {}
 
 class FetchSimulationDataEvent extends SimulationEvent {
   final String? fieldId;
+  final int pageNumber;
 
-  FetchSimulationDataEvent({this.fieldId});
+  FetchSimulationDataEvent({this.fieldId, this.pageNumber = 1});
 }
 
 class ShowAnswerEvent extends SimulationEvent {
@@ -13,4 +14,3 @@ class ShowAnswerEvent extends SimulationEvent {
 
   ShowAnswerEvent({this.questionIndex});
 }
-
