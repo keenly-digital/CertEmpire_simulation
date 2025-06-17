@@ -16,11 +16,13 @@ class SimulationDataSrc {
     String fileId,
     int pageNumber,
   ) async {
-
     final result = await _apiManager.get(
       ApiEndpoint.getSimulationData,
-      queryParameters: {'fileId': fileId, 'pageNumber': pageNumber},
-
+      queryParameters: {
+        'fileId': fileId,
+        'pageNumber': pageNumber,
+        'IsUser': true,
+      },
     );
     return result.when(
       onSuccess:
