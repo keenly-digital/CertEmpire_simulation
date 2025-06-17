@@ -20,6 +20,7 @@ class SimulationDataSrc {
     final result = await _apiManager.get(
       ApiEndpoint.getSimulationData,
       queryParameters: {'fileId': fileId, 'pageNumber': pageNumber},
+
     );
     return result.when(
       onSuccess:
