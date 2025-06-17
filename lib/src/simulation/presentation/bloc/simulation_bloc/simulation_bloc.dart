@@ -34,7 +34,7 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
         LogUtil.debug(
           "Simulation-onSuccess........... :${(res.data?.toJson())}",
         );
-        String newMessage = "20";
+        String newMessage = res.message;
         if (res.success && res.data != null) {
           emit(
             (state as SimulationState).copyWith(
