@@ -7,7 +7,7 @@ class AppStrings {
   static const String reportQue = '!Report Question';
   static const String showAnswer = 'Show Answer';
   static const String hideAnswer = 'Hide Answer';
-  static const String correctAnswer = 'Correct Answer';
+  static const String correctAnswer = 'Correct Answer:';
   static const String explanation = 'Explanation: ';
   static const String goBack = 'Go Back';
   static const String reportExplanation = '!Report Explanation as Incorrect';
@@ -23,6 +23,6 @@ class AppStrings {
   static const String reportAnswerAsIncorrect = '! Report Answer as Incorrect';
   // static String fileId = '';
   // static String userId = '';
-static String fileId = '5649031d-07af-4595-a17f-be37c71d0669';
-static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
+  static String fileId = '5649031d-07af-4595-a17f-be37c71d0669';
+  static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
 }

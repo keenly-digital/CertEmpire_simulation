@@ -4,6 +4,7 @@ import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/core/shared/widgets/spaces.dart';
+import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
@@ -15,6 +16,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
+/// Main page showing exam questions with pagination inside an iframe.
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
 
@@ -32,19 +34,23 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     fetchSimulationData();
   }
 
-  /// Measures the full content height and sends it to the parent iframe
-  void _sendHeight() {
+  /// Send height (and optionally scroll) to parent window.
+  void _postToParent({bool scrollToTop = false}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
-      if (box != null) {
-        final logicalHeight = box.size.height;
-        final dpr = html.window.devicePixelRatio;
-        final cssHeight = logicalHeight * dpr;
-        print('CSS Height : $cssHeight');
-        html.window.parent?.postMessage({
-          'iframeHeight': cssHeight,
-        }, 'https://staging2.certempire.com/');
-      }
+      if (box == null) return;
+      final logicalHeight = box.size.height;
+      final dpr = html.window.devicePixelRatio;
+      final cssHeight = logicalHeight * dpr;
+      final message = {
+        'iframeHeight': cssHeight,
+        if (scrollToTop) 'scrollToTop': true,
+      };
+      print('Responce fron flutter: $cssHeight $scrollToTop');
+      html.window.parent?.postMessage(
+        message,
+        'https://staging2.certempire.com/',
+      );
     });
   }
 
@@ -70,10 +76,10 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                         final isWide = constraints.maxWidth > 852;
                         return BlocBuilder<SearchQuestionCubit, String>(
                           builder: (context, query) {
-                            // initial height measure
+                            // Initial measure without scrolling
                             Future.delayed(
                               const Duration(milliseconds: 200),
-                              _sendHeight,
+                              () => _postToParent(),
                             );
 
                             return SingleChildScrollView(
@@ -92,14 +98,14 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                         simulationState.simulationData ??
                                         FileContent(),
                                     searchQuery: query,
-                                    onContentChanged: _sendHeight,
+                                    onContentChanged: () => _postToParent(),
                                   ),
                                   const SizedBox(height: 16),
                                   Padding(
                                     padding: const EdgeInsets.all(8.0),
                                     child: Container(
-                                      height: 60.h,
-                                      width: ScreenUtil().screenWidth,
+                                      height: 60,
+                                      width: double.infinity,
                                       decoration: BoxDecoration(
                                         border: Border.all(color: Colors.black),
                                       ),
@@ -126,6 +132,10 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                                                   pageNumber--,
                                                             );
                                                             fetchSimulationData();
+                                                            // after page change, scroll parent to top
+                                                            _postToParent(
+                                                              scrollToTop: true,
+                                                            );
                                                           }
                                                           : null,
                                                   icon: _buildPageButton(
@@ -142,6 +152,9 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                                                   pageNumber++,
                                                             );
                                                             fetchSimulationData();
+                                                            _postToParent(
+                                                              scrollToTop: true,
+                                                            );
                                                           }
                                                           : null,
                                                   icon: _buildPageButton(
@@ -174,9 +187,9 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     SimulationState state,
     bool isWide,
   ) {
-    final name = state.simulationData?.fileName ?? '';
+    final fileName = state.simulationData?.fileName ?? '';
     final title = Text(
-      name,
+      fileName,
       style: context.textTheme.headlineSmall?.copyWith(
         color: AppColors.blue,
         decoration: TextDecoration.underline,
@@ -218,10 +231,10 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
         ],
       );
     }
-
     return Wrap(spacing: 8, runSpacing: 8, children: [title, search, download]);
   }
 
+  /// Builds page arrow button graphics
   Widget _buildPageButton(IconData icon, {bool disabled = false}) {
     return Container(
       width: 30,

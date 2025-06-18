@@ -14,12 +14,11 @@ import '../../data/models/question_model.dart';
 import '../cubit/report_ans_cubit.dart';
 import 'border_box.dart';
 
-/// Overview of a single question, allows toggling answer/explanation display
+/// Overview of a single question, with dialogs opening at the button’s position
 class AdminQuestionOverviewWidget extends StatefulWidget {
   final Question question;
   final int questionIndex;
-  final VoidCallback
-  onContentChanged; // callback to notify parent of size change
+  final VoidCallback onContentChanged;
 
   const AdminQuestionOverviewWidget({
     Key? key,
@@ -29,7 +28,7 @@ class AdminQuestionOverviewWidget extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<AdminQuestionOverviewWidget> createState() =>
+  _AdminQuestionOverviewWidgetState createState() =>
       _AdminQuestionOverviewWidgetState();
 }
 
@@ -62,6 +61,7 @@ class _AdminQuestionOverviewWidgetState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Question Text
             Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -69,10 +69,10 @@ class _AdminQuestionOverviewWidgetState
                   "Q.${widget.questionIndex}",
                   style: const TextStyle(
                     decoration: TextDecoration.underline,
-                    decorationColor: AppColors.black,
+                    decorationColor: AppColors.lightPurple,
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.black,
+                    color: AppColors.lightPurple,
                   ),
                 ),
                 const SizedBox(width: 12),
@@ -86,7 +86,7 @@ class _AdminQuestionOverviewWidgetState
             SizedBox(height: 5.h),
             EditorView(initialContent: widget.question.questionDescription),
             const SizedBox(height: 16),
-            // Options list
+            // Options
             Column(
               children: List.generate(widget.question.options.length, (i) {
                 final isCorrect =
@@ -94,16 +94,26 @@ class _AdminQuestionOverviewWidgetState
                     _showAnswer;
                 return EditorView(
                   initialContent: widget.question.options[i],
-                  textColor: isCorrect ? Colors.green : null,
+                  textColor:
+                      isCorrect ? const Color.fromARGB(255, 79, 177, 82) : null,
                 );
               }),
             ),
             SizedBox(height: 10.h),
+            // Action buttons
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
+                // Report Question
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    // Scroll this widget into view within the iframe
+                    await Scrollable.ensureVisible(
+                      context,
+                      alignment: 0.5,
+                      duration: const Duration(milliseconds: 200),
+                    );
+                    // Then open dialog centered on viewport
                     showDialog(
                       barrierColor: Colors.transparent,
                       context: context,
@@ -117,24 +127,39 @@ class _AdminQuestionOverviewWidgetState
                   },
                   child: Text(
                     AppStrings.reportQue,
-                    style: TextStyle(color: AppColors.reportColor),
+                    style: TextStyle(
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.orangeColor,
+                      color: AppColors.orangeColor,
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
+                // Toggle Show/Hide Answer
                 TextButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    await Scrollable.ensureVisible(
+                      context,
+                      alignment: 0.5,
+                      duration: const Duration(milliseconds: 200),
+                    );
                     setState(() => _showAnswer = !_showAnswer);
-                    widget.onContentChanged(); // notify parent to re-measure
+                    widget.onContentChanged();
                   },
                   child: Text(
                     !_showAnswer
                         ? AppStrings.showAnswer
                         : AppStrings.hideAnswer,
-                    style: const TextStyle(color: AppColors.lightPurple),
+                    style: const TextStyle(
+                      decoration: TextDecoration.underline,
+                      decorationColor: AppColors.lightPurple,
+                      color: AppColors.lightPurple,
+                    ),
                   ),
                 ),
               ],
             ),
+            // Correct Answer / Explanation
             if (_showAnswer)
               Container(
                 decoration: BoxDecoration(
@@ -149,24 +174,30 @@ class _AdminQuestionOverviewWidgetState
                       children: [
                         Text(
                           AppStrings.correctAnswer,
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.black,
                           ),
                         ),
-                        horizontalSpace(5.w),
+                        horizontalSpace(2),
                         Text(
                           convertIndicesToLetters(
                             widget.question.correctAnswerIndices,
                           ),
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.black,
                           ),
                         ),
-                        Spacer(),
+
+                        horizontalSpace(8.w), // smaller gap before button
                         TextButton(
-                          onPressed: () {
+                          onPressed: () async {
+                            await Scrollable.ensureVisible(
+                              context,
+                              alignment: 0.5,
+                              duration: const Duration(milliseconds: 200),
+                            );
                             context
                                 .read<ReportAnsCubit>()
                                 .reportAnswerAsIncorrect(widget.question);
@@ -182,6 +213,8 @@ class _AdminQuestionOverviewWidgetState
                           child: Text(
                             AppStrings.reportAnswerAsIncorrect,
                             style: TextStyle(
+                              decoration: TextDecoration.underline,
+                              decorationColor: AppColors.orangeColor,
                               fontWeight: FontWeight.bold,
                               color: AppColors.orangeColor,
                             ),
@@ -194,9 +227,9 @@ class _AdminQuestionOverviewWidgetState
                       children: [
                         Text(
                           AppStrings.explanation,
-                          style: TextStyle(fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontWeight: FontWeight.w700),
                         ),
-                        horizontalSpace(3),
+                        horizontalSpace(2),
                         Expanded(
                           child: EditorView(
                             initialContent: widget.question.answerExplanation,
@@ -208,7 +241,12 @@ class _AdminQuestionOverviewWidgetState
                     Align(
                       alignment: Alignment.bottomRight,
                       child: TextButton(
-                        onPressed: () {
+                        onPressed: () async {
+                          await Scrollable.ensureVisible(
+                            context,
+                            alignment: 0.5,
+                            duration: const Duration(milliseconds: 200),
+                          );
                           showDialog(
                             barrierColor: Colors.transparent,
                             context: context,
@@ -222,6 +260,8 @@ class _AdminQuestionOverviewWidgetState
                         child: Text(
                           AppStrings.reportExplanation,
                           style: TextStyle(
+                            decoration: TextDecoration.underline,
+                            decorationColor: AppColors.orangeColor,
                             fontWeight: FontWeight.bold,
                             color: AppColors.orangeColor,
                           ),
@@ -237,6 +277,7 @@ class _AdminQuestionOverviewWidgetState
     );
   }
 
+  /// Convert 0→A, 1→B, etc.
   String convertIndicesToLetters(List<int> indices) =>
       indices.map((i) => String.fromCharCode(65 + i)).join(", ");
 }
