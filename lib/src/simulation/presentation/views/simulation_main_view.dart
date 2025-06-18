@@ -16,7 +16,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Main page showing exam questions with pagination inside an iframe.
+/// Callback signature for notifying parent of content size changes, with optional scroll flag
+typedef ContentChanged = void Function({bool scrollToTop});
+
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({super.key});
 
@@ -28,166 +30,183 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   int pageNumber = 1;
   final GlobalKey _contentKey = GlobalKey();
 
+  double _lastSentHeight = 0;
+  static const double _heightThreshold = 30;
+
   @override
   void initState() {
     super.initState();
     fetchSimulationData();
   }
 
-  /// Send height (and optionally scroll) to parent window.
-  void _postToParent({bool scrollToTop = false}) {
+  /// Posts iframeHeight only if change ≥ threshold, or always if scrollToTop requested
+  void _sendHeight({bool scrollToTop = false}) {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
       if (box == null) return;
       final logicalHeight = box.size.height;
-      final dpr = html.window.devicePixelRatio;
-      final cssHeight = logicalHeight * dpr;
-      final message = {
-        'iframeHeight': cssHeight,
+      final cssHeight = logicalHeight * html.window.devicePixelRatio;
+      if (!scrollToTop &&
+          (cssHeight - _lastSentHeight).abs() < _heightThreshold)
+        return;
+      _lastSentHeight = cssHeight;
+
+      final msg = <String, dynamic>{
+        'iframeHeight': cssHeight.toInt(),
         if (scrollToTop) 'scrollToTop': true,
       };
-      print('Responce fron flutter: $cssHeight $scrollToTop');
-      html.window.parent?.postMessage(
-        message,
-        'https://staging2.certempire.com/',
-      );
+      print('Flutter sending : $cssHeight $scrollToTop');
+      html.window.parent?.postMessage(msg, 'https://staging2.certempire.com/');
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return BlocBuilder<SimulationBloc, SimulationInitState>(
-      builder: (context, state) {
-        final simulationState = state as SimulationState;
-        final total = state.totalItemLength ?? 0;
-        final currentCount = simulationState.simulationData?.items.length ?? 0;
-        final canNext = currentCount < total;
+    return BlocListener<SimulationBloc, SimulationInitState>(
+      listener: (context, state) {
+        if (state is SimulationState && !state.loading) {
+          // After new page loads, scroll parent and resize iframe
+          _sendHeight(scrollToTop: true);
+        }
+      },
+      child: BlocBuilder<SimulationBloc, SimulationInitState>(
+        builder: (context, state) {
+          final simulationState = state as SimulationState;
+          final totalCount = simulationState.totalItemLength ?? 0;
+          final currentCount =
+              simulationState.simulationData?.items.length ?? 0;
+          final canNext = currentCount < totalCount;
 
-        return Scaffold(
-          body: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child:
-                simulationState.loading
-                    ? const Center(
-                      child: CircularProgressIndicator(color: AppColors.purple),
-                    )
-                    : LayoutBuilder(
-                      builder: (context, constraints) {
-                        final isWide = constraints.maxWidth > 852;
-                        return BlocBuilder<SearchQuestionCubit, String>(
-                          builder: (context, query) {
-                            // Initial measure without scrolling
-                            Future.delayed(
-                              const Duration(milliseconds: 200),
-                              () => _postToParent(),
-                            );
+          return Scaffold(
+            body: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child:
+                  simulationState.loading
+                      ? const Center(
+                        child: CircularProgressIndicator(
+                          color: AppColors.purple,
+                        ),
+                      )
+                      : LayoutBuilder(
+                        builder: (context, constraints) {
+                          final isWide = constraints.maxWidth > 852;
+                          return BlocBuilder<SearchQuestionCubit, String>(
+                            builder: (context, query) {
+                              // Initial height send
+                              if (_lastSentHeight == 0) {
+                                Future.delayed(
+                                  const Duration(milliseconds: 200),
+                                  _sendHeight,
+                                );
+                              }
 
-                            return SingleChildScrollView(
-                              child: Column(
-                                key: _contentKey,
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  _buildHeader(
-                                    context,
-                                    simulationState,
-                                    isWide,
-                                  ),
-                                  verticalSpace(6),
-                                  FileContentWidget(
-                                    fileContent:
-                                        simulationState.simulationData ??
-                                        FileContent(),
-                                    searchQuery: query,
-                                    onContentChanged: () => _postToParent(),
-                                  ),
-                                  const SizedBox(height: 16),
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Container(
-                                      height: 60,
-                                      width: double.infinity,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(color: Colors.black),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.spaceBetween,
-                                          children: [
-                                            Text(
-                                              "Showing $pageNumber to $currentCount of $total results",
-                                              style: const TextStyle(
-                                                color: Colors.black,
+                              return SingleChildScrollView(
+                                child: Column(
+                                  key: _contentKey,
+                                  crossAxisAlignment:
+                                      CrossAxisAlignment.stretch,
+                                  children: [
+                                    _buildHeader(
+                                      context,
+                                      simulationState,
+                                      isWide,
+                                    ),
+                                    verticalSpace(6),
+                                    FileContentWidget(
+                                      fileContent:
+                                          simulationState.simulationData ??
+                                          FileContent(),
+                                      searchQuery: query,
+                                      onContentChanged:
+                                          ({bool scrollToTop = false}) =>
+                                              _sendHeight(
+                                                scrollToTop: scrollToTop,
                                               ),
-                                            ),
-                                            Row(
-                                              children: [
-                                                IconButton(
-                                                  onPressed:
-                                                      pageNumber > 1
-                                                          ? () {
-                                                            setState(
-                                                              () =>
-                                                                  pageNumber--,
-                                                            );
-                                                            fetchSimulationData();
-                                                            // after page change, scroll parent to top
-                                                            _postToParent(
-                                                              scrollToTop: true,
-                                                            );
-                                                          }
-                                                          : null,
-                                                  icon: _buildPageButton(
-                                                    Icons.arrow_back,
-                                                    disabled: pageNumber <= 1,
-                                                  ),
+                                    ),
+                                    const SizedBox(height: 16),
+                                    Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        height: 60,
+                                        width: double.infinity,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        child: Padding(
+                                          padding: const EdgeInsets.all(8.0),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                "Showing $pageNumber to $currentCount of $totalCount results",
+                                                style: const TextStyle(
+                                                  color: Colors.black,
                                                 ),
-                                                IconButton(
-                                                  onPressed:
-                                                      canNext
-                                                          ? () {
-                                                            setState(
-                                                              () =>
-                                                                  pageNumber++,
-                                                            );
-                                                            fetchSimulationData();
-                                                            _postToParent(
-                                                              scrollToTop: true,
-                                                            );
-                                                          }
-                                                          : null,
-                                                  icon: _buildPageButton(
-                                                    Icons.arrow_forward,
-                                                    disabled: !canNext,
+                                              ),
+                                              Row(
+                                                children: [
+                                                  IconButton(
+                                                    onPressed:
+                                                        pageNumber > 1
+                                                            ? () {
+                                                              setState(
+                                                                () =>
+                                                                    pageNumber--,
+                                                              );
+                                                              fetchSimulationData();
+                                                            }
+                                                            : null,
+                                                    icon: _buildPageButton(
+                                                      Icons.arrow_back,
+                                                      disabled: pageNumber <= 1,
+                                                    ),
                                                   ),
-                                                ),
-                                              ],
-                                            ),
-                                          ],
+                                                  IconButton(
+                                                    onPressed:
+                                                        canNext
+                                                            ? () {
+                                                              setState(
+                                                                () =>
+                                                                    pageNumber++,
+                                                              );
+                                                              fetchSimulationData();
+                                                            }
+                                                            : null,
+                                                    icon: _buildPageButton(
+                                                      Icons.arrow_forward,
+                                                      disabled: !canNext,
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                            ],
+                                          ),
                                         ),
                                       ),
                                     ),
-                                  ),
-                                ],
-                              ),
-                            );
-                          },
-                        );
-                      },
-                    ),
-          ),
-        );
-      },
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
+                      ),
+            ),
+          );
+        },
+      ),
     );
   }
 
   Widget _buildHeader(
     BuildContext context,
-    SimulationState state,
-    bool isWide,
+    SimulationState simulationState,
+    bool isWideScreen,
   ) {
-    final fileName = state.simulationData?.fileName ?? '';
+    final fileName = simulationState.simulationData?.fileName ?? "";
     final title = Text(
       fileName,
       style: context.textTheme.headlineSmall?.copyWith(
@@ -197,44 +216,50 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
       ),
     );
 
-    final search = SizedBox(
+    final searchField = SizedBox(
       width: 400,
       child: TextFormField(
-        onChanged: (val) => context.read<SearchQuestionCubit>().setQuery(val),
+        onChanged:
+            (value) => context.read<SearchQuestionCubit>().setQuery(value),
         decoration: InputDecoration(
           contentPadding: EdgeInsets.symmetric(horizontal: 15.w),
           labelText: 'Search',
           labelStyle: const TextStyle(color: AppColors.black),
           border: const OutlineInputBorder(),
           prefixIcon: const Icon(Icons.search),
+          hintStyle: const TextStyle(color: Colors.black),
         ),
       ),
     );
 
-    final download = appButton(
+    final downloadButton = appButton(
       withIcon: true,
       onPressed: () {},
-      text: 'Download',
+      text: "Download",
       textColor: Colors.white,
       borderColor: AppColors.lightBlue,
       background: AppColors.lightBlue,
     );
 
-    if (isWide) {
+    if (isWideScreen) {
       return Row(
         children: [
           title,
           const Spacer(),
-          search,
+          searchField,
           const SizedBox(width: 8),
-          download,
+          downloadButton,
         ],
       );
     }
-    return Wrap(spacing: 8, runSpacing: 8, children: [title, search, download]);
+
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: [title, searchField, downloadButton],
+    );
   }
 
-  /// Builds page arrow button graphics
   Widget _buildPageButton(IconData icon, {bool disabled = false}) {
     return Container(
       width: 30,

@@ -14,11 +14,14 @@ import '../../data/models/question_model.dart';
 import '../cubit/report_ans_cubit.dart';
 import 'border_box.dart';
 
+/// Callback signature for notifying parent of content size changes, with optional scroll flag
+typedef ContentChanged = void Function({bool scrollToTop});
+
 /// Overview of a single question, with dialogs opening at the button’s position
 class AdminQuestionOverviewWidget extends StatefulWidget {
   final Question question;
   final int questionIndex;
-  final VoidCallback onContentChanged;
+  final ContentChanged onContentChanged; // <-- changed
 
   const AdminQuestionOverviewWidget({
     Key? key,
@@ -144,7 +147,6 @@ class _AdminQuestionOverviewWidgetState
                       duration: const Duration(milliseconds: 200),
                     );
                     setState(() => _showAnswer = !_showAnswer);
-                    widget.onContentChanged();
                   },
                   child: Text(
                     !_showAnswer

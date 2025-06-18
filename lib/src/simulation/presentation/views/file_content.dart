@@ -5,11 +5,13 @@ import '../widgets/admin_question_overview.dart';
 import '../widgets/file_casestudy_row.dart';
 import '../widgets/file_topic_row.dart';
 
+typedef ContentChanged = void Function({bool scrollToTop});
+
 /// Renders file content items and notifies parent when inner content size changes.
 class FileContentWidget extends StatelessWidget {
   final FileContent fileContent;
   final String searchQuery;
-  final VoidCallback onContentChanged;
+  final ContentChanged onContentChanged;
 
   const FileContentWidget({
     Key? key,
