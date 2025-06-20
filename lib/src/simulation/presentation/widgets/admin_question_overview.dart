@@ -14,14 +14,14 @@ import '../../data/models/question_model.dart';
 import '../cubit/report_ans_cubit.dart';
 import 'border_box.dart';
 
-/// Callback signature for notifying parent of content size changes, with optional scroll flag
+/// Callback signature for notifying parent of content size changes
 typedef ContentChanged = void Function({bool scrollToTop});
 
-/// Overview of a single question, with dialogs opening at the button’s position
+/// Overview of a single question, with question highlighted when showing answers
 class AdminQuestionOverviewWidget extends StatefulWidget {
   final Question question;
   final int questionIndex;
-  final ContentChanged onContentChanged; // <-- changed
+  final ContentChanged onContentChanged;
 
   const AdminQuestionOverviewWidget({
     Key? key,
@@ -44,176 +44,241 @@ class _AdminQuestionOverviewWidgetState
       return SpacerUtil.instance.large;
     } else if (widget.question.hasTopic() || widget.question.hasCaseStudy()) {
       return SpacerUtil.instance.medium;
-    } else {
-      return 0;
     }
+    return 0;
   }
 
   @override
   Widget build(BuildContext context) {
-    return BorderBox(
-      padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
-      margin: SpacerUtil.only(
-        top: SpacerUtil.instance.small,
-        left: calculateLeftMargin(),
-        bottom: SpacerUtil.instance.small,
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Question Text
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  "Q.${widget.questionIndex}",
-                  style: const TextStyle(
-                    decoration: TextDecoration.underline,
-                    decorationColor: AppColors.lightPurple,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.lightPurple,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: EditorView(
-                    initialContent: widget.question.questionText,
-                  ),
-                ),
-              ],
-            ),
-            SizedBox(height: 5.h),
-            EditorView(initialContent: widget.question.questionDescription),
-            const SizedBox(height: 16),
-            // Options
-            Column(
-              children: List.generate(widget.question.options.length, (i) {
-                final isCorrect =
-                    widget.question.correctAnswerIndices.contains(i) &&
-                    _showAnswer;
-                return EditorView(
-                  initialContent: widget.question.options[i],
-                  textColor:
-                      isCorrect ? const Color.fromARGB(255, 79, 177, 82) : null,
-                );
-              }),
-            ),
-            SizedBox(height: 10.h),
-            // Action buttons
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                // Report Question
-                TextButton(
-                  onPressed: () async {
-                    // Scroll this widget into view within the iframe
-                    await Scrollable.ensureVisible(
-                      context,
-                      alignment: 0.5,
-                      duration: const Duration(milliseconds: 200),
-                    );
-                    // Then open dialog centered on viewport
-                    showDialog(
-                      barrierColor: Colors.transparent,
-                      context: context,
-                      builder:
-                          (_) => ReportQuestionDialog(
-                            fileId: AppStrings.fileId,
-                            questionId: widget.question.id,
-                            questionIndex: widget.questionIndex,
-                          ),
-                    );
-                  },
-                  child: Text(
-                    AppStrings.reportQue,
-                    style: TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.orangeColor,
-                      color: AppColors.orangeColor,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 8),
-                // Toggle Show/Hide Answer
-                TextButton(
-                  onPressed: () async {
-                    await Scrollable.ensureVisible(
-                      context,
-                      alignment: 0.5,
-                      duration: const Duration(milliseconds: 200),
-                    );
-                    setState(() => _showAnswer = !_showAnswer);
-                  },
-                  child: Text(
-                    !_showAnswer
-                        ? AppStrings.showAnswer
-                        : AppStrings.hideAnswer,
+    // Wrap entire question in highlight border when answers are shown
+    return Container(
+      decoration:
+          _showAnswer
+              ? BoxDecoration(
+                color: AppColors.themeTransparent, // highlighted background
+                border: Border.all(color: AppColors.themePurple, width: 2),
+                borderRadius: BorderRadius.circular(8),
+              )
+              : null,
+      child: BorderBox(
+        padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
+        color: AppColors.lightBackground,
+        margin: SpacerUtil.only(
+          top: SpacerUtil.instance.small,
+          left: calculateLeftMargin(),
+          bottom: SpacerUtil.instance.small,
+        ),
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Question Header
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "Q.${widget.questionIndex}",
                     style: const TextStyle(
-                      decoration: TextDecoration.underline,
-                      decorationColor: AppColors.lightPurple,
-                      color: AppColors.lightPurple,
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.black,
                     ),
                   ),
-                ),
-              ],
-            ),
-            // Correct Answer / Explanation
-            if (_showAnswer)
-              Container(
-                decoration: BoxDecoration(
-                  color: AppColors.grey,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: EdgeInsets.all(10.h),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Text(
-                          AppStrings.correctAnswer,
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
-                          ),
-                        ),
-                        horizontalSpace(2),
-                        Text(
-                          convertIndicesToLetters(
-                            widget.question.correctAnswerIndices,
-                          ),
-                          style: const TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.black,
-                          ),
-                        ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: EditorView(
+                      initialContent: widget.question.questionText,
+                    ),
+                  ),
+                ],
+              ),
+              widget.question.questionDescription.isEmpty ||
+                      widget.question.questionDescription == ''
+                  ? EditorView(
+                    initialContent: widget.question.questionDescription,
+                  )
+                  : SizedBox.shrink(),
 
-                        horizontalSpace(8.w), // smaller gap before button
-                        TextButton(
+              // Options Label
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Options:',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.black,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 4.h),
+              // Options List
+              Column(
+                children: List.generate(widget.question.options.length, (i) {
+                  final isCorrect =
+                      widget.question.correctAnswerIndices.contains(i) &&
+                      _showAnswer;
+                  return Padding(
+                    padding: EdgeInsets.only(
+                      left: 40.h,
+                    ), // space between options
+                    child: EditorView(
+                      initialContent: widget.question.options[i],
+                      textColor: isCorrect ? const Color(0xFF4FB152) : null,
+                    ),
+                  );
+                }),
+              ),
+              SizedBox(height: 5.h),
+              // Action Buttons
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  TextButton(
+                    onPressed: () async {
+                      await Scrollable.ensureVisible(
+                        context,
+                        alignment: 0.5,
+                        duration: const Duration(milliseconds: 200),
+                      );
+                      showDialog(
+                        barrierColor: Colors.transparent,
+                        context: context,
+                        builder:
+                            (_) => ReportQuestionDialog(
+                              fileId: AppStrings.fileId,
+                              questionId: widget.question.id,
+                              questionIndex: widget.questionIndex,
+                            ),
+                      );
+                    },
+                    child: Text(
+                      AppStrings.reportQue,
+                      style: TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.orangeColor,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.orangeColor,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      setState(() => _showAnswer = !_showAnswer);
+                    },
+                    child: Text(
+                      !_showAnswer
+                          ? AppStrings.showAnswer
+                          : AppStrings.hideAnswer,
+                      style: const TextStyle(
+                        decoration: TextDecoration.underline,
+                        decorationColor: AppColors.themePurple,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.themePurple,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              // Correct Answer & Explanation
+              if (_showAnswer)
+                Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.lightBackgroundpurple,
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: EdgeInsets.all(10.h),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            AppStrings.correctAnswer,
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          horizontalSpace(2),
+                          Text(
+                            convertIndicesToLetters(
+                              widget.question.correctAnswerIndices,
+                            ),
+                            style: const TextStyle(fontWeight: FontWeight.bold),
+                          ),
+                          // horizontalSpace(58.w),
+                          Spacer(),
+                          TextButton(
+                            onPressed: () async {
+                              await Scrollable.ensureVisible(
+                                context,
+                                alignment: 0.5,
+                                duration: const Duration(milliseconds: 200),
+                              );
+                              context
+                                  .read<ReportAnsCubit>()
+                                  .reportAnswerAsIncorrect(widget.question);
+                              showDialog(
+                                barrierColor: Colors.transparent,
+                                context: context,
+                                builder:
+                                    (_) => ReportIncorrectAnswerDialog(
+                                      questionId: widget.question.id,
+                                    ),
+                              );
+                            },
+                            child: Text(
+                              AppStrings.reportAnswerAsIncorrect,
+                              style: TextStyle(
+                                decoration: TextDecoration.underline,
+                                decorationColor: AppColors.orangeColor,
+                                fontWeight: FontWeight.bold,
+                                color: AppColors.orangeColor,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            AppStrings.explanation,
+                            style: const TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                          horizontalSpace(2),
+                          Expanded(
+                            child: EditorView(
+                              initialContent: widget.question.answerExplanation,
+                            ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5.h),
+                      Align(
+                        alignment: Alignment.bottomRight,
+                        child: TextButton(
                           onPressed: () async {
                             await Scrollable.ensureVisible(
                               context,
                               alignment: 0.5,
                               duration: const Duration(milliseconds: 200),
                             );
-                            context
-                                .read<ReportAnsCubit>()
-                                .reportAnswerAsIncorrect(widget.question);
                             showDialog(
                               barrierColor: Colors.transparent,
                               context: context,
                               builder:
-                                  (_) => ReportIncorrectAnswerDialog(
+                                  (_) => ReportExplanationDialogue(
                                     questionId: widget.question.id,
+                                    fileId: AppStrings.fileId,
                                   ),
                             );
                           },
                           child: Text(
-                            AppStrings.reportAnswerAsIncorrect,
+                            AppStrings.reportExplanation,
                             style: TextStyle(
                               decoration: TextDecoration.underline,
                               decorationColor: AppColors.orangeColor,
@@ -222,58 +287,12 @@ class _AdminQuestionOverviewWidgetState
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          AppStrings.explanation,
-                          style: const TextStyle(fontWeight: FontWeight.w700),
-                        ),
-                        horizontalSpace(2),
-                        Expanded(
-                          child: EditorView(
-                            initialContent: widget.question.answerExplanation,
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 5.h),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: TextButton(
-                        onPressed: () async {
-                          await Scrollable.ensureVisible(
-                            context,
-                            alignment: 0.5,
-                            duration: const Duration(milliseconds: 200),
-                          );
-                          showDialog(
-                            barrierColor: Colors.transparent,
-                            context: context,
-                            builder:
-                                (_) => ReportExplanationDialogue(
-                                  questionId: widget.question.id,
-                                  fileId: AppStrings.fileId,
-                                ),
-                          );
-                        },
-                        child: Text(
-                          AppStrings.reportExplanation,
-                          style: TextStyle(
-                            decoration: TextDecoration.underline,
-                            decorationColor: AppColors.orangeColor,
-                            fontWeight: FontWeight.bold,
-                            color: AppColors.orangeColor,
-                          ),
-                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-          ],
+            ],
+          ),
         ),
       ),
     );
