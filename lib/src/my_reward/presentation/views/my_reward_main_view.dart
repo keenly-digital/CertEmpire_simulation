@@ -7,7 +7,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/shared/widgets/toast.dart';
-import '../../reward_dependency_injection.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
 import '../widgets/reward_summary_card.dart';
 
@@ -24,7 +23,6 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
   @override
   void initState() {
     super.initState();
-    rewardDependency();
     fetchReward();
   }
 

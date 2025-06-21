@@ -15,9 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// Callback signature for notifying parent of content size changes
-/// (only used on pagination now)
-typedef ContentChanged = void Function({bool scrollToTop});
 
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({Key? key}) : super(key: key);
@@ -99,62 +96,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                           key: _contentKey,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                            // Scrollable header
-                            Container(
-                              height: 80.h,
-                              color: AppColors.themeBlue,
-                              padding: EdgeInsets.symmetric(horizontal: 16.w),
-                              child: Row(
-                                children: [
-                                  Image.asset(
-                                    'assets/images/CertEmpire_Logo.png',
-                                    height: 50.h,
-                                    width: 150.h,
-                                  ),
-                                  const Spacer(),
-                                  ElevatedButton.icon(
-                                    onPressed: () {
-                                      html.window.location.href =
-                                          'https://staging2.certempire.com/my-account/downloads/';
-                                    },
-                                    icon: const Icon(
-                                      Icons.arrow_back_rounded,
-                                      color: Color(0xFF2C027E),
-                                    ),
-                                    label: const Text(
-                                      'Back',
-                                      style: TextStyle(
-                                        color: Color(0xFF2C027E),
-                                        fontWeight: FontWeight.bold,
-                                      ),
-                                    ),
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor:
-                                          Colors.white, // button fill
-                                      foregroundColor:
-                                          AppColors
-                                              .themeBlue, // splash & hover color
-                                      elevation: 4, // slight shadow
-                                      padding: EdgeInsets.symmetric(
-                                        // comfortable touch target
-                                        horizontal: 16.w,
-                                        vertical: 12.h,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        // pill‐ish corners
-                                        borderRadius: BorderRadius.circular(12),
-                                        side: const BorderSide(
-                                          color: Color(0xFF2C027E),
-                                          width: 1,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            verticalSpace(6),
-                            // File-level header
+                       
                             _buildHeader(context, simulationState, isWide),
                             verticalSpace(6),
                             FileContentWidget(

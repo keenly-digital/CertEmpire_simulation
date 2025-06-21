@@ -25,7 +25,6 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
   @override
   void initState() {
     super.initState();
-    taskDependencies();
     fetchTasks();
   }
 
@@ -148,6 +147,7 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
                     ),
                   ),
                 ],
+
               );
         },
       ),

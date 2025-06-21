@@ -26,7 +26,6 @@ class _ReportMainViewState extends State<ReportMainView> {
   @override
   void initState() {
     super.initState();
-    reportHistoryDependency();
     fetchReports();
   }
 
