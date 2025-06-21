@@ -19,16 +19,16 @@ Widget header() {
         const Spacer(),
         ElevatedButton.icon(
           onPressed: () {},
-          icon: const Icon(Icons.arrow_back_rounded, color: Color(0xFF2C027E)),
+          icon: const Icon(Icons.arrow_back_rounded, color: AppColors.black),
           label: const Text(
-            'Back',
+            'Back to main website',
             style: TextStyle(
-              color: Color(0xFF2C027E),
-              fontWeight: FontWeight.bold,
+              color: AppColors.black,
+              // fontWeight: FontWeight.bold,
             ),
           ),
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.white,
+            backgroundColor: Color(0xFFF7E5FF),
             // button fill
             foregroundColor: AppColors.themeBlue,
             // splash & hover color
@@ -41,8 +41,8 @@ Widget header() {
             ),
             shape: RoundedRectangleBorder(
               // pill‐ish corners
-              borderRadius: BorderRadius.circular(12),
-              side: const BorderSide(color: Color(0xFF2C027E), width: 1),
+              borderRadius: BorderRadius.circular(4),
+              side: const BorderSide(color: Color(0xFFF7E5FF), width: 1),
             ),
           ),
         ),
