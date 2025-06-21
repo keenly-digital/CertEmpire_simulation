@@ -3,10 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class Footer extends StatelessWidget {
-  /// Pass your page's ScrollController here to enable the “scroll to top” button
   final ScrollController? scrollController;
 
-  const Footer({Key? key, this.scrollController}) : super(key: key);
+  const Footer({super.key, this.scrollController});
 
   @override
   Widget build(BuildContext context) {
@@ -192,11 +191,13 @@ class Footer extends StatelessWidget {
                               children: const [
                                 Icon(Icons.mail, color: Colors.white, size: 16),
                                 SizedBox(width: 8),
-                                Text(
-                                  "sales@certempire.com",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
+                                Expanded(
+                                  child: Text(
+                                    "sales@certempire.com",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.bold,
+                                    ),
                                   ),
                                 ),
                               ],

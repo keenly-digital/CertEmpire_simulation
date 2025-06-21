@@ -114,13 +114,15 @@ class _DownloadMainViewState extends State<DownloadMainView> {
                               decoration: BoxDecoration(
                                 border: Border.all(color: Colors.grey.shade300),
                               ),
-                              child: Row(
-                                mainAxisAlignment:
-                                    MainAxisAlignment.spaceAround,
+                              child: Wrap(
+                                spacing: 14,
+                                runSpacing: 4,
+                                alignment: WrapAlignment.start,
                                 children: [
                                   InkWell(
                                     child: Container(
                                       decoration: BoxDecoration(
+                                        borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
                                           color: AppColors.purple,
                                         ),
@@ -140,6 +142,8 @@ class _DownloadMainViewState extends State<DownloadMainView> {
                                   InkWell(
                                     child: Container(
                                       decoration: BoxDecoration(
+
+                                        borderRadius: BorderRadius.circular(5),
                                         border: Border.all(
                                           color: AppColors.purple,
                                         ),
