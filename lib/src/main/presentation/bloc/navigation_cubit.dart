@@ -51,7 +51,7 @@ class NavigationCubitState extends Equatable {
 
   const NavigationCubitState({
     this.viewType = MobileMoreOptionViewType.primary,
-    this.index = 0,
+    this.index = 2,
   });
 
   NavigationCubitState copyWith({
