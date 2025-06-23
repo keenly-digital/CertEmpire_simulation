@@ -29,22 +29,21 @@ class NavItemView extends StatelessWidget {
                   ? AppColors.selectedBackground
                   : Colors.transparent, // Rounded for selected state
         ),
-        child: Row(
-          children: [
-            Expanded(
-              child: Text(
-                label,
-                style:
-                    isSelected
-                        ? context.textTheme.labelMedium!.copyWith(
-                          color: AppColors.black,
-                        )
-                        : context.textTheme.labelMedium!.copyWith(
-                          color: AppColors.purple,
-                        ),
-              ),
+        child: Expanded(
+          child: Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text(
+              label,
+              style:
+                  isSelected
+                      ? context.textTheme.labelMedium!.copyWith(
+                        color: AppColors.black,
+                      )
+                      : context.textTheme.labelMedium!.copyWith(
+                        color: AppColors.purple,
+                      ),
             ),
-          ],
+          ),
         ),
       ),
     );

@@ -1,0 +1,137 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../main/presentation/bloc/navigation_cubit.dart';
+
+class AddressView extends StatelessWidget {
+  const AddressView({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "The following addresses will be used on the checkout page by default.",
+              style: TextStyle(fontSize: 16),
+            ),
+            const SizedBox(height: 20),
+            Wrap(
+              // crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Billing Address
+                _addressBox(
+                  title: "Billing address",
+                  actionLabel: "Edit Billing address",
+                  onActionTap: () {
+                    context.read<NavigationCubit>().selectTab(9);
+                  },
+                  content: const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        "Usman Ahmad",
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        "54000",
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        "Pakistan",
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                  color: AppColors.purple,
+                ),
+                const SizedBox(width: 16),
+
+                // Shipping Address
+                _addressBox(
+                  title: "Shipping address",
+                  actionLabel: "Add Shipping address",
+                  onActionTap: () {},
+                  content: Column(
+                    children: [
+                      const Text(
+                        "You have not set up this type of address yet.",
+                        style: TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                  color: AppColors.purple,
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _addressBox({
+    required String title,
+    required String actionLabel,
+    required VoidCallback onActionTap,
+    required Widget content,
+    required Color color,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.grey.shade300),
+      ),
+
+      width: 355,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            height: 120,
+            color: Colors.grey.shade100,
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+            child: Expanded(
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Align(
+                    alignment: Alignment.topLeft,
+                    child: Text(
+                      title,
+                      style: TextStyle(
+                        color: color,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  Align(
+                    alignment: Alignment.bottomRight,
+                    child: GestureDetector(
+                      onTap: onActionTap,
+                      child: Text(
+                        actionLabel,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          Padding(padding: const EdgeInsets.all(12), child: content),
+        ],
+      ),
+    );
+  }
+}

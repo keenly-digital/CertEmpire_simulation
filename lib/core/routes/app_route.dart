@@ -3,5 +3,6 @@ enum AppRoute {
   report,
   myRewardMainView,
   myTasks,
-  main
+  main,
+  updateBillingAddress
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../src/addresses/presentation/views/update_billing_address.dart';
 import '../../src/main/presentation/views/main_page.dart';
 import '../../src/my_reward/presentation/views/my_reward_main_view.dart';
 import '../../src/my_tasks/presentation/views/my_task_main_veiw.dart';
@@ -16,7 +17,8 @@ class AppRouter {
         path: '/main',
         name: AppRoute.main.name,
         builder: (context, state) => MainPage(),
-      ), GoRoute(
+      ),
+      GoRoute(
         path: '/Simulation',
         name: AppRoute.simulation.name,
         builder: (context, state) => ExamQuestionPage(),
@@ -30,10 +32,16 @@ class AppRouter {
         path: '/MyRewards',
         name: AppRoute.myRewardMainView.name,
         builder: (context, state) => MyRewardMainView(),
-      ),  GoRoute(
+      ),
+      GoRoute(
         path: '/MyTasks',
         name: AppRoute.myTasks.name,
         builder: (context, state) => MyTaskMainView(),
+      ),
+      GoRoute(
+        path: '/UpdateBillingAddress',
+        name: AppRoute.updateBillingAddress.name,
+        builder: (context, state) => UpdateBillingAddress(),
       ),
     ],
     errorBuilder:

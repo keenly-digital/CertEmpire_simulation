@@ -9,6 +9,9 @@ import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/shared/widgets/footer.dart';
 import '../../../../core/shared/widgets/header.dart';
 import '../../../../core/utils/breakpoints_config.dart';
+import '../../../account_details/presentation/views/update_account_view.dart';
+import '../../../addresses/presentation/views/addresses_main_view.dart';
+import '../../../addresses/presentation/views/update_billing_address.dart';
 import '../../../order/presentation/views/order_main_view.dart';
 import '../../../simulation/presentation/views/simulation_main_view.dart';
 import '../../../submittions/views/submittion_main_view.dart';
@@ -38,16 +41,16 @@ class _MainPageState extends State<MainPage> {
               height: MediaQuery.of(context).size.height,
               child: Row(
                 children: [
-                  // if (!BreakpointConfig().isMobile)
-                    Expanded(
-                      flex: 1,
-                      child: Card(
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 8),
-                          child: LeftNavigationView(),
-                        ),
+                  if (!BreakpointConfig().isMobile)
+                  Expanded(
+                    flex: 1,
+                    child: Card(
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        child: LeftNavigationView(),
                       ),
                     ),
+                  ),
                   // Main view content
                   Expanded(
                     flex: 4,
@@ -56,19 +59,25 @@ class _MainPageState extends State<MainPage> {
                       builder: (context, state) {
                         switch (state.index) {
                           case 0:
-                            return const ExamQuestionPage();
+                            return ExamQuestionPage();
                           case 1:
                             return OrderMainView();
                           case 2:
-                            return const DownloadMainView();
+                            return DownloadMainView();
                           case 3:
-                            return const MyTaskMainView();
+                            return MyTaskMainView();
                           case 4:
-                            return const ReportMainView();
+                            return ReportMainView();
                           case 5:
-                            return const MyRewardMainView();
+                            return MyRewardMainView();
+                          case 6:
+                            return AddressView();
                           case 7:
                             return SubmittionMainView();
+                          case 8:
+                            return UpdateAccount();
+                            case 9:
+                            return UpdateBillingAddress();
                           default:
                             return const Center(child: Text("Unknown Page"));
                         }
@@ -84,6 +93,14 @@ class _MainPageState extends State<MainPage> {
           ],
         ),
       ),
+    );
+  }
+
+  Widget content(Widget widget) {
+    return Padding(
+      padding: const EdgeInsets.only(top: 30),
+      child:
+      widget,
     );
   }
 }

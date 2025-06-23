@@ -36,22 +36,18 @@ class LeftNavigationView extends StatelessWidget {
             Expanded(
               child: ListView.builder(
                 itemCount: customerNavItems.length,
-                padding: const EdgeInsets.symmetric(vertical: 16),
                 itemBuilder: (context, index) {
                   final item = customerNavItems[index];
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        border: Border.all(color: AppColors.unselected),
-                      ),
-                      child: NavItemView(
-                        label: item['label'].toString(),
-                        isSelected: state.index == index,
-                        onTap: () {
-                          context.read<NavigationCubit>().selectTab(index);
-                        },
-                      ),
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey.shade300),
+                    ),
+                    child: NavItemView(
+                      label: item['label'].toString(),
+                      isSelected: state.index == index,
+                      onTap: () {
+                        context.read<NavigationCubit>().selectTab(index);
+                      },
                     ),
                   );
                 },

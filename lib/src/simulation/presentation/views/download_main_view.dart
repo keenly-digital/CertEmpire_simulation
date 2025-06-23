@@ -3,9 +3,10 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/res/app_strings.dart';
-import '../../../order/presentation/bloc/report_bloc/order_bloc.dart';
-import '../../../order/presentation/bloc/report_bloc/order_events.dart';
-import '../../../order/presentation/bloc/report_bloc/order_state.dart';
+import '../../../order/presentation/bloc/order_bloc/order_bloc.dart';
+import '../../../order/presentation/bloc/order_bloc/order_events.dart';
+import '../../../order/presentation/bloc/order_bloc/order_state.dart';
+import '../widgets/download/custom_widgets.dart';
 
 class DownloadMainView extends StatefulWidget {
   const DownloadMainView({super.key});
@@ -17,7 +18,6 @@ class DownloadMainView extends StatefulWidget {
 class _DownloadMainViewState extends State<DownloadMainView> {
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     context.read<OrderBloc>().add(
       GetOrderEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
@@ -31,143 +31,16 @@ class _DownloadMainViewState extends State<DownloadMainView> {
         padding: const EdgeInsets.all(8.0),
         child: Column(
           children: [
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                color: Color(0x99EFEFEF),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                mainAxisSize: MainAxisSize.max,
-                children: [
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "Product",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "File",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    child: Text(
-                      "  Remaining",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Expanded(
-                    flex: 2,
-                    child: Text(
-                      "  Expires",
-                      style: TextStyle(fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            const DownloadHeader(),
             BlocBuilder<OrderBloc, OrderInitialState>(
               builder: (context, state) {
                 return Expanded(
                   child: ListView.builder(
+                    itemCount: state.orders?.length ?? 0,
                     itemBuilder: (context, index) {
-                      var element = state.orders?[index];
-
-                      return Row(
-                        children: [
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(element?.order ?? ""),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(element?.date ?? ""),
-                            ),
-                          ),
-                          Expanded(
-                            child: Container(
-                              padding: EdgeInsets.all(8.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Text(element?.status ?? ""),
-                            ),
-                          ),
-                          Expanded(
-                            flex: 2,
-                            child: Container(
-                              padding: EdgeInsets.all(4.0),
-                              decoration: BoxDecoration(
-                                border: Border.all(color: Colors.grey.shade300),
-                              ),
-                              child: Wrap(
-                                spacing: 14,
-                                runSpacing: 4,
-                                alignment: WrapAlignment.start,
-                                children: [
-                                  InkWell(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                          color: AppColors.purple,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: Text(
-                                          "Download",
-                                          style: TextStyle(
-                                            color: AppColors.purple,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  InkWell(
-                                    child: Container(
-                                      decoration: BoxDecoration(
-
-                                        borderRadius: BorderRadius.circular(5),
-                                        border: Border.all(
-                                          color: AppColors.purple,
-                                        ),
-                                      ),
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(3.0),
-                                        child: Text(
-                                          "Practice Online",
-                                          style: TextStyle(
-                                            color: AppColors.purple,
-                                            fontWeight: FontWeight.w600,
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      );
+                      final order = state.orders?[index];
+                      return DownloadRow(order: order);
                     },
-                    itemCount: state.orders?.length,
                   ),
                 );
               },
