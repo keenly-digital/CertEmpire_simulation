@@ -1,10 +1,14 @@
-
+import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/config/theme/app_colors.dart';
+import '../../../data/models/download_model.dart';
 
 class DownloadHeader extends StatelessWidget {
-  const DownloadHeader();
+  const DownloadHeader({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -50,7 +54,7 @@ class DownloadHeader extends StatelessWidget {
 }
 
 class DownloadRow extends StatelessWidget {
-  final dynamic order; // Replace `dynamic` with your actual model
+  final DownloadModel order; // Replace `dynamic` with your actual model
 
   const DownloadRow({super.key, required this.order});
 
@@ -58,10 +62,10 @@ class DownloadRow extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        _TableCell(flex: 2, text: order?.order ?? ''),
-        _TableCell(text: order?.date ?? ''),
-        _TableCell(text: order?.status ?? ''),
-        _TableCell(text: order?.total ?? ''),
+        _TableCell(flex: 2, text: order.productName.toString() ?? ''),
+        _TableCell(text: order.file?.name ?? ''),
+        _TableCell(text: order.downloadsRemaining ?? ''),
+        _TableCell(text: convertDate(order.accessExpires ?? '')),
         Expanded(
           flex: 2,
           child: Container(
@@ -73,15 +77,38 @@ class DownloadRow extends StatelessWidget {
               spacing: 14,
               runSpacing: 4,
               alignment: WrapAlignment.start,
-              children: const [
-                _DownloadButton(label: "Download"),
-                _DownloadButton(label: "Practice Online"),
+              children: [
+                _DownloadButton(
+                  label: "Download",
+                  onTap: () async {
+                    await launchUrl(
+                      Uri.parse(
+                        "https://certempirbackend-production.up.railway.app/uploads/QuizFiles/MB-330_Dumps_Export.pdf",
+                      ),
+                    );
+                  },
+                ),
+
+                _DownloadButton(label: "Practice Online", onTap: () {
+                  
+                  
+                  context.read<NavigationCubit>().selectTab(2,subTitle: 1);
+                }),
               ],
             ),
           ),
         ),
       ],
     );
+  }
+
+  String convertDate(String isoTimestamp) {
+    try {
+      final dateTime = DateTime.parse(isoTimestamp);
+      return DateFormat('dd/MM/yyyy').format(dateTime);
+    } catch (_) {
+      return '';
+    }
   }
 }
 
@@ -108,15 +135,14 @@ class _TableCell extends StatelessWidget {
 
 class _DownloadButton extends StatelessWidget {
   final String label;
+  void Function()? onTap;
 
-  const _DownloadButton({required this.label});
+  _DownloadButton({required this.label, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return InkWell(
-      onTap: () {
-        // Implement onTap handler
-      },
+      onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(5),

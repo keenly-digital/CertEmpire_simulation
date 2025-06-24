@@ -1,9 +1,9 @@
 import 'package:equatable/equatable.dart';
 
-import '../../../data/models/order_data_model.dart';
+import '../../models/order_model.dart';
 
 class OrderInitialState extends Equatable {
-  final List<OrderData>? orders;
+  final List<OrdersDetails>? orders;
   final bool? loading;
   final int? itemLength;
 
@@ -13,11 +13,9 @@ class OrderInitialState extends Equatable {
   const OrderInitialState({this.itemLength = 1, this.loading, this.orders});
 
   OrderInitialState copyWith({
-    List<OrderData>? orders,
+    List<OrdersDetails>? orders,
     bool? loading,
-    String? errorMessage,
     int? itemLength,
-    bool? withDrawLoading,
   }) {
     return OrderInitialState(
       itemLength: itemLength ?? this.itemLength,

@@ -3,7 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../../models/user_model.dart';
 
 class UserInitialState extends Equatable {
-  final UserData? userData;
+  final UserInfoData? userData;
   final bool? loading;
   final int? itemLength;
 
@@ -13,7 +13,7 @@ class UserInitialState extends Equatable {
   const UserInitialState({this.itemLength = 1, this.loading, this.userData});
 
   UserInitialState copyWith({
-    UserData? userData,
+    UserInfoData? userData,
     bool? loading,
     String? errorMessage,
   }) {

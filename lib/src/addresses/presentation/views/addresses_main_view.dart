@@ -1,7 +1,6 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../main/presentation/bloc/navigation_cubit.dart';
 
@@ -22,14 +21,13 @@ class AddressView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
             Wrap(
-              // crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 // Billing Address
                 _addressBox(
                   title: "Billing address",
                   actionLabel: "Edit Billing address",
                   onActionTap: () {
-                    context.read<NavigationCubit>().selectTab(9);
+                    context.read<NavigationCubit>().selectTab(7, subTitle: 1);
                   },
                   content: const Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -96,37 +94,35 @@ class AddressView extends StatelessWidget {
             height: 120,
             color: Colors.grey.shade100,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Expanded(
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Align(
-                    alignment: Alignment.topLeft,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Align(
+                  alignment: Alignment.topLeft,
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: color,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                Align(
+                  alignment: Alignment.bottomRight,
+                  child: GestureDetector(
+                    onTap: onActionTap,
                     child: Text(
-                      title,
+                      actionLabel,
                       style: TextStyle(
                         color: color,
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 14,
+                        decoration: TextDecoration.underline,
                       ),
                     ),
                   ),
-                  Align(
-                    alignment: Alignment.bottomRight,
-                    child: GestureDetector(
-                      onTap: onActionTap,
-                      child: Text(
-                        actionLabel,
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 14,
-                          decoration: TextDecoration.underline,
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
           Padding(padding: const EdgeInsets.all(12), child: content),

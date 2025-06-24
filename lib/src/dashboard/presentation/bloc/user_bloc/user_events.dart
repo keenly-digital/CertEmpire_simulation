@@ -1,7 +1,7 @@
 abstract class UserInitEvent {}
 
 class GetUserEvent extends UserInitEvent {
-  String userId;
+  int userId;
 
   GetUserEvent({required this.userId});
 }

@@ -1,4 +1,4 @@
-import 'dart:html' as html;
+// import 'dart:html' as html;
 
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
@@ -37,28 +37,28 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   }
 
   /// Sends iframe height update to parent (only if delta ≥ threshold or forced)
-  void _sendHeight({bool scrollToTop = false}) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
-      if (box == null) return;
-      final cssHeight = box.size.height * html.window.devicePixelRatio;
-      if (!scrollToTop &&
-          (cssHeight - _lastSentHeight).abs() < _heightThreshold)
-        return;
-      _lastSentHeight = cssHeight;
-      html.window.parent?.postMessage({
-        'iframeHeight': cssHeight.toInt(),
-        if (scrollToTop) 'scrollToTop': true,
-      }, 'https://staging2.certempire.com/');
-    });
-  }
+  // void _sendHeight({bool scrollToTop = false}) {
+  //   WidgetsBinding.instance.addPostFrameCallback((_) {
+  //     final box = _contentKey.currentContext?.findRenderObject() as RenderBox?;
+  //     if (box == null) return;
+  //     final cssHeight = box.size.height * html.window.devicePixelRatio;
+  //     if (!scrollToTop &&
+  //         (cssHeight - _lastSentHeight).abs() < _heightThreshold)
+  //       return;
+  //     _lastSentHeight = cssHeight;
+  //     html.window.parent?.postMessage({
+  //       'iframeHeight': cssHeight.toInt(),
+  //       if (scrollToTop) 'scrollToTop': true,
+  //     }, 'https://staging2.certempire.com/');
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {
     return BlocListener<SimulationBloc, SimulationInitState>(
       listener: (context, state) {
         if (state is SimulationState && !state.loading) {
-          _sendHeight(scrollToTop: true);
+          // _sendHeight(scrollToTop: true);
         }
       },
       child: Scaffold(
@@ -88,7 +88,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                       if (_lastSentHeight == 0) {
                         Future.delayed(
                           const Duration(milliseconds: 200),
-                          _sendHeight,
+                          // _sendHeight,
                         );
                       }
                       return SingleChildScrollView(
@@ -106,7 +106,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                               searchQuery: query,
                               onContentChanged:
                                   ({bool scrollToTop = false}) =>
-                                      _sendHeight(scrollToTop: scrollToTop),
+                                  {},
                             ),
                             const SizedBox(height: 16),
                             _buildPagination(currentCount, totalCount, canNext),

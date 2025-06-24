@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/res/app_strings.dart';
-import '../../../order/presentation/bloc/order_bloc/order_bloc.dart';
-import '../../../order/presentation/bloc/order_bloc/order_events.dart';
-import '../../../order/presentation/bloc/order_bloc/order_state.dart';
+import '../../data/models/download_model.dart';
+import '../bloc/download_page_bloc/download_page_bloc.dart';
 import '../widgets/download/custom_widgets.dart';
 
 class DownloadMainView extends StatefulWidget {
@@ -19,8 +17,8 @@ class _DownloadMainViewState extends State<DownloadMainView> {
   @override
   void initState() {
     super.initState();
-    context.read<OrderBloc>().add(
-      GetOrderEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
+    context.read<DownloadPageBloc>().add(
+      GetDownloadsEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
     );
   }
 
@@ -32,14 +30,14 @@ class _DownloadMainViewState extends State<DownloadMainView> {
         child: Column(
           children: [
             const DownloadHeader(),
-            BlocBuilder<OrderBloc, OrderInitialState>(
+            BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
               builder: (context, state) {
                 return Expanded(
                   child: ListView.builder(
                     itemCount: state.orders?.length ?? 0,
                     itemBuilder: (context, index) {
                       final order = state.orders?[index];
-                      return DownloadRow(order: order);
+                      return DownloadRow(order: order?? DownloadModel());
                     },
                   ),
                 );

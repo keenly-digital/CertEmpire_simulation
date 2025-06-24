@@ -1,4 +1,3 @@
-import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -17,10 +16,9 @@ class LeftNavigationView extends StatelessWidget {
       {'label': "My Tasks"},
       {'label': "Report History"},
       {'label': "My Reward"},
-      {'label': "Addresses"},
       {'label': "My Submissions"},
+      {'label': "Addresses"},
       {'label': "Account Details"},
-      {'label': "Payment Methods"},
       {'label': "Logout"},
     ];
 
@@ -33,25 +31,27 @@ class LeftNavigationView extends StatelessWidget {
               "${customerNavItems[state.index]['label']}",
               style: Theme.of(context).textTheme.headlineSmall,
             ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: customerNavItems.length,
-                itemBuilder: (context, index) {
-                  final item = customerNavItems[index];
-                  return Container(
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey.shade300),
-                    ),
-                    child: NavItemView(
-                      label: item['label'].toString(),
-                      isSelected: state.index == index,
-                      onTap: () {
-                        context.read<NavigationCubit>().selectTab(index);
-                      },
-                    ),
-                  );
-                },
-              ),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: customerNavItems.length,
+              itemBuilder: (context, index) {
+                final item = customerNavItems[index];
+                return Container(
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey.shade300),
+                  ),
+                  child: NavItemView(
+                    label: item['label'].toString(),
+                    isSelected: state.index == index,
+                    onTap: () {
+                      context.read<NavigationCubit>().selectTab(
+                        index,
+                        subTitle: 0,
+                      );
+                    },
+                  ),
+                );
+              },
             ),
           ],
         );

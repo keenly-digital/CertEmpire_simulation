@@ -1,17 +1,15 @@
 import 'dart:async';
 
 import 'package:bloc/bloc.dart';
-import 'package:certempiree/core/shared/widgets/snakbar.dart';
+import 'package:dio/dio.dart';
 
-import '../../../../../core/di/dependency_injection.dart';
-import '../../../data/models/order_data_model.dart';
-import '../../../domain/repos/order_repo.dart';
+import '../../../../../core/res/app_strings.dart';
+import '../../../../../core/utils/log_util.dart';
+import '../../models/order_model.dart';
 import 'order_events.dart';
 import 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderInitEvent, OrderInitialState> {
-  final OrderRepo _orderRepo = getIt<OrderRepo>();
-
   OrderBloc() : super(OrderInitialState()) {
     on<GetOrderEvent>(_getRewards);
   }
@@ -20,65 +18,28 @@ class OrderBloc extends Bloc<OrderInitEvent, OrderInitialState> {
     GetOrderEvent event,
     Emitter<OrderInitialState> emit,
   ) async {
-    List<OrderData> orders = [
-      OrderData(
-        order: "Order #1",
-        date: "2023-10-01",
-        status: "Pending",
-        total: "\$100.00",
-        actions: "View",
-      ),
-      OrderData(
-        order: "Order #2",
-        date: "2023-10-02",
-        status: "Completed",
-        total: "\$200.00",
-        actions: "View",
-      ),
-      OrderData(
-        order: "Order #1",
-        date: "2023-10-01",
-        status: "Pending",
-        total: "\$100.00",
-        actions: "View",
-      ),
-      OrderData(
-        order: "Order #2",
-        date: "2023-10-02",
-        status: "Completed",
-        total: "\$200.00",
-        actions: "View",
-      ),
-      OrderData(
-        order: "Order #1",
-        date: "2023-10-01",
-        status: "Pending",
-        total: "\$100.00",
-        actions: "View",
-      ),
-      OrderData(
-        order: "Order #2",
-        date: "2023-10-02",
-        status: "Completed",
-        total: "\$200.00",
-        actions: "View",
-      ),
-    ];
+    emit(state.copyWith(loading: true,));
+    final dio = Dio();
 
-    emit(state.copyWith(loading: true, withDrawLoading: false,orders: orders));
-    // final res = await _orderRepo.getUserReward(
-    //   event.userId,
-    //   event.pageSize,
-    //   event.pageNumber,
-    // );
-    // res.when(
-    //   onSuccess: (data) {
-    //     emit(state.copyWith(loading: false, orders: orders, itemLength: 10));
-    //   },
-    //   onFailure: (message) {
-    //     Snackbar.show(message);
-    //     emit(state.copyWith(loading: false, errorMessage: message));
-    //   },
-    // );
+    final url =
+        '${AppStrings.baseUrl}/wp-json/cwc/v2/orders?customer=${AppStrings.id}';
+    final consumerSecret = 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
+    try {
+      final response = await dio.get(
+        url,
+        queryParameters: {'consumer_secret': consumerSecret},
+      );
+      if (response.statusCode == 200) {
+        var data = OrderDataModel.fromJson(response.data);
+
+        emit(state.copyWith(orders: data.data, loading: false));
+        LogUtil.debug("ewqoiueiwqueoiuwq ${data.toJson()}");
+      } else {
+        print('Failed with status: ${response.statusCode}');
+        emit(state.copyWith(loading: false, orders: null));
+      }
+    } catch (e) {
+      print('Request error: $e');
+    }
   }
 }

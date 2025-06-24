@@ -26,7 +26,8 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
       );
       if (response.statusCode == 200) {
         var data = UserData.fromJson(response.data);
-        emit(state.copyWith(userData: data, loading: false));
+
+        emit(state.copyWith(userData: data.data, loading: false));
         LogUtil.debug("sadas asdklj ${data.toJson()}");
       } else {
         print('Failed with status: ${response.statusCode}');

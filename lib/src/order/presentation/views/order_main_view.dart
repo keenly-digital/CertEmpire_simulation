@@ -1,7 +1,7 @@
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import 'package:certempiree/core/res/app_strings.dart';
 import '../bloc/order_bloc/order_bloc.dart';
 import '../bloc/order_bloc/order_events.dart';
 import '../bloc/order_bloc/order_state.dart';
@@ -19,11 +19,7 @@ class _OrderMainViewState extends State<OrderMainView> {
   void initState() {
     super.initState();
     context.read<OrderBloc>().add(
-      GetOrderEvent(
-        pageNumber: 1,
-        pageSize: 10,
-        userId: AppStrings.userId,
-      ),
+      GetOrderEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
     );
   }
 
@@ -37,12 +33,11 @@ class _OrderMainViewState extends State<OrderMainView> {
             const OrderHeader(),
             BlocBuilder<OrderBloc, OrderInitialState>(
               builder: (context, state) {
-                final orders = state.orders ?? [];
                 return Expanded(
                   child: ListView.builder(
-                    itemCount: orders.length,
+                    itemCount: state.orders?.length ?? 0,
                     itemBuilder: (context, index) {
-                      return OrderRow(order: orders[index]);
+                      return OrderRow(order: state.orders![index]);
                     },
                   ),
                 );

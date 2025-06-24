@@ -1,11 +1,13 @@
 import 'dart:convert';
 
+import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_bloc.dart';
 import 'package:certempiree/src/report_history/presentation/bloc/report_bloc/get_all_report_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/report_ans_cubit.dart';
 import 'package:certempiree/src/simulation/presentation/cubit/search_cubit/search_cubit.dart';
@@ -43,14 +45,14 @@ class _MyAppState extends State<MyApp> {
 
   void _handleIncomingLink() {
     final uri = Uri.base;
-    final encodedData = uri.queryParameters['data'];
+    final encodedData = uri.queryParameters['auth_token'];
     if (encodedData != null) {
       try {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
         AppStrings.id = data['id'] ?? '10860';
-        // AppStrings.fileId = data['fileId'];
-        // AppStrings.userId = data['userId'];
+        AppStrings.userId = data['simulation_user_id'];
+        AppStrings.authToken = encodedData;
       } catch (e) {
         debugPrint("Error decoding data: $e");
       }
@@ -79,6 +81,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => NavigationCubit()),
             BlocProvider(create: (context) => OrderBloc()),
             BlocProvider(create: (context) => UserBloc()),
+            BlocProvider(create: (context) => DownloadPageBloc()),
           ],
           child: MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,

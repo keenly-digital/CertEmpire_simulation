@@ -3,7 +3,7 @@ class UserData {
   bool? success;
   String? message;
   String? error;
-  Data? data;
+  UserInfoData? data;
 
   UserData({
     this.success,
@@ -16,7 +16,7 @@ class UserData {
     success: json["Success"],
     message: json["Message"],
     error: json["Error"],
-    data: json["Data"] == null ? null : Data.fromJson(json["Data"]),
+    data: json["Data"] == null ? null : UserInfoData.fromJson(json["Data"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,7 +27,7 @@ class UserData {
   };
 }
 
-class Data {
+class UserInfoData {
   int? id;
   DateTime? dateCreated;
   DateTime? dateCreatedGmt;
@@ -42,10 +42,10 @@ class Data {
   Ing? shipping;
   bool? isPayingCustomer;
   String? avatarUrl;
-  Currency? defaultCurrency;
-  Currency? selectedCurrency;
+  List<SelectedCurrency>? currencyOptions;
+  SelectedCurrency? selectedCurrency;
 
-  Data({
+  UserInfoData({
     this.id,
     this.dateCreated,
     this.dateCreatedGmt,
@@ -60,11 +60,11 @@ class Data {
     this.shipping,
     this.isPayingCustomer,
     this.avatarUrl,
-    this.defaultCurrency,
+    this.currencyOptions,
     this.selectedCurrency,
   });
 
-  factory Data.fromJson(Map<String, dynamic> json) => Data(
+  factory UserInfoData.fromJson(Map<String, dynamic> json) => UserInfoData(
     id: json["id"],
     dateCreated: json["date_created"] == null ? null : DateTime.parse(json["date_created"]),
     dateCreatedGmt: json["date_created_gmt"] == null ? null : DateTime.parse(json["date_created_gmt"]),
@@ -79,8 +79,8 @@ class Data {
     shipping: json["shipping"] == null ? null : Ing.fromJson(json["shipping"]),
     isPayingCustomer: json["is_paying_customer"],
     avatarUrl: json["avatar_url"],
-    defaultCurrency: json["default_currency"] == null ? null : Currency.fromJson(json["default_currency"]),
-    selectedCurrency: json["selected_currency"] == null ? null : Currency.fromJson(json["selected_currency"]),
+    currencyOptions: json["currency_options"] == null ? [] : List<SelectedCurrency>.from(json["currency_options"]!.map((x) => SelectedCurrency.fromJson(x))),
+    selectedCurrency: json["selected_currency"] == null ? null : SelectedCurrency.fromJson(json["selected_currency"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -98,7 +98,7 @@ class Data {
     "shipping": shipping?.toJson(),
     "is_paying_customer": isPayingCustomer,
     "avatar_url": avatarUrl,
-    "default_currency": defaultCurrency?.toJson(),
+    "currency_options": currencyOptions == null ? [] : List<dynamic>.from(currencyOptions!.map((x) => x.toJson())),
     "selected_currency": selectedCurrency?.toJson(),
   };
 }
@@ -159,18 +159,18 @@ class Ing {
   };
 }
 
-class Currency {
+class SelectedCurrency {
   String? code;
   String? symbol;
   String? name;
 
-  Currency({
+  SelectedCurrency({
     this.code,
     this.symbol,
     this.name,
   });
 
-  factory Currency.fromJson(Map<String, dynamic> json) => Currency(
+  factory SelectedCurrency.fromJson(Map<String, dynamic> json) => SelectedCurrency(
     code: json["code"],
     symbol: json["symbol"],
     name: json["name"],

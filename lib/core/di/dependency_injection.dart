@@ -3,7 +3,6 @@ import 'package:get_it/get_it.dart';
 import '../../src/main/main_dependency.dart';
 import '../../src/my_reward/reward_dependency_injection.dart';
 import '../../src/my_tasks/my_task_depenency.dart';
-import '../../src/order/order_dependency_injection.dart';
 import '../../src/report_history/report_history_dependencies.dart';
 import '../../src/simulation/simulation_dependency.dart';
 import '../config/api/api_manager.dart';
@@ -25,7 +24,6 @@ Future<void> setupDependencies() async {
   taskDependencies();
   reportHistoryDependency();
   setupSimulationDependencies();
-  orderDependency();
 
   await getIt.allReady();
 }
