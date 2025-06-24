@@ -12,8 +12,8 @@ import '../../../../core/utils/breakpoints_config.dart';
 import '../../../account_details/presentation/views/update_account_view.dart';
 import '../../../addresses/presentation/views/addresses_main_view.dart';
 import '../../../addresses/presentation/views/update_billing_address.dart';
+import '../../../dashboard/views/dashboard_main_view.dart';
 import '../../../order/presentation/views/order_main_view.dart';
-import '../../../simulation/presentation/views/simulation_main_view.dart';
 import '../../../submittions/views/submittion_main_view.dart';
 import '../bloc/navigation_cubit.dart';
 import '../widgets/left_navigation_view.dart';
@@ -33,24 +33,21 @@ class _MainPageState extends State<MainPage> {
       body: SingleChildScrollView(
         child: Column(
           children: [
-            // Place header at the top
             header(),
-
-            // Main content with optional sidebar
             SizedBox(
               height: MediaQuery.of(context).size.height,
               child: Row(
                 children: [
                   if (!BreakpointConfig().isMobile)
-                  Expanded(
-                    flex: 1,
-                    child: Card(
-                      child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
-                        child: LeftNavigationView(),
+                    Expanded(
+                      flex: 1,
+                      child: Card(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 8),
+                          child: LeftNavigationView(),
+                        ),
                       ),
                     ),
-                  ),
                   // Main view content
                   Expanded(
                     flex: 4,
@@ -59,7 +56,7 @@ class _MainPageState extends State<MainPage> {
                       builder: (context, state) {
                         switch (state.index) {
                           case 0:
-                            return ExamQuestionPage();
+                            return UserMainView();
                           case 1:
                             return OrderMainView();
                           case 2:
@@ -76,7 +73,7 @@ class _MainPageState extends State<MainPage> {
                             return SubmittionMainView();
                           case 8:
                             return UpdateAccount();
-                            case 9:
+                          case 9:
                             return UpdateBillingAddress();
                           default:
                             return const Center(child: Text("Unknown Page"));
@@ -87,8 +84,6 @@ class _MainPageState extends State<MainPage> {
                 ],
               ),
             ),
-
-            // Footer shown below the main content
             const Footer(),
           ],
         ),
@@ -97,10 +92,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget content(Widget widget) {
-    return Padding(
-      padding: const EdgeInsets.only(top: 30),
-      child:
-      widget,
-    );
+    return Padding(padding: const EdgeInsets.only(top: 30), child: widget);
   }
 }

@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
@@ -47,8 +48,9 @@ class _MyAppState extends State<MyApp> {
       try {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
-        AppStrings.fileId = data['fileId'];
-        AppStrings.userId = data['userId'];
+        AppStrings.id = data['id'] ?? '10860';
+        // AppStrings.fileId = data['fileId'];
+        // AppStrings.userId = data['userId'];
       } catch (e) {
         debugPrint("Error decoding data: $e");
       }
@@ -76,6 +78,7 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => GetAllTaskBloc()),
             BlocProvider(create: (context) => NavigationCubit()),
             BlocProvider(create: (context) => OrderBloc()),
+            BlocProvider(create: (context) => UserBloc()),
           ],
           child: MaterialApp.router(
             scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,

@@ -21,8 +21,11 @@ class AppStrings {
       'Thank you for your report. This helps us and our community.';
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = 'Report Answer as Incorrect';
-  // static String fileId = '';
-  // static String userId = '';
+
   static String fileId = '5649031d-07af-4595-a17f-be37c71d0669';
   static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
+
+  static String baseUrl = "https://staging2.certempire.com";
+
+  static String id = '10860';
 }
