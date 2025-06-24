@@ -1,3 +1,4 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -28,7 +29,7 @@ class OrderHeader extends StatelessWidget {
 }
 
 class OrderRow extends StatelessWidget {
-  final OrdersDetails order; // Replace `dynamic` with your order model class
+  final OrdersDetails order;
 
   const OrderRow({super.key, required this.order});
 
@@ -48,7 +49,7 @@ class OrderRow extends StatelessWidget {
   String convertDate(String isoTimestamp) {
     try {
       final dateTime = DateTime.parse(isoTimestamp);
-      return DateFormat('dd/MM/yyyy').format(dateTime);
+      return DateFormat('MMMM d, yyyy').format(dateTime);
     } catch (_) {
       return '';
     }
@@ -78,9 +79,25 @@ class TableCell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    /// zohaib
     return text == "View"
-        ? Container(color: Colors.purple, width: 20, height: 20)
+        ? Container(
+          // Button styling
+          decoration: BoxDecoration(
+            color: AppColors.themeBlue, // Use your exact blue/purple
+            borderRadius: BorderRadius.circular(1),
+          ),
+          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 18),
+          child: const Text(
+            "View",
+            style: TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.bold,
+              fontSize: 14,
+              letterSpacing: 0.2,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        )
         : Expanded(
           flex: flex,
           child: InkWell(

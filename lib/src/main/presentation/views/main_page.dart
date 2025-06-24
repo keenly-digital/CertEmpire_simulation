@@ -29,7 +29,6 @@ class _MainPageState extends State<MainPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.lightBackground,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -43,7 +42,7 @@ class _MainPageState extends State<MainPage> {
                     flex: 1,
                     child: Card(
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 8),
+                        padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: LeftNavigationView(),
                       ),
                     ),
@@ -78,7 +77,6 @@ class _MainPageState extends State<MainPage> {
                           case 6:
                             return content(SubmittionMainView());
                           case 7:
-
                             if (state.subTitleIndex == 0) {
                               return content(AddressView());
                             } else if (state.subTitleIndex == 1) {
@@ -107,6 +105,6 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget content(Widget widget) {
-    return Padding(padding: const EdgeInsets.only(top: 30.0), child: widget);
+    return Padding(padding: const EdgeInsets.only(top: 80.0), child: widget);
   }
 }

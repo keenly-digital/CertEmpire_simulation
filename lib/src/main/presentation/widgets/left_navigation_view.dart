@@ -1,8 +1,8 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../bloc/navigation_cubit.dart';
-import 'nav_item_view.dart';
 
 class LeftNavigationView extends StatelessWidget {
   const LeftNavigationView({super.key});
@@ -14,12 +14,12 @@ class LeftNavigationView extends StatelessWidget {
       {'label': "Orders"},
       {'label': "Downloads"},
       {'label': "My Tasks"},
-      {'label': "Report History"},
-      {'label': "My Reward"},
+      {'label': "Reports History"},
+      {'label': "My Rewards"},
       {'label': "My Submissions"},
       {'label': "Addresses"},
-      {'label': "Account Details"},
-      {'label': "Logout"},
+      {'label': "Account details"},
+      {'label': "Log out"},
     ];
 
     return BlocBuilder<NavigationCubit, NavigationCubitState>(
@@ -27,31 +27,64 @@ class LeftNavigationView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
+            const SizedBox(height: 20),
             Text(
               "${customerNavItems[state.index]['label']}",
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(
+                context,
+              ).textTheme.headlineSmall?.copyWith(color: AppColors.themeBlue),
             ),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: customerNavItems.length,
-              itemBuilder: (context, index) {
-                final item = customerNavItems[index];
-                return Container(
-                  decoration: BoxDecoration(
-                    border: Border.all(color: Colors.grey.shade300),
-                  ),
-                  child: NavItemView(
-                    label: item['label'].toString(),
-                    isSelected: state.index == index,
-                    onTap: () {
-                      context.read<NavigationCubit>().selectTab(
-                        index,
-                        subTitle: 0,
-                      );
-                    },
-                  ),
-                );
-              },
+            const SizedBox(height: 20),
+            Container(
+              width: 250, // adjust as needed
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  ...List.generate(customerNavItems.length, (index) {
+                    final isSelected = state.index == index;
+                    return Material(
+                      color: isSelected ? Colors.grey.shade200 : Colors.white,
+                      child: InkWell(
+                        onTap: () {
+                          context.read<NavigationCubit>().selectTab(
+                            index,
+                            subTitle: 0,
+                          );
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 14,
+                            horizontal: 18,
+                          ),
+                          decoration: BoxDecoration(
+                            border: Border(
+                              bottom: BorderSide(color: Colors.grey.shade300),
+                            ),
+                          ),
+                          child: Text(
+                            customerNavItems[index]['label']!,
+                            style: TextStyle(
+                              color:
+                                  isSelected
+                                      ? Colors.black
+                                      : AppColors.themeBlue,
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.normal
+                                      : FontWeight.normal,
+                              fontSize: 16,
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  }),
+                ],
+              ),
             ),
           ],
         );

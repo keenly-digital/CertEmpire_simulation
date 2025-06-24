@@ -6,6 +6,9 @@ class SubmittionMainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Align(alignment:Alignment.topLeft,child: Image.asset(Assets.submittion));
+    return Align(
+      alignment: Alignment.center,
+      child: Image.asset(Assets.submittion),
+    );
   }
 }

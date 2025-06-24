@@ -1,3 +1,4 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
@@ -35,7 +36,7 @@ class _UserMainViewState extends State<UserMainView> {
                 children: [
                   TextSpan(text: 'Hello '),
                   TextSpan(
-                    text: 'Ahmed R. ',
+                    text: AppStrings.name,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(
@@ -43,13 +44,13 @@ class _UserMainViewState extends State<UserMainView> {
                     style: TextStyle(color: Colors.black54),
                   ),
                   TextSpan(
-                    text: 'Ahmed R.',
+                    text: AppStrings.name,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: '? '),
                   TextSpan(
                     text: 'Log out',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: AppColors.themeBlue),
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
@@ -70,7 +71,7 @@ class _UserMainViewState extends State<UserMainView> {
                   ),
                   TextSpan(
                     text: 'recent orders',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: AppColors.themeBlue),
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
@@ -80,7 +81,7 @@ class _UserMainViewState extends State<UserMainView> {
                   TextSpan(text: ', manage your '),
                   TextSpan(
                     text: 'shipping and billing addresses',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: AppColors.themeBlue),
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
@@ -93,7 +94,7 @@ class _UserMainViewState extends State<UserMainView> {
                   TextSpan(text: ', and '),
                   TextSpan(
                     text: 'edit your password and account details',
-                    style: TextStyle(color: Colors.blue),
+                    style: TextStyle(color: AppColors.themeBlue),
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {

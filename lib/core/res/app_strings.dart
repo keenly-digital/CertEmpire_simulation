@@ -30,4 +30,6 @@ class AppStrings {
   static String baseUrl = "https://staging2.certempire.com";
 
   static int id = 10860;
+
+  static String name = "Ahmed R";
 }

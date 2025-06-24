@@ -89,11 +89,12 @@ class DownloadRow extends StatelessWidget {
                   },
                 ),
 
-                _DownloadButton(label: "Practice Online", onTap: () {
-                  
-                  
-                  context.read<NavigationCubit>().selectTab(2,subTitle: 1);
-                }),
+                _DownloadButton(
+                  label: "Practice Online",
+                  onTap: () {
+                    context.read<NavigationCubit>().selectTab(2, subTitle: 1);
+                  },
+                ),
               ],
             ),
           ),
@@ -145,15 +146,15 @@ class _DownloadButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(5),
-          border: Border.all(color: AppColors.purple),
+          borderRadius: BorderRadius.circular(1),
+          border: Border.all(color: AppColors.themeBlue),
         ),
         child: Padding(
           padding: const EdgeInsets.all(3.0),
           child: Text(
             label,
             style: const TextStyle(
-              color: AppColors.purple,
+              color: AppColors.themeBlue,
               fontWeight: FontWeight.w600,
             ),
           ),

@@ -51,6 +51,7 @@ class _MyAppState extends State<MyApp> {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
         AppStrings.id = data['id'] ?? '10860';
+        AppStrings.name = data['name'];
         AppStrings.userId = data['simulation_user_id'];
         AppStrings.authToken = encodedData;
       } catch (e) {

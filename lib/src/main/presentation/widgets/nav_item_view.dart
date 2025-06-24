@@ -39,7 +39,7 @@ class NavItemView extends StatelessWidget {
                       color: AppColors.black,
                     )
                     : context.textTheme.labelMedium!.copyWith(
-                      color: AppColors.purple,
+                      color: AppColors.themeBlue,
                     ),
           ),
         ),
