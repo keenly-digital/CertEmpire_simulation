@@ -5,6 +5,7 @@ import '../../../../core/res/app_strings.dart';
 import '../../data/models/download_model.dart';
 import '../bloc/download_page_bloc/download_page_bloc.dart';
 import '../widgets/download/custom_widgets.dart';
+import 'download_table_view.dart';
 
 class DownloadMainView extends StatefulWidget {
   const DownloadMainView({super.key});
@@ -17,30 +18,20 @@ class _DownloadMainViewState extends State<DownloadMainView> {
   @override
   void initState() {
     super.initState();
-    context.read<DownloadPageBloc>().add(
-      GetDownloadsEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
-    );
+    context.read<DownloadPageBloc>().add(GetDownloadsEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId));
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0),
         child: Column(
           children: [
-            const DownloadHeader(),
+            // const DownloadHeader(),
             BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
               builder: (context, state) {
-                return Expanded(
-                  child: ListView.builder(
-                    itemCount: state.orders?.length ?? 0,
-                    itemBuilder: (context, index) {
-                      final order = state.orders?[index];
-                      return DownloadRow(order: order?? DownloadModel());
-                    },
-                  ),
-                );
+                return Expanded(child: DownloadTableView(download: state.orders ?? []));
               },
             ),
           ],
@@ -48,4 +39,31 @@ class _DownloadMainViewState extends State<DownloadMainView> {
       ),
     );
   }
+
+  // @override
+  // Widget build(BuildContext context) {
+  //   return Scaffold(
+  //     body: Padding(
+  //       padding: const EdgeInsets.all(8.0),
+  //       child: Column(
+  //         children: [
+  //           const DownloadHeader(),
+  //           BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
+  //             builder: (context, state) {
+  //               return Expanded(
+  //                 child: ListView.builder(
+  //                   itemCount: state.orders?.length ?? 0,
+  //                   itemBuilder: (context, index) {
+  //                     final order = state.orders?[index];
+  //                     return DownloadRow(order: order?? DownloadModel());
+  //                   },
+  //                 ),
+  //               );
+  //             },
+  //           ),
+  //         ],
+  //       ),
+  //     ),
+  //   );
+  // }
 }
