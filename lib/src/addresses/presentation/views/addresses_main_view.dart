@@ -1,4 +1,9 @@
+import 'dart:js_interop';
+
+import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
+import 'package:certempiree/core/config/theme/font_manager.dart';
+import 'package:certempiree/core/utils/spacer_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -11,7 +16,7 @@ class AddressView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(horizontal: 16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -20,53 +25,65 @@ class AddressView extends StatelessWidget {
               style: TextStyle(fontSize: 16),
             ),
             const SizedBox(height: 20),
-            Wrap(
+
+
+            Row(
+
+              crossAxisAlignment: CrossAxisAlignment.start,
+
               children: [
                 // Billing Address
-                _addressBox(
-                  title: "Billing address",
-                  actionLabel: "Edit Billing address",
-                  onActionTap: () {
-                    context.read<NavigationCubit>().selectTab(7, subTitle: 1);
-                  },
-                  content: const Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        "Usman Ahmad",
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        "54000",
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        "Pakistan",
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ],
+                Expanded(
+                  child: _addressBox(
+                    context: context,
+                    title: "Billing address",
+                    actionLabel: "Edit Billing address",
+                    onActionTap: () {
+                      context.read<NavigationCubit>().selectTab(7, subTitle: 1);
+                    },
+                    content: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          "Usman Ahmad",
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          "54000",
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          "Pakistan",
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                    color: AppColors.purple,
                   ),
-                  color: AppColors.purple,
                 ),
-                const SizedBox(width: 16),
 
+                SpacerUtil.horizontalLarge(),
                 // Shipping Address
-                _addressBox(
-                  title: "Shipping address",
-                  actionLabel: "Add Shipping address",
-                  onActionTap: () {},
-                  content: Column(
-                    children: [
-                      const Text(
-                        "You have not set up this type of address yet.",
-                        style: TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ],
+                Expanded(
+                  child: _addressBox(
+                    context: context,
+                    title: "Shipping address",
+                    actionLabel: "Add Shipping address",
+                    onActionTap: () {},
+                    content: Column(
+                      children: [
+                        const Text(
+                          "You have not set up this type of address yet.",
+                          style: TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                    color: AppColors.purple,
                   ),
-                  color: AppColors.purple,
                 ),
+
               ],
-            ),
+            )
           ],
         ),
       ),
@@ -74,6 +91,7 @@ class AddressView extends StatelessWidget {
   }
 
   Widget _addressBox({
+    required BuildContext context,
     required String title,
     required String actionLabel,
     required VoidCallback onActionTap,
@@ -92,7 +110,7 @@ class AddressView extends StatelessWidget {
         children: [
           Container(
             height: 120,
-            color: Colors.grey.shade100,
+            color: AppColors.lightGreyBg,
             padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -101,11 +119,10 @@ class AddressView extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     title,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
+                    style:context.textTheme.headlineSmall?.copyWith(
+                      color: AppColors.lightPrimary,
+                      fontWeight: FontManager.medium,
+                    ) ,
                   ),
                 ),
                 Align(

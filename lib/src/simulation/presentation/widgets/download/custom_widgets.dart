@@ -14,39 +14,15 @@ class DownloadHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: const Color(0x99EFEFEF),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
+      decoration: BoxDecoration(color: const Color(0x99EFEFEF), border: Border.all(color: Colors.grey.shade300)),
       child: const Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Expanded(
-            flex: 2,
-            child: Text(
-              "Product",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: Text("File", style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
-          Expanded(
-            child: Text(
-              "  Remaining",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            child: Text(
-              "  Expires",
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-          ),
-          Expanded(
-            flex: 2,
-            child: Text('', style: TextStyle(fontWeight: FontWeight.bold)),
-          ),
+          Expanded(flex: 2, child: Text("Product", style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text("File", style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text("  Remaining", style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(child: Text("  Expires", style: TextStyle(fontWeight: FontWeight.bold))),
+          Expanded(flex: 2, child: Text('', style: TextStyle(fontWeight: FontWeight.bold))),
         ],
       ),
     );
@@ -70,9 +46,7 @@ class DownloadRow extends StatelessWidget {
           flex: 2,
           child: Container(
             padding: const EdgeInsets.all(4.0),
-            decoration: BoxDecoration(
-              border: Border.all(color: Colors.grey.shade300),
-            ),
+            decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300)),
             child: Wrap(
               spacing: 14,
               runSpacing: 4,
@@ -82,9 +56,7 @@ class DownloadRow extends StatelessWidget {
                   label: "Download",
                   onTap: () async {
                     await launchUrl(
-                      Uri.parse(
-                        "https://certempirbackend-production.up.railway.app/uploads/QuizFiles/MB-330_Dumps_Export.pdf",
-                      ),
+                      Uri.parse("https://certempirbackend-production.up.railway.app/uploads/QuizFiles/MB-330_Dumps_Export.pdf"),
                     );
                   },
                 ),
@@ -125,9 +97,7 @@ class _TableCell extends StatelessWidget {
       flex: flex,
       child: Container(
         padding: const EdgeInsets.all(8.0),
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.grey.shade300),
-        ),
+        decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300)),
         child: Text(text),
       ),
     );
@@ -145,19 +115,10 @@ class _DownloadButton extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(1),
-          border: Border.all(color: AppColors.themeBlue),
-        ),
+        decoration: BoxDecoration(borderRadius: BorderRadius.circular(1), border: Border.all(color: AppColors.themeBlue)),
         child: Padding(
           padding: const EdgeInsets.all(3.0),
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: AppColors.themeBlue,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
+          child: Text(label, style: const TextStyle(color: AppColors.themeBlue, fontWeight: FontWeight.w600)),
         ),
       ),
     );

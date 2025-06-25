@@ -6,16 +6,13 @@ import '../../config/theme/app_colors.dart';
 Widget header() {
   return // Scrollable header
   Container(
-    height: 80.h,
+    height: 70.h,
+    margin: EdgeInsets.only(top: 20),
     color: AppColors.themeBlue,
     padding: EdgeInsets.symmetric(horizontal: 16.w),
     child: Row(
       children: [
-        Image.asset(
-          'assets/images/CertEmpire_Logo.png',
-          height: 50.h,
-          width: 150.h,
-        ),
+        Image.asset('assets/images/CertEmpire_Logo.png', height: 50.h, width: 150.h),
         const Spacer(),
         ElevatedButton.icon(
           onPressed: () {},

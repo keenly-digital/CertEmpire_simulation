@@ -1,3 +1,4 @@
+import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -25,59 +26,34 @@ class LeftNavigationView extends StatelessWidget {
     return BlocBuilder<NavigationCubit, NavigationCubitState>(
       builder: (context, state) {
         return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const SizedBox(height: 20),
             Text(
               "${customerNavItems[state.index]['label']}",
-              style: Theme.of(
-                context,
-              ).textTheme.headlineSmall?.copyWith(color: AppColors.themeBlue),
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.themeBlue),
             ),
             const SizedBox(height: 20),
             Container(
               width: 250, // adjust as needed
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-              ),
+              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300)),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   ...List.generate(customerNavItems.length, (index) {
                     final isSelected = state.index == index;
                     return Material(
-                      color: isSelected ? Colors.grey.shade200 : Colors.white,
+                      color: isSelected ? AppColors.lightGreyBg : Colors.white,
                       child: InkWell(
                         onTap: () {
-                          context.read<NavigationCubit>().selectTab(
-                            index,
-                            subTitle: 0,
-                          );
+                          context.read<NavigationCubit>().selectTab(index, subTitle: 0);
                         },
                         child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 14,
-                            horizontal: 18,
-                          ),
-                          decoration: BoxDecoration(
-                            border: Border(
-                              bottom: BorderSide(color: Colors.grey.shade300),
-                            ),
-                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
+                          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
                           child: Text(
                             customerNavItems[index]['label']!,
-                            style: TextStyle(
-                              color:
-                                  isSelected
-                                      ? Colors.black
-                                      : AppColors.themeBlue,
-                              fontWeight:
-                                  isSelected
-                                      ? FontWeight.normal
-                                      : FontWeight.normal,
-                              fontSize: 16,
-                            ),
+                            style: context.textTheme.titleSmall?.copyWith(color: isSelected ? Colors.black : AppColors.themeBlue),
                           ),
                         ),
                       ),

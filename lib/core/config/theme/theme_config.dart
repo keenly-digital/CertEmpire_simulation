@@ -55,8 +55,8 @@ class ThemeConfig {
       ),
       titleLarge: TextStyle(
         fontFamily: fontFamily,
-        fontSize: _responsiveFontSize(22),
-        fontWeight: FontManager.semiBold,
+        fontSize: _responsiveFontSize(18),
+        fontWeight: FontManager.medium,
       ),
       titleMedium: TextStyle(
         fontFamily: fontFamily,
@@ -70,7 +70,7 @@ class ThemeConfig {
       ),
       bodyLarge: TextStyle(
         fontFamily: fontFamily,
-        fontSize: _responsiveFontSize(16),
+        fontSize: _responsiveFontSize(15),
         fontWeight: FontManager.regular,
       ),
       bodyMedium: TextStyle(

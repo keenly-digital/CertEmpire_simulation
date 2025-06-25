@@ -1,7 +1,9 @@
+import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/config/theme/font_manager.dart';
 import '../models/order_model.dart';
 
 class OrderHeader extends StatelessWidget {
@@ -11,10 +13,7 @@ class OrderHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.all(8.0),
-      decoration: BoxDecoration(
-        color: const Color(0xFFEFEFEF),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
+      decoration: BoxDecoration(color: const Color(0xFFEFEFEF), border: Border.all(color: Colors.grey.shade300)),
       child: const Row(
         children: [
           HeaderCell(text: "Orders"),
@@ -66,7 +65,11 @@ class HeaderCell extends StatelessWidget {
   Widget build(BuildContext context) {
     return Expanded(
       flex: flex,
-      child: Text(text, style: const TextStyle(fontWeight: FontWeight.bold)),
+      child: Container(
+        margin: EdgeInsets.only(right: 3),
+        color: Colors.red,
+        child: Text(text, style: context.textTheme.labelMedium?.copyWith(fontWeight: FontManager.bold)),
+      ),
     );
   }
 }
@@ -80,22 +83,28 @@ class TableCell extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return text == "View"
-        ? Container(
-          // Button styling
-          decoration: BoxDecoration(
-            color: AppColors.themeBlue, // Use your exact blue/purple
-            borderRadius: BorderRadius.circular(1),
-          ),
-          padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 18),
-          child: const Text(
-            "View",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 14,
-              letterSpacing: 0.2,
+        ? Expanded(
+          child: Container(
+            constraints: BoxConstraints(
+              maxWidth: 60,
+              maxHeight: 44,
+              minHeight: 44,
+              minWidth: 60,
             ),
-            textAlign: TextAlign.center,
+
+            // Button styling
+            decoration: BoxDecoration(
+              color: AppColors.lightPrimary, // Use your exact blue/purple
+              borderRadius: BorderRadius.circular(1),
+            ),
+            padding: const EdgeInsets.symmetric(vertical: 6, horizontal: 18),
+            child: Center(
+              child: Text(
+                "View",
+                style: context.textTheme.labelMedium?.copyWith(color: AppColors.lightBackgroundpurple, fontWeight: FontManager.semiBold),
+                textAlign: TextAlign.center,
+              ),
+            ),
           ),
         )
         : Expanded(
@@ -103,9 +112,7 @@ class TableCell extends StatelessWidget {
           child: InkWell(
             child: Container(
               padding: const EdgeInsets.all(8.0),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.grey.shade300),
-              ),
+              decoration: BoxDecoration(border: Border.all(color: Colors.grey.shade300)),
               child: Text(text),
             ),
           ),

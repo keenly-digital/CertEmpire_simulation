@@ -41,6 +41,7 @@ class _MainPageState extends State<MainPage> {
                   Expanded(
                     flex: 1,
                     child: Card(
+                      elevation: 0,
                       child: Padding(
                         padding: const EdgeInsets.symmetric(horizontal: 10),
                         child: LeftNavigationView(),

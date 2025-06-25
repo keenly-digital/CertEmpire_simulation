@@ -11,7 +11,7 @@ class AppColors {
     0xFFF2F0FE,
   ); // Text/icons on primary
   static const Color themePurple = Color(0xFF874FFF);
-  static const Color themeBlue = Color(0xFF2F0186);
+  static const Color themeBlue = Color(0xFF2A0081);
   static const Color themeTransparent = Color(0xFFFBFBFB);
   static const Color lightSecondary = Color(
     0xFF47BEB9,
@@ -34,6 +34,9 @@ class AppColors {
   static const Color lightError = Color(0xFFD32F2F); // Bright red for errors
   static const Color lightOnError = Color(
     0xFFFFFFFF,
+  ); // White text/icons on errors
+  static const Color lightGreyBg = Color(
+    0xFFFAFAFA,
   ); // White text/icons on errors
 
   // Dark Theme Colors
