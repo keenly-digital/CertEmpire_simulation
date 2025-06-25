@@ -5,29 +5,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/shared/widgets/spaces.dart';
 
-class UpdateBillingAddress extends StatefulWidget {
-  const UpdateBillingAddress({super.key});
+class UpdateShippingAddress extends StatefulWidget {
+  const UpdateShippingAddress({super.key});
 
   @override
-  State<UpdateBillingAddress> createState() => _UpdateBillingAddressState();
+  State<UpdateShippingAddress> createState() => _UpdateShippingAddressState();
 }
 
-class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
+class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController firstNameController = TextEditingController(
-    text: "Usmans",
-  );
-  final TextEditingController lastNameController = TextEditingController(
-    text: "Ahmad",
-  );
-  final TextEditingController companyName = TextEditingController(
-    text: "Usman Ahmad",
-  );
-  final TextEditingController country = TextEditingController(
-    text: "wp.usman.personal@gmail.com",
-  );
-
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController companyName = TextEditingController();
+  final TextEditingController country = TextEditingController();
   final TextEditingController streetAddress = TextEditingController();
   final TextEditingController streetAddress2 = TextEditingController();
   final TextEditingController newPasswordController = TextEditingController();
@@ -44,14 +35,14 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
     LogUtil.debug("lsjdlksajdlksajuweoiwqu ${userBloc.userData?.toJson()}");
     firstNameController.text = userBloc.userData?.firstName ?? "";
     lastNameController.text = userBloc.userData?.lastName ?? "";
-    companyName.text = userBloc.userData?.billing?.company ?? "";
-    country.text = userBloc.userData?.billing?.country ?? "";
-    streetAddress.text = userBloc.userData?.billing?.address1 ?? "";
-    streetAddress2.text = userBloc.userData?.billing?.address2 ?? "";
-    townCity.text = userBloc.userData?.billing?.city ?? "";
-    state.text = userBloc.userData?.billing?.state ?? "";
-    postCode.text = userBloc.userData?.billing?.postcode ?? "";
-    phone.text = userBloc.userData?.billing?.phone ?? "";
+    companyName.text = userBloc.userData?.shipping?.company ?? "";
+    country.text = userBloc.userData?.shipping?.country ?? "";
+    streetAddress.text = userBloc.userData?.shipping?.address1 ?? "";
+    streetAddress2.text = userBloc.userData?.shipping?.address2 ?? "";
+    townCity.text = userBloc.userData?.shipping?.city ?? "";
+    state.text = userBloc.userData?.shipping?.state ?? "";
+    postCode.text = userBloc.userData?.shipping?.postcode ?? "";
+    phone.text = userBloc.userData?.shipping?.phone ?? "";
     email.text = userBloc.userData?.email ?? "";
   }
 
@@ -104,7 +95,7 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
               const Divider(),
               const SizedBox(height: 20),
 
-              _buildTitle("Street address (optional)", true),
+              _buildTitle("Street address", true),
               _buildPlainTextField(streetAddress, obscure: false),
               _buildPlainTextField(streetAddress2, obscure: false),
 
@@ -114,10 +105,6 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
               _buildPlainTextField(state, obscure: false),
               _buildTitle("Post Code / ZIP", false),
               _buildPlainTextField(postCode, obscure: false),
-              _buildTitle("Phone", false),
-              _buildPlainTextField(phone, obscure: false),
-              _buildTitle("Email address", false),
-              _buildPlainTextField(email, obscure: false),
 
               const SizedBox(height: 20),
               ElevatedButton(
@@ -126,7 +113,7 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
                     // Submit logic
                   }
                 },
-                child: const Text("Save Changes"),
+                child: const Text("Save Addresses"),
               ),
             ],
           ),

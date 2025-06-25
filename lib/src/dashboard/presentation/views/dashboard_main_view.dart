@@ -36,7 +36,7 @@ class _UserMainViewState extends State<UserMainView> {
                 children: [
                   TextSpan(text: 'Hello '),
                   TextSpan(
-                    text: AppStrings.name,
+                    text: state.userData?.firstName,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(
@@ -44,7 +44,7 @@ class _UserMainViewState extends State<UserMainView> {
                     style: TextStyle(color: Colors.black54),
                   ),
                   TextSpan(
-                    text: AppStrings.name,
+                    text: state.userData?.firstName,
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   TextSpan(text: '? '),

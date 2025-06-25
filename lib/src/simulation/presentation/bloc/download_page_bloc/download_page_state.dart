@@ -2,7 +2,7 @@ part of 'download_page_bloc.dart';
 
 @immutable
 class DownloadPageInitial extends Equatable {
-  final List<DownloadModel>? orders;
+  final List<DownloadedData>? orders;
   final bool? loading;
   final int? itemLength;
 
@@ -12,7 +12,7 @@ class DownloadPageInitial extends Equatable {
   const DownloadPageInitial({this.itemLength = 1, this.loading, this.orders});
 
   DownloadPageInitial copyWith({
-    List<DownloadModel>? orders,
+    List<DownloadedData>? orders,
     bool? loading,
     int? itemLength,
   }) {

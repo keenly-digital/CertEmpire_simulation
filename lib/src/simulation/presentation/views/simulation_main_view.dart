@@ -33,7 +33,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   @override
   void initState() {
     super.initState();
-    fetchSimulationData();
+    // fetchSimulationData();
   }
 
   /// Sends iframe height update to parent (only if delta ≥ threshold or forced)

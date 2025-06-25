@@ -1,9 +1,9 @@
-import 'dart:js_interop';
-
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
 import 'package:certempiree/core/utils/spacer_utility.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,40 +26,46 @@ class AddressView extends StatelessWidget {
             ),
             const SizedBox(height: 20),
 
-
             Row(
-
               crossAxisAlignment: CrossAxisAlignment.start,
 
               children: [
                 // Billing Address
-                Expanded(
-                  child: _addressBox(
-                    context: context,
-                    title: "Billing address",
-                    actionLabel: "Edit Billing address",
-                    onActionTap: () {
-                      context.read<NavigationCubit>().selectTab(7, subTitle: 1);
-                    },
-                    content: const Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          "Usman Ahmad",
-                          style: TextStyle(fontStyle: FontStyle.italic),
+                BlocBuilder<UserBloc, UserInitialState>(
+                  builder: (context, state) {
+                    return Expanded(
+                      child: _addressBox(
+                        context: context,
+                        title: "Billing address",
+                        actionLabel: "Edit Billing address",
+                        onActionTap: () {
+                          print("sjdlksajdlksaj");
+                          context.read<NavigationCubit>().selectTab(
+                            7,
+                            subTitle: 1,
+                          );
+                        },
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              state.userData?.firstName ?? "First Name",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.billing?.postcode ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.billing?.country ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ],
                         ),
-                        Text(
-                          "54000",
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                        Text(
-                          "Pakistan",
-                          style: TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ],
-                    ),
-                    color: AppColors.purple,
-                  ),
+                        color: AppColors.purple,
+                      ),
+                    );
+                  },
                 ),
 
                 SpacerUtil.horizontalLarge(),
@@ -69,7 +75,9 @@ class AddressView extends StatelessWidget {
                     context: context,
                     title: "Shipping address",
                     actionLabel: "Add Shipping address",
-                    onActionTap: () {},
+                    onActionTap: () {
+                      context.read<NavigationCubit>().selectTab(7, subTitle: 2);
+                    },
                     content: Column(
                       children: [
                         const Text(
@@ -81,9 +89,8 @@ class AddressView extends StatelessWidget {
                     color: AppColors.purple,
                   ),
                 ),
-
               ],
-            )
+            ),
           ],
         ),
       ),
@@ -119,10 +126,10 @@ class AddressView extends StatelessWidget {
                   alignment: Alignment.topLeft,
                   child: Text(
                     title,
-                    style:context.textTheme.headlineSmall?.copyWith(
+                    style: context.textTheme.headlineSmall?.copyWith(
                       color: AppColors.lightPrimary,
                       fontWeight: FontManager.medium,
-                    ) ,
+                    ),
                   ),
                 ),
                 Align(

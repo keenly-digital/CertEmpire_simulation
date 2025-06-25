@@ -5,13 +5,14 @@ import 'package:certempiree/src/simulation/presentation/views/download_main_view
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/shared/widgets/footer.dart';
 import '../../../../core/shared/widgets/header.dart';
 import '../../../account_details/presentation/views/update_account_view.dart';
 import '../../../addresses/presentation/views/addresses_main_view.dart';
 import '../../../addresses/presentation/views/update_billing_address.dart';
+import '../../../addresses/presentation/views/update_shipping_address.dart';
 import '../../../dashboard/presentation/views/dashboard_main_view.dart';
+import '../../../order/presentation/views/order_detail_view.dart';
 import '../../../order/presentation/views/order_main_view.dart';
 import '../../../simulation/presentation/views/simulation_main_view.dart';
 import '../../../submittions/views/submittion_main_view.dart';
@@ -58,7 +59,15 @@ class _MainPageState extends State<MainPage> {
                           case 0:
                             return content(UserMainView(), top: 70.0);
                           case 1:
-                            return content(OrderMainView(), top: 70.0);
+                            if (state.subTitleIndex == 0) {
+                              return content(OrderMainView(), top: 70.0);
+                            } else if (state.subTitleIndex == 1) {
+                              return content(OrderDetailView(), top: 70.0);
+                            } else {
+                              return const Center(
+                                child: Text("Unknown Order Page"),
+                              );
+                            }
                           case 2:
                             if (state.subTitleIndex == 0) {
                               return content(DownloadMainView(), top: 70.0);
@@ -82,6 +91,11 @@ class _MainPageState extends State<MainPage> {
                               return content(AddressView(), top: 70.0);
                             } else if (state.subTitleIndex == 1) {
                               return content(UpdateBillingAddress(), top: 70.0);
+                            } else if (state.subTitleIndex == 2) {
+                              return content(
+                                UpdateShippingAddress(),
+                                top: 70.0,
+                              );
                             } else {
                               return const Center(
                                 child: Text("Unknown Address Page"),

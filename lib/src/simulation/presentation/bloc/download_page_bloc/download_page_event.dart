@@ -13,4 +13,11 @@ class GetDownloadsEvent extends DownloadPageEvent {
     required this.pageNumber,
     required this.pageSize,
   });
+
+
+}
+class GetFileURlEvent extends DownloadPageEvent {
+  final List<DownloadedData> download;
+
+  GetFileURlEvent({required this.download});
 }

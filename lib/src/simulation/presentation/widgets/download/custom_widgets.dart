@@ -9,7 +9,7 @@ import '../../../data/models/download_model.dart';
 import '../../../../../core/config/theme/font_manager.dart';
 
 class DownloadTableView extends StatelessWidget {
-  final List<DownloadModel> downloads;
+  final List<DownloadedData> downloads;
   const DownloadTableView({super.key, required this.downloads});
 
   @override
@@ -95,7 +95,7 @@ class DownloadTableView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  order.file?.name ?? "",
+                  order.productName ?? "",
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontManager.regular,
                   ),

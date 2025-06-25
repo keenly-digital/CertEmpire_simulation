@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
@@ -51,7 +50,6 @@ class _MyAppState extends State<MyApp> {
         final decodedJson = utf8.decode(base64Url.decode(encodedData));
         final Map<String, dynamic> data = jsonDecode(decodedJson);
         AppStrings.id = data['id'] ?? '10860';
-        AppStrings.name = data['name'];
         AppStrings.userId = data['simulation_user_id'];
         AppStrings.authToken = encodedData;
       } catch (e) {

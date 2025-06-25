@@ -24,8 +24,6 @@ class NavigationCubitState extends Equatable {
 
   const NavigationCubitState({
     this.viewType = MobileMoreOptionViewType.primary,
-
-    /// zohaib
     this.index = 0,
     this.subTitleIndex = 0,
   });

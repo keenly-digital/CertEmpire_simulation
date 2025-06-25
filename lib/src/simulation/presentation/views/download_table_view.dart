@@ -4,19 +4,22 @@
 
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
-import 'package:certempiree/core/utils/spacer_utility.dart';
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/download_model.dart';
+import '../bloc/simulation_bloc/simulation_event.dart';
 
 class DownloadTableView extends StatelessWidget {
   DownloadTableView({super.key, required this.download});
 
-  final List<DownloadModel>? download;
+  final List<DownloadedData>? download;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +85,6 @@ class DownloadTableView extends StatelessWidget {
             ),
           ],
         ),
-        // Data rows
         ...download!.map(
           (item) => TableRow(
             children: [
@@ -98,7 +100,7 @@ class DownloadTableView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  item.file?.name ?? "",
+                  item.productName ?? "",
                   style: context.textTheme.bodySmall?.copyWith(
                     fontWeight: FontManager.regular,
                   ),
@@ -139,9 +141,8 @@ class DownloadTableView extends StatelessWidget {
                         ),
                         child: OutlinedButton(
                           onPressed: () {
-                            // Button action here
-                            Uri.parse(
-                              "https://certempirbackend-production.up.railway.app/uploads/QuizFiles/MB-330_Dumps_Export.pdf",
+                            context.read<DownloadPageBloc>().exportFile(
+                              item.fileId ?? "",
                             );
                           },
                           style: OutlinedButton.styleFrom(
@@ -180,7 +181,24 @@ class DownloadTableView extends StatelessWidget {
                         ),
                         child: OutlinedButton(
                           onPressed: () {
-                            // Button action here
+                            if (item.fileId?.isEmpty ??
+                                false ||
+                                    item.fileId == null ||
+                                    item.fileId == "") {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text("File ID is not available."),
+                                ),
+                              );
+                              return;
+                            }
+                            AppStrings.fileId = item.fileId ?? "";
+                            context.read<SimulationBloc>().add(
+                              FetchSimulationDataEvent(
+                                fieldId: item.fileId ?? "",
+                                pageNumber: 1,
+                              ),
+                            );
                             context.read<NavigationCubit>().selectTab(
                               2,
                               subTitle: 1,
