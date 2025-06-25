@@ -54,7 +54,7 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      style: TextStyle(fontWeight: FontWeight.w500),
+                      // style: TextStyle(fontWeight: FontWeight.w500),
                       "My Rewards module is based on the rewards that you have earned by helping our community. Please note that you can send only one withdrawal request per order. Therefore, only apply for withdrawal when you believe that you cannot earn  more credits. Please remember that withdrawal credits cannot exceed the initial order amount as the withdrawal are issued in the form of refunds.",
                     ),
                     Flexible(
