@@ -56,39 +56,39 @@ class _MainPageState extends State<MainPage> {
                       builder: (context, state) {
                         switch (state.index) {
                           case 0:
-                            return content(UserMainView());
+                            return content(UserMainView(), top: 70.0);
                           case 1:
-                            return content(OrderMainView());
+                            return content(OrderMainView(), top: 70.0);
                           case 2:
                             if (state.subTitleIndex == 0) {
-                              return content(DownloadMainView());
+                              return content(DownloadMainView(), top: 70.0);
                             } else if (state.subTitleIndex == 1) {
-                              return content(ExamQuestionPage());
+                              return content(ExamQuestionPage(), top: 20.0);
                             } else {
                               return const Center(
                                 child: Text("Unknown Address Page"),
                               );
                             }
                           case 3:
-                            return content(MyTaskMainView());
+                            return content(MyTaskMainView(), top: 20.0);
                           case 4:
-                            return content(ReportMainView());
+                            return content(ReportMainView(), top: 20.0);
                           case 5:
-                            return content(MyRewardMainView());
+                            return content(MyRewardMainView(), top: 20.0);
                           case 6:
-                            return content(SubmittionMainView());
+                            return content(SubmittionMainView(), top: 20.0);
                           case 7:
                             if (state.subTitleIndex == 0) {
-                              return content(AddressView());
+                              return content(AddressView(), top: 70.0);
                             } else if (state.subTitleIndex == 1) {
-                              return content(UpdateBillingAddress());
+                              return content(UpdateBillingAddress(), top: 70.0);
                             } else {
                               return const Center(
                                 child: Text("Unknown Address Page"),
                               );
                             }
                           case 8:
-                            return content(UpdateAccount());
+                            return content(UpdateAccount(), top: 70.0);
                           default:
                             return const Center(child: Text("Unknown Page"));
                         }
@@ -105,7 +105,7 @@ class _MainPageState extends State<MainPage> {
     );
   }
 
-  Widget content(Widget widget) {
-    return Padding(padding: const EdgeInsets.only(top: 80.0), child: widget);
+  Widget content(Widget widget, {double top = 50.0}) {
+    return Padding(padding: EdgeInsets.only(top: top), child: widget);
   }
 }
