@@ -8,12 +8,15 @@ import 'package:flutter/cupertino.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/res/app_strings.dart';
+import '../../../../order/presentation/models/order_model.dart';
 import '../../../data/models/download_model.dart';
 
 part 'download_page_event.dart';
 part 'download_page_state.dart';
 
 class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
+  OrdersDetails ordersDetails = OrdersDetails();
+
   DownloadPageBloc() : super(DownloadPageInitial()) {
     on<GetDownloadsEvent>(_getDownloadData);
     on<GetFileURlEvent>(_getFileUrls);

@@ -10,6 +10,7 @@ import 'order_events.dart';
 import 'order_state.dart';
 
 class OrderBloc extends Bloc<OrderInitEvent, OrderInitialState> {
+
   OrderBloc() : super(OrderInitialState()) {
     on<GetOrderEvent>(_getRewards);
   }
@@ -18,7 +19,7 @@ class OrderBloc extends Bloc<OrderInitEvent, OrderInitialState> {
     GetOrderEvent event,
     Emitter<OrderInitialState> emit,
   ) async {
-    emit(state.copyWith(loading: true,));
+    emit(state.copyWith(loading: true));
     final dio = Dio();
 
     final url =

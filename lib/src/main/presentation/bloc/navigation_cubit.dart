@@ -2,11 +2,15 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/shared/models/more_option_item.dart';
+import '../../../order/presentation/models/order_model.dart';
 
 class NavigationCubit extends Cubit<NavigationCubitState> {
   NavigationCubit() : super(NavigationCubitState());
 
-  void selectTab(int index, {int subTitle = 0}) {
+  void selectTab(
+    int index, {
+    int subTitle = 0,
+  }) {
     emit(
       state.copyWith(
         index: index,

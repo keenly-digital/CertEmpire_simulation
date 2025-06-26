@@ -4,6 +4,8 @@
 
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
+import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
@@ -122,7 +124,7 @@ class OrderTableView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  order.total ?? "",
+                  "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''} for ${order.lineItems?.length ?? ''}",
                   style: context.textTheme.bodySmall?.copyWith(
                     fontWeight: FontManager.regular,
                   ),
@@ -130,6 +132,7 @@ class OrderTableView extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
+                  context.read<DownloadPageBloc>().ordersDetails = order;
                   context.read<NavigationCubit>().selectTab(1, subTitle: 1);
                 },
                 child: Padding(
@@ -184,5 +187,55 @@ class OrderTableView extends StatelessWidget {
     } catch (_) {
       return '';
     }
+  }
+
+  String formatCurrency(num amount, String currencyCode) {
+    final currencyLocaleMap = {
+      'USD': 'en_US', // US Dollar
+      'EUR': 'fr_FR', // Euro (France - symbol after amount)
+      'GBP': 'en_GB', // British Pound
+      'JPY': 'ja_JP', // Japanese Yen
+      'CNY': 'zh_CN', // Chinese Yuan
+      'INR': 'hi_IN', // Indian Rupee
+      'PKR': 'ur_PK', // Pakistani Rupee
+      'AUD': 'en_AU', // Australian Dollar
+      'CAD': 'en_CA', // Canadian Dollar
+      'CHF': 'de_CH', // Swiss Franc
+      'SEK': 'sv_SE', // Swedish Krona
+      'NOK': 'nb_NO', // Norwegian Krone
+      'DKK': 'da_DK', // Danish Krone
+      'RUB': 'ru_RU', // Russian Ruble
+      'BRL': 'pt_BR', // Brazilian Real
+      'MXN': 'es_MX', // Mexican Peso
+      'ZAR': 'en_ZA', // South African Rand
+      'TRY': 'tr_TR', // Turkish Lira
+      'SAR': 'ar_SA', // Saudi Riyal
+      'AED': 'ar_AE', // UAE Dirham
+      'SGD': 'en_SG', // Singapore Dollar
+      'HKD': 'zh_HK', // Hong Kong Dollar
+      'KRW': 'ko_KR', // South Korean Won
+      'THB': 'th_TH', // Thai Baht
+      'IDR': 'id_ID', // Indonesian Rupiah
+      'MYR': 'ms_MY', // Malaysian Ringgit
+      'PLN': 'pl_PL', // Polish Zloty
+      'CZK': 'cs_CZ', // Czech Koruna
+      'HUF': 'hu_HU', // Hungarian Forint
+      'ILS': 'he_IL', // Israeli Shekel
+      'EGP': 'ar_EG', // Egyptian Pound
+      'NGN': 'en_NG', // Nigerian Naira
+      'BDT': 'bn_BD', // Bangladeshi Taka
+      'LKR': 'si_LK', // Sri Lankan Rupee
+      'VND': 'vi_VN', // Vietnamese Dong
+      // Add more as needed
+    };
+
+    final locale = currencyLocaleMap[currencyCode] ?? 'en';
+
+    final format = NumberFormat.simpleCurrency(
+      locale: locale,
+      name: currencyCode,
+    );
+
+    return format.format(amount);
   }
 }
