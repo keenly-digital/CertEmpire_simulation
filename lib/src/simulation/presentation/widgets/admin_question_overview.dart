@@ -11,6 +11,92 @@ import '../cubit/report_ans_cubit.dart';
 
 typedef ContentChanged = void Function({bool scrollToTop});
 
+/// ===== Inline Images Helper =====
+List<_DescPart> splitTextAndImages(String input) {
+  final RegExp imgExp = RegExp(
+    r'(https?:\/\/\S+\.(?:png|jpg|jpeg|gif|webp))',
+    caseSensitive: false,
+  );
+  final matches = imgExp.allMatches(input);
+  int last = 0;
+  List<_DescPart> parts = [];
+  for (final match in matches) {
+    if (match.start > last) {
+      parts.add(_DescPart.text(input.substring(last, match.start)));
+    }
+    parts.add(_DescPart.image(match.group(0)!));
+    last = match.end;
+  }
+  if (last < input.length) {
+    parts.add(_DescPart.text(input.substring(last)));
+  }
+  return parts;
+}
+
+class _DescPart {
+  final String? text;
+  final String? imageUrl;
+  _DescPart.text(this.text) : imageUrl = null;
+  _DescPart.image(this.imageUrl) : text = null;
+  bool get isImage => imageUrl != null;
+}
+
+Widget inlineTextWithImages(
+  String input, {
+  TextStyle? style,
+  double? imageMaxWidth,
+}) {
+  final parts = splitTextAndImages(input);
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children:
+        parts.map((part) {
+          if (part.isImage) {
+            return Padding(
+              padding: const EdgeInsets.symmetric(vertical: 6),
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(8),
+                child: Image.network(
+                  part.imageUrl!,
+                  fit: BoxFit.contain,
+                  width: imageMaxWidth,
+                  loadingBuilder:
+                      (context, child, progress) =>
+                          progress == null
+                              ? child
+                              : const SizedBox(
+                                height: 36,
+                                width: 36,
+                                child: CircularProgressIndicator(),
+                              ),
+                  errorBuilder:
+                      (context, error, stackTrace) => Text(
+                        '[Image failed to load]',
+                        style: TextStyle(color: Colors.red),
+                      ),
+                ),
+              ),
+            );
+          } else {
+            final txt = part.text!.trim();
+            if (txt.isEmpty) return const SizedBox.shrink();
+            return Text(
+              txt,
+              style:
+                  style ??
+                  const TextStyle(
+                    fontSize: 15,
+                    color: Colors.black87,
+                    height: 1.33,
+                  ),
+            );
+          }
+        }).toList(),
+  );
+}
+
+/// ===== Main Widget =====
+
 class AdminQuestionOverviewWidget extends StatefulWidget {
   final Question question;
   final int questionIndex;
@@ -55,13 +141,8 @@ class _AdminQuestionOverviewWidgetState
         foregroundColor: AppColors.orangeColor,
         side: BorderSide(color: AppColors.orangeColor.withOpacity(0.5)),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        textStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
       ),
     );
   }
@@ -79,13 +160,8 @@ class _AdminQuestionOverviewWidgetState
         foregroundColor: Colors.white,
         backgroundColor: AppColors.themePurple,
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-        textStyle: const TextStyle(
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
-        ),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8.0),
-        ),
+        textStyle: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8.0)),
         elevation: 2,
       ),
     );
@@ -105,12 +181,12 @@ class _AdminQuestionOverviewWidgetState
 
   @override
   Widget build(BuildContext context) {
-    final bool hasCorrectAnswer = widget.question.correctAnswerIndices.isNotEmpty;
+    final bool hasCorrectAnswer =
+        widget.question.correctAnswerIndices.isNotEmpty;
     final bool hasExplanation = widget.question.answerExplanation.isNotEmpty;
 
-    // --- FIX: The outer container has been removed ---
     return Padding(
-      padding: const EdgeInsets.fromLTRB(26.0, 0, 26.0, 26.0), // Removed top padding
+      padding: const EdgeInsets.fromLTRB(26.0, 0, 26.0, 26.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -135,7 +211,7 @@ class _AdminQuestionOverviewWidgetState
               ),
               const SizedBox(width: 18),
               Expanded(
-                child: Text(
+                child: inlineTextWithImages(
                   widget.question.questionText,
                   style: const TextStyle(
                     fontSize: 17,
@@ -144,6 +220,7 @@ class _AdminQuestionOverviewWidgetState
                     height: 1.34,
                     letterSpacing: 0.01,
                   ),
+                  imageMaxWidth: 400, // Adjust as needed for your layout
                 ),
               ),
             ],
@@ -152,13 +229,14 @@ class _AdminQuestionOverviewWidgetState
             const SizedBox(height: 12),
             Padding(
               padding: const EdgeInsets.only(left: 58),
-              child: Text(
+              child: inlineTextWithImages(
                 widget.question.questionDescription,
                 style: TextStyle(
                   color: Colors.grey[700],
                   fontSize: 15,
                   height: 1.33,
                 ),
+                imageMaxWidth: 350,
               ),
             ),
           ],
@@ -173,40 +251,45 @@ class _AdminQuestionOverviewWidgetState
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: List.generate(widget.question.options.length, (i) {
-                final isCorrect = widget.question.correctAnswerIndices.contains(i) && _showAnswer;
+                final isCorrect =
+                    widget.question.correctAnswerIndices.contains(i) &&
+                    _showAnswer;
                 final String optionLetter = String.fromCharCode(65 + i);
                 final String optionText = widget.question.options[i] ?? '';
-                final String cleanOptionText =
-                    optionText.startsWith("$optionLetter.")
-                        ? optionText.substring(2).trim()
-                        : optionText;
-                
                 return AnimatedContainer(
                   duration: const Duration(milliseconds: 140),
                   margin: const EdgeInsets.symmetric(vertical: 5.5),
                   decoration: BoxDecoration(
-                    color: isCorrect ? const Color(0xFFF4FBF6) : Colors.transparent,
+                    color:
+                        isCorrect
+                            ? const Color(0xFFF4FBF6)
+                            : Colors.transparent,
                     border: Border.all(
-                      color: isCorrect
-                          ? const Color(0xFF38b000)
-                          : Colors.grey.shade200,
+                      color:
+                          isCorrect
+                              ? const Color(0xFF38b000)
+                              : Colors.grey.shade200,
                       width: isCorrect ? 1.1 : 1.0,
                     ),
                     borderRadius: BorderRadius.circular(8),
-                    boxShadow: isCorrect
-                        ? [
-                            BoxShadow(
-                              color:
-                                  const Color(0xFF38b000).withOpacity(0.10),
-                              blurRadius: 6,
-                              offset: const Offset(0, 2),
-                            ),
-                          ]
-                        : [],
+                    boxShadow:
+                        isCorrect
+                            ? [
+                              BoxShadow(
+                                color: const Color(
+                                  0xFF38b000,
+                                ).withOpacity(0.10),
+                                blurRadius: 6,
+                                offset: const Offset(0, 2),
+                              ),
+                            ]
+                            : [],
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
-                        vertical: 11.0, horizontal: 14),
+                      vertical: 11.0,
+                      horizontal: 14,
+                    ),
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -221,13 +304,9 @@ class _AdminQuestionOverviewWidgetState
                         ),
                         const SizedBox(width: 8),
                         Expanded(
-                          child: Text(
-                            cleanOptionText,
-                            style: const TextStyle(
-                              fontSize: 15,
-                              color: Colors.black87,
-                              height: 1.35,
-                            ),
+                          child: inlineTextWithImages(
+                            optionText,
+                            imageMaxWidth: 300,
                           ),
                         ),
                       ],
@@ -249,22 +328,25 @@ class _AdminQuestionOverviewWidgetState
                   showDialog(
                     barrierColor: Colors.black.withOpacity(0.07),
                     context: context,
-                    builder: (_) => ReportQuestionDialog(
-                      fileId: AppStrings.fileId,
-                      questionId: widget.question.id,
-                      questionIndex: widget.questionIndex,
-                    ),
+                    builder:
+                        (_) => ReportQuestionDialog(
+                          fileId: AppStrings.fileId,
+                          questionId: widget.question.id,
+                          questionIndex: widget.questionIndex,
+                        ),
                   );
                 },
               ),
               const SizedBox(width: 8),
               _buildPrimaryButton(
-                text: !_showAnswer
-                    ? AppStrings.showAnswer
-                    : AppStrings.hideAnswer,
-                icon: !_showAnswer
-                    ? Icons.visibility_outlined
-                    : Icons.visibility_off_outlined,
+                text:
+                    !_showAnswer
+                        ? AppStrings.showAnswer
+                        : AppStrings.hideAnswer,
+                icon:
+                    !_showAnswer
+                        ? Icons.visibility_outlined
+                        : Icons.visibility_off_outlined,
                 onPressed: () {
                   setState(() => _showAnswer = !_showAnswer);
                   widget.onContentChanged();
@@ -292,7 +374,8 @@ class _AdminQuestionOverviewWidgetState
                     const SizedBox(width: 8),
                     Text(
                       convertIndicesToLetters(
-                          widget.question.correctAnswerIndices),
+                        widget.question.correctAnswerIndices,
+                      ),
                       style: const TextStyle(
                         fontWeight: FontWeight.bold,
                         fontSize: 15,
@@ -304,15 +387,16 @@ class _AdminQuestionOverviewWidgetState
                       text: AppStrings.reportAnswerAsIncorrect,
                       icon: Icons.warning_amber_rounded,
                       onPressed: () {
-                        context
-                            .read<ReportAnsCubit>()
-                            .reportAnswerAsIncorrect(widget.question);
+                        context.read<ReportAnsCubit>().reportAnswerAsIncorrect(
+                          widget.question,
+                        );
                         showDialog(
                           barrierColor: Colors.black.withOpacity(0.1),
                           context: context,
-                          builder: (_) => ReportIncorrectAnswerDialog(
-                            questionId: widget.question.id,
-                          ),
+                          builder:
+                              (_) => ReportIncorrectAnswerDialog(
+                                questionId: widget.question.id,
+                              ),
                         );
                       },
                     ),
@@ -333,13 +417,14 @@ class _AdminQuestionOverviewWidgetState
               const SizedBox(height: 10),
               Padding(
                 padding: const EdgeInsets.only(right: 4),
-                child: Text(
+                child: inlineTextWithImages(
                   widget.question.answerExplanation,
                   style: TextStyle(
                     color: Colors.grey[700],
                     fontSize: 15.5,
                     height: 1.33,
                   ),
+                  imageMaxWidth: 350,
                 ),
               ),
               const SizedBox(height: 10),
@@ -352,10 +437,11 @@ class _AdminQuestionOverviewWidgetState
                     showDialog(
                       barrierColor: Colors.black.withOpacity(0.1),
                       context: context,
-                      builder: (_) => ReportExplanationDialogue(
-                        questionId: widget.question.id,
-                        fileId: AppStrings.fileId,
-                      ),
+                      builder:
+                          (_) => ReportExplanationDialogue(
+                            questionId: widget.question.id,
+                            fileId: AppStrings.fileId,
+                          ),
                     );
                   },
                 ),

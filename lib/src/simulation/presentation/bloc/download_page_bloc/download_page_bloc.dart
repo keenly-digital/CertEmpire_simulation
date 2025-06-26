@@ -24,9 +24,9 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
 
   /// Fetches download data from the WordPress API.
   Future<void> _getDownloadData(
-      GetDownloadsEvent event,
-      Emitter<DownloadPageInitial> emit,
-      ) async {
+    GetDownloadsEvent event,
+    Emitter<DownloadPageInitial> emit,
+  ) async {
     final dio = Dio();
     final url =
         '${AppStrings.baseUrl}/wp-json/cwc/v2/downloads?customer=${AppStrings.id}';
@@ -59,25 +59,23 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
 
   /// Sends the list of file URLs to the backend and receives file IDs.
   Future<void> _getFileUrls(
-      GetFileURlEvent event,
-      Emitter<DownloadPageInitial> emit,
-      ) async {
+    GetFileURlEvent event,
+    Emitter<DownloadPageInitial> emit,
+  ) async {
     final dio = Dio();
     const url =
         'https://certempirbackend-production.up.railway.app/api/WordpressAPI/GetSimulationURL';
 
-    final fileURLs = event.download
-        .map((e) => e.fileUrl ?? '')
-        .where((url) => url.isNotEmpty)
-        .toList();
+    final fileURLs =
+        event.download
+            .map((e) => e.fileUrl ?? '')
+            .where((url) => url.isNotEmpty)
+            .toList();
 
     try {
       final response = await dio.post(
         url,
-        data: {
-          'userId': AppStrings.userId,
-          'fileURL': fileURLs,
-        },
+        data: {'userId': AppStrings.userId, 'fileURL': fileURLs},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
@@ -102,10 +100,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     try {
       final response = await dio.get(
         url,
-        queryParameters: {
-          'fileId': fileId,
-          'type': 'pdf',
-        },
+        queryParameters: {'fileId': fileId, 'type': 'pdf'},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
