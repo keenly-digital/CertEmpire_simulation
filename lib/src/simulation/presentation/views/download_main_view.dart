@@ -3,13 +3,12 @@ import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/config/theme/font_manager.dart';
 import '../../data/models/download_model.dart';
 import '../bloc/download_page_bloc/download_page_bloc.dart';
-import '../widgets/download/custom_widgets.dart'; // Remove if unused
-import 'package:url_launcher/url_launcher.dart';
 
 class DownloadMainView extends StatefulWidget {
   const DownloadMainView({super.key});
@@ -48,7 +47,7 @@ class _DownloadMainViewState extends State<DownloadMainView> {
 }
 
 class DownloadTableView extends StatelessWidget {
-  final List<DownloadModel> downloads;
+  final List<DownloadedData> downloads;
 
   const DownloadTableView({super.key, required this.downloads});
 
@@ -135,7 +134,7 @@ class DownloadTableView extends StatelessWidget {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
-                  download.file?.name ?? "",
+                  download.productName ?? "",
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
                     fontWeight: FontManager.regular,
                   ),
