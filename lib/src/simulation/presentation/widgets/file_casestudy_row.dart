@@ -1,140 +1,162 @@
-import 'package:certempiree/core/config/extensions/theme_extension.dart';
-import 'package:certempiree/src/simulation/presentation/views/editor/editor_view.dart';
-import 'package:flutter/material.dart';
-import 'package:readmore/readmore.dart';
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_quill/quill_delta.dart';
 import 'package:flutter_quill_extensions/flutter_quill_extensions.dart';
 
-import '../../../../../core/utils/editor_util.dart';
-
-import '../../../../core/config/theme/app_colors.dart' show AppColors;
 import '../../../../core/res/asset.dart';
-import '../../../../core/utils/spacer_utility.dart';
+import '../../../../core/utils/editor_util.dart';
 import '../../data/models/file_content_model.dart';
-import 'border_box.dart';
 
-class FileCaseStudyRowWidget extends StatelessWidget {
+// --- CHANGE: Converted to a StatefulWidget to manage its own state ---
+class FileCaseStudyRowWidget extends StatefulWidget {
   final CaseStudy caseStudy;
+  final bool initiallyExpanded;
 
-  const FileCaseStudyRowWidget({super.key, required this.caseStudy});
+  const FileCaseStudyRowWidget({
+    super.key,
+    required this.caseStudy,
+    this.initiallyExpanded = false, // Collapsed by default
+  });
+
+  @override
+  State<FileCaseStudyRowWidget> createState() => _FileCaseStudyRowWidgetState();
+}
+
+class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
+  late bool _isExpanded;
+
+  @override
+  void initState() {
+    super.initState();
+    _isExpanded = widget.initiallyExpanded;
+  }
+
+  Widget _buildLabel(String text) {
+    return Text(
+      text.toUpperCase(),
+      style: TextStyle(
+        color: Colors.grey.shade500,
+        fontWeight: FontWeight.bold,
+        fontSize: 12,
+        letterSpacing: 0.8,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    return BorderBox(
-      margin: SpacerUtil.only(
-        top: SpacerUtil.instance.small,
-        left: caseStudy.hasTopic() ? SpacerUtil.instance.small : 0,
+    return Container(
+      margin: const EdgeInsets.only(bottom: 24.0),
+      padding: const EdgeInsets.all(26.0),
+      decoration: BoxDecoration(
+        color: AppColors.lightBackgroundpurple.withOpacity(0.15),
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: AppColors.themePurple.withOpacity(0.2), width: 1.0),
       ),
-      child: Padding(
-        padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              margin: EdgeInsets.only(left: 5, top: 5),
-              child: Image.asset(Assets.caseStudy, width: 22, height: 22),
-            ),
-            SpacerUtil.horizontalSmall(),
-            Expanded(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(caseStudy.title, style: context.textTheme.titleSmall),
-                  Text(
-                    "Questions : ${caseStudy.questions?.length}",
-                    style: context.textTheme.labelMedium,
-                  ),
-
-                  caseStudy.description.isEmpty || caseStudy.description == ""
-                      ? Container()
-                      :ExpandableQuillViewer(jsonContent: caseStudy.description,)
-                ],
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Image.asset(Assets.caseStudy, width: 24, height: 24, color: AppColors.themePurple),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildLabel("Case Study"),
+                    const SizedBox(height: 4),
+                    Text(
+                      widget.caseStudy.title,
+                      style: const TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        color: AppColors.themePurple,
+                      ),
+                    ),
+                  ],
+                ),
               ),
+              Text(
+                "Questions: ${widget.caseStudy.questions?.length ?? 0}",
+                style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.grey.shade600),
+              ),
+              const SizedBox(width: 16),
+              // --- NEW: 'Show'/'Hide' button in the header ---
+              TextButton(
+                onPressed: () => setState(() => _isExpanded = !_isExpanded),
+                child: Row(
+                  children: [
+                    Text(_isExpanded ? "Hide" : "Show", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    Icon(_isExpanded ? Icons.keyboard_arrow_up : Icons.keyboard_arrow_down),
+                  ],
+                ),
+              ),
+            ],
+          ),
+          if (widget.caseStudy.description.isNotEmpty) ...[
+            const Divider(height: 32),
+            // --- CHANGE: Pass expanded state to the viewer ---
+            ExpandableQuillViewer(
+              jsonContent: widget.caseStudy.description,
+              isExpanded: _isExpanded,
             ),
-          ],
-        ),
+          ]
+        ],
       ),
     );
   }
 }
-class ExpandableQuillViewer extends StatefulWidget {
-  final String? jsonContent; // Raw input content
 
-  const ExpandableQuillViewer({super.key, required this.jsonContent});
+class ExpandableQuillViewer extends StatelessWidget {
+  final String? jsonContent;
+  final bool isExpanded; // Controlled by the parent now
 
-  @override
-  State<ExpandableQuillViewer> createState() => _ExpandableQuillViewerState();
-}
-
-class _ExpandableQuillViewerState extends State<ExpandableQuillViewer> {
-  bool _expanded = false;
+  const ExpandableQuillViewer({
+    super.key,
+    required this.jsonContent,
+    required this.isExpanded,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final cleanedContent = cleanNewLines(widget.jsonContent ?? '');
-    final doc = Document.fromJson(parseStringToDeltaJson(cleanedContent));
+    final doc = Document.fromJson(parseStringToDeltaJson(jsonContent ?? ''));
     final controller = QuillController(
       document: doc,
-      readOnly: true,
       selection: const TextSelection.collapsed(offset: 0),
+      readOnly: true,
     );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: _expanded ? null : 150,
-          child: ClipRect(
-            child: QuillEditor(
-              controller: controller,
-              focusNode: FocusNode(),
-              scrollController: ScrollController(),
-              config: QuillEditorConfig(
-                scrollable: false,
-                placeholder: '',
-                embedBuilders: FlutterQuillEmbeds.editorBuilders(),
-                showCursor: false,
-              ),
+    return AnimatedCrossFade(
+      duration: const Duration(milliseconds: 300),
+      // --- CHANGE: The firstChild is now a sized box to create the collapsed view ---
+      firstChild: SizedBox(
+        height: 50, // This approximates the pink line in your mockup
+        child: ClipRect(
+          child: QuillEditor.basic(
+            controller: controller,
+            config: QuillEditorConfig(
+              padding: EdgeInsets.zero,
+              showCursor: false,
+              embedBuilders: FlutterQuillEmbeds.editorBuilders(),
             ),
           ),
         ),
-        TextButton(
-          onPressed: () => setState(() => _expanded = !_expanded),
-          child: Text(_expanded ? 'Show less' : 'Show more'),
+      ),
+      secondChild: QuillEditor.basic(
+        controller: controller,
+        config: QuillEditorConfig(
+          padding: EdgeInsets.zero,
+          showCursor: false,
+          embedBuilders: FlutterQuillEmbeds.editorBuilders(),
         ),
-      ],
+      ),
+      crossFadeState:
+          isExpanded ? CrossFadeState.showSecond : CrossFadeState.showFirst,
     );
-  }
-
-  /// Removes all \n except those that are directly followed by an image or link
-  String cleanNewLines(String input) {
-    final buffer = StringBuffer();
-    final regex = RegExp(
-      r"^(<img\s+src='.*?'>|https?:\/\/\S+\.(jpg|png)|https?:\/\/\S+)",
-      caseSensitive: false,
-    );
-
-    int i = 0;
-    while (i < input.length) {
-      if (input[i] == '\n') {
-        final remaining = input.substring(i + 1);
-        final match = regex.firstMatch(remaining);
-        if (match != null && match.start == 0) {
-          buffer.write('\n'); // Keep \n only if followed by image/link
-        }
-        // else skip this \n
-      } else {
-        buffer.write(input[i]);
-      }
-      i++;
-    }
-
-    return buffer.toString();
   }
 }
-
+  

@@ -35,19 +35,18 @@ class _EditorViewState extends State<EditorView> {
   }
 
   void _initializeController() {
-    final cleanedContent = cleanNewLines(widget.initialContent ?? "");
-    final originalDelta = Delta.fromJson(parseStringToDeltaJson(cleanedContent));
+  final cleanedContent = cleanNewLines(widget.initialContent ?? "");
+  final originalDelta = Delta.fromJson(parseStringToDeltaJson(cleanedContent));
 
-    _controller =
-        widget.quillController ??
-            QuillController(
-              readOnly: true,
-              document: Document.fromDelta(
-                _applyTextColorToDelta(originalDelta, widget.textColor),
-              ),
-              selection: const TextSelection.collapsed(offset: 0),
-            );
-  }
+  _controller =
+      widget.quillController ??
+          QuillController(
+            document: Document.fromDelta(
+              _applyTextColorToDelta(originalDelta, widget.textColor),
+            ),
+            selection: const TextSelection.collapsed(offset: 0),
+          );
+}
 
   @override
   void didUpdateWidget(covariant EditorView oldWidget) {

@@ -1,114 +1,196 @@
+import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_type_enum.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../data/models/submit_report_param.dart';
 
-class ReportExplanationDialogue extends StatelessWidget {
+class ReportExplanationDialogue extends StatefulWidget {
   final int? questionId;
   final String? fileId;
 
-   ReportExplanationDialogue({super.key, this.questionId, this.fileId});
+  const ReportExplanationDialogue({super.key, this.questionId, this.fileId});
+
+  @override
+  State<ReportExplanationDialogue> createState() =>
+      _ReportExplanationDialogueState();
+}
+
+class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  /// Helper for the primary submit button
+  Widget _buildSubmitButton({
+    required VoidCallback onPressed,
+    required double dialogWidth,
+  }) {
+    return SizedBox(
+      width: dialogWidth * 0.6,
+      child: ElevatedButton.icon(
+        icon: const Icon(Icons.send_rounded, size: 20),
+        label: const Text("Submit Report"),
+        style: ElevatedButton.styleFrom(
+          foregroundColor: Colors.white,
+          backgroundColor: AppColors.themePurple,
+          elevation: 2,
+          padding: const EdgeInsets.symmetric(vertical: 14),
+          textStyle: const TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+        ),
+        onPressed: onPressed,
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final TextEditingController _controller = TextEditingController();
-
     return LayoutBuilder(
       builder: (context, constraints) {
         final screenWidth = MediaQuery.of(context).size.width;
-
-        final dialogWidth = screenWidth > 600 ? 450.0 : screenWidth * 0.7;
+        final dialogWidth = screenWidth > 600 ? 500.0 : screenWidth * 0.90;
 
         return Dialog(
-          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            side:  BorderSide(color: Colors.red, width: 1.5),
-            borderRadius: BorderRadius.circular(10),
+            side: BorderSide(color: AppColors.themePurple, width: 1.5),
+            borderRadius: BorderRadius.circular(12),
           ),
+          insetPadding: const EdgeInsets.all(16),
+          clipBehavior: Clip.antiAlias,
           child: SizedBox(
             width: dialogWidth,
-            child: Padding(
-              padding:  EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Modern Header with Gradient and Close Icon
+                Stack(
                   children: [
-                    Text(
-                      AppStrings.reportExplanation,
-                      style:  TextStyle(
-                        color: Colors.red,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
-                        decorationColor: Colors.red,
-                      ),
-                    ),
-                     SizedBox(height: 15),
-                    Text(
-                      AppStrings.explanationBelow,
-                      style:  TextStyle(
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                     SizedBox(height: 10),
                     Container(
-                      height: 150,
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 12, horizontal: 16),
                       decoration: BoxDecoration(
-                        color: Colors.grey.shade100,
-                        borderRadius: BorderRadius.circular(4),
-                      ),
-                      child: TextField(
-                        controller: _controller,
-                        maxLines: 7,
-                        style:  TextStyle(fontSize: 14),
-                        decoration:  InputDecoration(
-                          focusedBorder: OutlineInputBorder(
-                            borderSide:  BorderSide(color: Colors.red, width: 2),
-                            borderRadius: BorderRadius.circular(8),
-                          ),
-                          contentPadding: EdgeInsets.all(8),
-                          border: InputBorder.none,
+                        gradient: LinearGradient(
+                          colors: [
+                            AppColors.lightBackgroundpurple.withOpacity(0.8),
+                            AppColors.lightBackgroundpurple,
+                          ],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
                         ),
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Icon(Icons.report_gmailerrorred_rounded,
+                              color: AppColors.themePurple),
+                          const SizedBox(width: 8),
+                          Text(
+                            AppStrings.reportExplanation,
+                            style: const TextStyle(
+                              color: AppColors.themePurple,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                     SizedBox(height: 12),
-                    SizedBox(
-                      width: double.infinity,
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          side:  BorderSide(color: Colors.red, width: 1.5),
-                          foregroundColor: Colors.red,
-                        ),
-                        onPressed: () {
-                          final submitReportParam = SubmitQuestionReportParam(
-                            explanation: _controller.text,
-                            type: ReportTypeEnum.Explanation.index,
-                            userId: AppStrings.userId,
-                            targetId: questionId ?? 0,
-                            reason: "Wrong Explanation",
-                            fileId: fileId ?? "",
-                            questionNumber: "",
-                          );
-                          context.read<SimulationBloc>().submitExplanationReport(
-                            submitReportParam,
-                            context,
-                          );
-                          Navigator.pop(context);
-                        },
-                        child:  Text(
-                          AppStrings.submit,
-                          style: TextStyle(fontSize: 14),
-                        ),
+                    Positioned(
+                      top: 0,
+                      right: 0,
+                      child: IconButton(
+                        icon: const Icon(Icons.close, color: AppColors.themePurple),
+                        onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
                   ],
                 ),
-              ),
+                // Content Area
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 20, 24),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        AppStrings.explanationBelow,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      // Lighter Text Area
+                      TextField(
+                        controller: _controller,
+                        maxLines: 7,
+                        style: const TextStyle(fontSize: 14),
+                        decoration: InputDecoration(
+                          hintText: "This explanation is incorrect because...",
+                          filled: true,
+                          fillColor: Colors.grey.shade50,
+                          hintStyle: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.grey,
+                          ),
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(8),
+                              borderSide: BorderSide.none),
+                          focusedBorder: OutlineInputBorder(
+                            borderSide: BorderSide(
+                                color: AppColors.themePurple, width: 2),
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 24),
+                      // Submit Button
+                      Center(
+                        child: _buildSubmitButton(
+                          dialogWidth: dialogWidth,
+                          onPressed: () {
+                            final submitReportParam = SubmitQuestionReportParam(
+                              explanation: _controller.text,
+                              type: ReportTypeEnum.Explanation.index,
+                              userId: AppStrings.userId,
+                              targetId: widget.questionId ?? 0,
+                              reason: "Wrong Explanation",
+                              fileId: widget.fileId ?? "",
+                              questionNumber: "",
+                            );
+                            context
+                                .read<SimulationBloc>()
+                                .submitExplanationReport(
+                                  submitReportParam,
+                                  context,
+                                );
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
             ),
           ),
         );
