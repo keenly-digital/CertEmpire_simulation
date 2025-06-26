@@ -25,7 +25,7 @@ class _DownloadMainViewState extends State<DownloadMainView> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.all(1.0),
         child: Column(
           children: [
             BlocBuilder<DownloadPageBloc, DownloadPageInitial>(

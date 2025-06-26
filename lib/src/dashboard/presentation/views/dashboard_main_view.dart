@@ -5,6 +5,7 @@ import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:html' as html;
 
 import '../../../../core/res/app_strings.dart';
 import '../bloc/user_bloc/user_events.dart';
@@ -54,7 +55,8 @@ class _UserMainViewState extends State<UserMainView> {
                     recognizer:
                         TapGestureRecognizer()
                           ..onTap = () {
-                            // Handle logout
+                            html.window.location.href =
+                                "${AppStrings.baseUrl}/?action=logout";
                           },
                   ),
                   TextSpan(text: ')'),

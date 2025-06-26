@@ -15,7 +15,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({Key? key}) : super(key: key);
 
@@ -96,7 +95,6 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                           key: _contentKey,
                           crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: [
-                       
                             _buildHeader(context, simulationState, isWide),
                             verticalSpace(6),
                             FileContentWidget(
@@ -105,8 +103,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                   FileContent(),
                               searchQuery: query,
                               onContentChanged:
-                                  ({bool scrollToTop = false}) =>
-                                  {},
+                                  ({bool scrollToTop = false}) => {},
                             ),
                             const SizedBox(height: 16),
                             _buildPagination(currentCount, totalCount, canNext),

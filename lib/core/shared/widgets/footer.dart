@@ -1,6 +1,7 @@
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/core/utils/spacer_utility.dart';
 import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -149,19 +150,17 @@ class Footer extends StatelessWidget {
                           // Helpful Links
                           Expanded(
                             child: _buildLinkSection(context, "HELPFUL LINKS", {
-                              "About Us":
-                                  "https://staging2.certempire.com/about-us/",
+                              "About Us": "${AppStrings.baseUrl}/about-us/",
                               "Refund Policy":
-                                  "https://staging2.certempire.com/refund-policy/",
+                                  "${AppStrings.baseUrl}/refund-policy/",
                               "Terms & Conditions":
-                                  "https://staging2.certempire.com/terms-conditions/",
+                                  "${AppStrings.baseUrl}/terms-conditions/",
                               "Login/Register":
-                                  "https://staging2.certempire.com/my-account/",
+                                  "${AppStrings.baseUrl}/my-account/",
                               "Privacy Policy":
-                                  "https://staging2.certempire.com/privacy-policy/",
-                              "Blogs": "https://staging2.certempire.com/blog/",
-                              "Contact Us":
-                                  "https://staging2.certempire.com/contact/",
+                                  "${AppStrings.baseUrl}/privacy-policy/",
+                              "Blogs": "${AppStrings.baseUrl}/blog/",
+                              "Contact Us": "${AppStrings.baseUrl}/contact/",
                             }),
                           ),
 
@@ -171,19 +170,15 @@ class Footer extends StatelessWidget {
                           Expanded(
                             child: _buildLinkSection(context, "TOP VENDORS", {
                               "Microsoft":
-                                  "https://staging2.certempire.com/pdf/microsoft/",
-                              "CompTIA":
-                                  "https://staging2.certempire.com/pdf/comptia/",
-                              "Amazon":
-                                  "https://staging2.certempire.com/pdf/amazon/",
+                                  "${AppStrings.baseUrl}/pdf/microsoft/",
+                              "CompTIA": "${AppStrings.baseUrl}/pdf/comptia/",
+                              "Amazon": "${AppStrings.baseUrl}/pdf/amazon/",
                               "Salesforce":
-                                  "https://staging2.certempire.com/pdf/salesforce/",
-                              "ISC2":
-                                  "https://staging2.certempire.com/pdf/isc2/",
+                                  "${AppStrings.baseUrl}/pdf/salesforce/",
+                              "ISC2": "${AppStrings.baseUrl}/pdf/isc2/",
                               "CISCO":
-                                  "https://staging2.certempire.com/pdf/cisco-exam-dumps/",
-                              "Google":
-                                  "https://staging2.certempire.com/pdf/google/",
+                                  "${AppStrings.baseUrl}/pdf/cisco-exam-dumps/",
+                              "Google": "${AppStrings.baseUrl}/pdf/google/",
                             }),
                           ),
 

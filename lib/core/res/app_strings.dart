@@ -22,12 +22,10 @@ class AppStrings {
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = 'Report Answer as Incorrect';
 
-  static String fileId = 'af8d8736-1d46-46d7-97bd-bc4385f80b2f';
   static String authToken = "";
-
+  static String fileId = 'af8d8736-1d46-46d7-97bd-bc4385f80b2f';
+  static int id = 10860;
   static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
 
   static String baseUrl = "https://staging2.certempire.com";
-
-  static int id = 10860;
 }

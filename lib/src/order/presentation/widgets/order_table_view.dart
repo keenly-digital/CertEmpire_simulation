@@ -87,14 +87,20 @@ class OrderTableView extends StatelessWidget {
             children: [
               Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  '#${order.id}',
-                  style: context.textTheme.labelMedium?.copyWith(
-                    color: AppColors.lightPrimary,
-                    fontWeight: FontManager.semiBold,
+                child: InkWell(
+                  onTap: () {
+                    context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                  },
+                  child: Text(
+                    '#${order.id}',
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: AppColors.lightPrimary,
+                      fontWeight: FontManager.semiBold,
+                    ),
                   ),
                 ),
               ),
+
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
@@ -124,7 +130,7 @@ class OrderTableView extends StatelessWidget {
               ),
               InkWell(
                 onTap: () {
-                  context.read<NavigationCubit>().selectTab(1 , subTitle: 1);
+                  context.read<NavigationCubit>().selectTab(1, subTitle: 1);
                 },
                 child: Padding(
                   padding: const EdgeInsets.all(8.0),

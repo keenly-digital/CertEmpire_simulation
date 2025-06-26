@@ -1,10 +1,12 @@
+import 'package:certempiree/core/res/app_strings.dart';
+import 'package:certempiree/src/logout/logout_main_view.dart';
 import 'package:certempiree/src/my_reward/presentation/views/my_reward_main_view.dart';
 import 'package:certempiree/src/my_tasks/presentation/views/my_task_main_veiw.dart';
 import 'package:certempiree/src/report_history/presentation/views/report_main_view.dart';
 import 'package:certempiree/src/simulation/presentation/views/download_main_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-
+import 'dart:html' as html;
 import '../../../../core/shared/widgets/footer.dart';
 import '../../../../core/shared/widgets/header.dart';
 import '../../../account_details/presentation/views/update_account_view.dart';
@@ -103,9 +105,14 @@ class _MainPageState extends State<MainPage> {
                             }
                           case 8:
                             return content(UpdateAccount(), top: 70.0);
-                          default:
-                            return const Center(child: Text("Unknown Page"));
+                          case 9:
+                            return content(
+                              LogoutMainView(),
+                              top: 70.0,
+                            ); // Or any placeholder widget, as this line is still required
                         }
+
+                        return const Center(child: Text("Unknown Page"));
                       },
                     ),
                   ),

@@ -39,7 +39,6 @@ class AddressView extends StatelessWidget {
                         title: "Billing address",
                         actionLabel: "Edit Billing address",
                         onActionTap: () {
-                          print("sjdlksajdlksaj");
                           context.read<NavigationCubit>().selectTab(
                             7,
                             subTitle: 1,
@@ -134,14 +133,17 @@ class AddressView extends StatelessWidget {
                 ),
                 Align(
                   alignment: Alignment.bottomRight,
-                  child: GestureDetector(
-                    onTap: onActionTap,
-                    child: Text(
-                      actionLabel,
-                      style: TextStyle(
-                        color: color,
-                        fontSize: 14,
-                        decoration: TextDecoration.underline,
+                  child: MouseRegion(
+                    cursor: SystemMouseCursors.click,
+                    child: GestureDetector(
+                      onTap: onActionTap,
+                      child: Text(
+                        actionLabel,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: 14,
+                          decoration: TextDecoration.underline,
+                        ),
                       ),
                     ),
                   ),
