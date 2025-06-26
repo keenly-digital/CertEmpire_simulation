@@ -52,6 +52,21 @@ class AddressView extends StatelessWidget {
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
                             Text(
+                              state.userData?.billing?.company ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),Text(
+                              state.userData?.billing?.address1 ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.billing?.address2 ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.billing?.city ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
                               state.userData?.billing?.postcode ?? "",
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
