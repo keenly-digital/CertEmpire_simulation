@@ -5,8 +5,6 @@ import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_event
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
-import '../../../../core/shared/widgets/spaces.dart';
-
 class UpdateBillingAddress extends StatefulWidget {
   const UpdateBillingAddress({super.key});
 
@@ -17,22 +15,12 @@ class UpdateBillingAddress extends StatefulWidget {
 class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
   final _formKey = GlobalKey<FormState>();
 
-  final TextEditingController firstNameController = TextEditingController(
-    text: "Usmans",
-  );
-  final TextEditingController lastNameController = TextEditingController(
-    text: "Ahmad",
-  );
-  final TextEditingController companyName = TextEditingController(
-    text: "Usman Ahmad",
-  );
-  final TextEditingController country = TextEditingController(
-    text: "wp.usman.personal@gmail.com",
-  );
-
+  final TextEditingController firstNameController = TextEditingController();
+  final TextEditingController lastNameController = TextEditingController();
+  final TextEditingController companyName = TextEditingController();
+  final TextEditingController country = TextEditingController();
   final TextEditingController streetAddress = TextEditingController();
   final TextEditingController streetAddress2 = TextEditingController();
-  final TextEditingController newPasswordController = TextEditingController();
   final TextEditingController townCity = TextEditingController();
   final TextEditingController state = TextEditingController();
   final TextEditingController postCode = TextEditingController();
@@ -42,10 +30,10 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
   @override
   void initState() {
     super.initState();
-    var userBloc = context.read<UserBloc>().state;
-    LogUtil.debug("lsjdlksajdlksajuweoiwqu ${userBloc.userData?.toJson()}");
-    firstNameController.text = userBloc.userData?.firstName ?? "";
-    lastNameController.text = userBloc.userData?.lastName ?? "";
+    final userBloc = context.read<UserBloc>().state;
+    LogUtil.debug("User Billing JSON: ${userBloc.userData?.toJson()}");
+    firstNameController.text = userBloc.userData?.billing?.firstName ?? "";
+    lastNameController.text = userBloc.userData?.billing?.lastName ?? "";
     companyName.text = userBloc.userData?.billing?.company ?? "";
     country.text = userBloc.userData?.billing?.country ?? "";
     streetAddress.text = userBloc.userData?.billing?.address1 ?? "";
@@ -59,98 +47,163 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 850;
+
     return Scaffold(
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+      backgroundColor: const Color(0xFFF7F8FC),
+      appBar: AppBar(
+        title: const Text("Update Billing Address"),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        centerTitle: true,
+      ),
+      body: Center(
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(maxWidth: 1400),
+          child: ListView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
             children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildTitle("First name", true),
-                        _buildPlainTextField(firstNameController),
-                      ],
-                    ),
-                  ),
-                  horizontalSpace(15),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        _buildTitle("Last name", true),
-                        _buildPlainTextField(lastNameController),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              _buildTitle("Company name", true),
-              _buildPlainTextField(companyName),
-
-              const Padding(
-                padding: EdgeInsets.only(left: 4, bottom: 12),
-                child: Text(
-                  "This will be how your name will be displayed in the account section and in reviews",
-                  style: TextStyle(color: Colors.black, fontSize: 13),
+              Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(24),
                 ),
-              ),
-
-              _buildTitle("Country / Region", false),
-              _buildPlainTextField(country),
-
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 20),
-
-              _buildTitle("Street address (optional)", true),
-              _buildPlainTextField(streetAddress, obscure: false),
-              _buildPlainTextField(streetAddress2, obscure: false),
-
-              _buildTitle("Town / City", false),
-              _buildPlainTextField(townCity, obscure: false),
-              _buildTitle("State / Country", false),
-              _buildPlainTextField(state, obscure: false),
-              _buildTitle("Post Code / ZIP", false),
-              _buildPlainTextField(postCode, obscure: false),
-              _buildTitle("Phone", false),
-              _buildPlainTextField(phone, obscure: false),
-              _buildTitle("Email address", false),
-              _buildPlainTextField(email, obscure: false),
-
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    final currentUser = context.read<UserBloc>();
-                    final existingUserData = currentUser.state.userData;
-
-                    final updatedBilling = Ing(
-                      firstName: firstNameController.text,
-                      lastName: lastNameController.text,
-                      company: companyName.text,
-                      country: country.text,
-                      address1: streetAddress.text,
-                      address2: streetAddress2.text,
-                      city: townCity.text,
-                      state: state.text,
-                      postcode: postCode.text,
-                      phone: phone.text,
-                    );
-
-                    final updatedUserData = existingUserData?.copyWith(
-                      billing: updatedBilling,
-                    );
-
-                    context.read<UserBloc>().add(
-                      UpdateUserEvent(userInfoData: updatedUserData!),
-                    );
-                  }
-                },
-                child: const Text("Save Changes"),
+                child: Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: isWide ? 44 : 18,
+                    vertical: 38,
+                  ),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      children: [
+                        // Responsive two-column on wide screens, one-column on mobile
+                        LayoutBuilder(
+                          builder: (context, constraints) {
+                            bool wide = constraints.maxWidth > 800;
+                            return Wrap(
+                              spacing: 30,
+                              runSpacing: 0,
+                              children: [
+                                SizedBox(
+                                  width:
+                                      wide
+                                          ? constraints.maxWidth / 2 - 20
+                                          : double.infinity,
+                                  child: _buildTitleInput(
+                                    "First name",
+                                    firstNameController,
+                                    required: true,
+                                  ),
+                                ),
+                                SizedBox(
+                                  width:
+                                      wide
+                                          ? constraints.maxWidth / 2 - 20
+                                          : double.infinity,
+                                  child: _buildTitleInput(
+                                    "Last name",
+                                    lastNameController,
+                                    required: true,
+                                  ),
+                                ),
+                              ],
+                            );
+                          },
+                        ),
+                        const SizedBox(height: 12),
+                        _buildTitleInput("Company name", companyName),
+                        Padding(
+                          padding: const EdgeInsets.only(
+                            left: 2,
+                            bottom: 12,
+                            top: 2,
+                          ),
+                          child: Text(
+                            "This will be how your name will be displayed in the account section and in reviews.",
+                            style: TextStyle(
+                              color: Colors.black.withOpacity(0.68),
+                              fontSize: 13,
+                            ),
+                          ),
+                        ),
+                        _buildTitleInput("Country / Region", country),
+                        const SizedBox(height: 18),
+                        Divider(
+                          thickness: 1.1,
+                          color: Colors.grey.shade200,
+                          height: 30,
+                        ),
+                        _buildTitleInput(
+                          "Street address (optional)",
+                          streetAddress,
+                        ),
+                        _buildTitleInput("Street address 2", streetAddress2),
+                        _buildTitleInput("Town / City", townCity),
+                        _buildTitleInput("State / Country", state),
+                        _buildTitleInput("Post Code / ZIP", postCode),
+                        _buildTitleInput("Phone", phone),
+                        _buildTitleInput("Email address", email),
+                        const SizedBox(height: 28),
+                        SizedBox(
+                          width: double.infinity,
+                          child: FilledButton.icon(
+                            icon: const Icon(Icons.save_rounded, size: 22),
+                            label: const Text(
+                              "Save Changes",
+                              style: TextStyle(
+                                fontWeight: FontWeight.w600,
+                                fontSize: 16.5,
+                              ),
+                            ),
+                            style: FilledButton.styleFrom(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
+                              backgroundColor: Theme.of(context).primaryColor,
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              foregroundColor: Colors.white,
+                              elevation: 2,
+                            ),
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                final currentUser = context.read<UserBloc>();
+                                final existingUserData =
+                                    currentUser.state.userData;
+                                final updatedBilling = Ing(
+                                  firstName: firstNameController.text,
+                                  lastName: lastNameController.text,
+                                  company: companyName.text,
+                                  country: country.text,
+                                  address1: streetAddress.text,
+                                  address2: streetAddress2.text,
+                                  city: townCity.text,
+                                  state: state.text,
+                                  postcode: postCode.text,
+                                  phone: phone.text,
+                                );
+                                final updatedUserData = existingUserData
+                                    ?.copyWith(billing: updatedBilling);
+                                context.read<UserBloc>().add(
+                                  UpdateUserEvent(
+                                    userInfoData: updatedUserData!,
+                                  ),
+                                );
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                    content: Text("Billing address updated!"),
+                                    backgroundColor: Colors.green,
+                                    duration: Duration(seconds: 2),
+                                  ),
+                                );
+                              }
+                            },
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ],
           ),
@@ -159,57 +212,86 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
     );
   }
 
-  Widget _buildTitle(String text, bool steric) {
+  Widget _buildTitleInput(
+    String label,
+    TextEditingController controller, {
+    bool required = false,
+  }) {
     return Padding(
-      padding: const EdgeInsets.only(top: 12, bottom: 6),
-      child: Row(
+      padding: const EdgeInsets.only(bottom: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            text,
-            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12),
+          RichText(
+            text: TextSpan(
+              text: label,
+              style: const TextStyle(
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF111339),
+                fontSize: 15.5,
+              ),
+              children:
+                  required
+                      ? [
+                        const TextSpan(
+                          text: " *",
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: Colors.red,
+                          ),
+                        ),
+                      ]
+                      : [],
+            ),
           ),
-          Text(
-            steric ? "*" : "",
-            style: const TextStyle(
-              fontWeight: FontWeight.w500,
-              color: Colors.red,
+          const SizedBox(height: 8),
+          TextFormField(
+            controller: controller,
+            validator: (val) {
+              if (required && (val == null || val.trim().isEmpty)) {
+                return "$label is required";
+              }
+              if (label == "Email address" && val != null && val.isNotEmpty) {
+                final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+                if (!emailRegex.hasMatch(val)) {
+                  return "Invalid email format";
+                }
+              }
+              if (label == "Phone" && val != null && val.isNotEmpty) {
+                final phoneRegex = RegExp(r'^[\d+\-\s]+$');
+                if (!phoneRegex.hasMatch(val)) {
+                  return "Invalid phone format";
+                }
+              }
+              return null;
+            },
+            style: const TextStyle(fontSize: 15.7, color: Colors.black87),
+            decoration: InputDecoration(
+              isDense: true,
+              filled: true,
+              fillColor: const Color(0xFFF4F6FB),
+              contentPadding: const EdgeInsets.symmetric(
+                vertical: 15,
+                horizontal: 13,
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide: const BorderSide(color: Color(0xFFE0E4F0)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide: const BorderSide(
+                  color: Color(0xFF6C63FF),
+                  width: 1.7,
+                ),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(9),
+                borderSide: const BorderSide(color: Color(0xFFE0E4F0)),
+              ),
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _buildPlainTextField(
-    TextEditingController controller, {
-    bool obscure = false,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscure,
-      style: TextStyle(color: Colors.black54, fontSize: 14),
-      decoration: InputDecoration(
-        isDense: true,
-        contentPadding: const EdgeInsets.symmetric(
-          vertical: 12,
-          horizontal: 10,
-        ),
-        filled: false,
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-
-          borderSide: BorderSide(color: Colors.grey.shade400),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-
-          borderSide: BorderSide(color: Colors.grey.shade600, width: 1.2),
-        ),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.zero,
-
-          borderSide: BorderSide(color: Colors.grey.shade400),
-        ),
       ),
     );
   }

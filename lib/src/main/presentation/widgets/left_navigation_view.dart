@@ -28,38 +28,99 @@ class LeftNavigationView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 20),
-            Text(
-              "${customerNavItems[state.index]['label']}",
-              style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.themeBlue),
+            const SizedBox(height: 28),
+            Padding(
+              padding: const EdgeInsets.only(left: 12.0, bottom: 14),
+              child: Text(
+                "${customerNavItems[state.index]['label']}",
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                  color: AppColors.themeBlue,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.4,
+                ),
+              ),
             ),
-            const SizedBox(height: 20),
             Container(
-              width: 250, // adjust as needed
-              decoration: BoxDecoration(color: Colors.white, border: Border.all(color: Colors.grey.shade300)),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  ...List.generate(customerNavItems.length, (index) {
-                    final isSelected = state.index == index;
-                    return Material(
-                      color: isSelected ? AppColors.lightGreyBg : Colors.white,
-                      child: InkWell(
-                        onTap: () {
-                          context.read<NavigationCubit>().selectTab(index, subTitle: 0);
-                        },
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 18),
-                          decoration: BoxDecoration(border: Border(bottom: BorderSide(color: Colors.grey.shade300))),
-                          child: Text(
-                            customerNavItems[index]['label']!,
-                            style: context.textTheme.titleSmall?.copyWith(color: isSelected ? Colors.black : AppColors.themeBlue),
+              width: 255,
+              margin: const EdgeInsets.symmetric(horizontal: 0),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.08),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
+                  ),
+                ],
+                border: Border.all(color: Colors.grey.shade200, width: 1.2),
+              ),
+              child: ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: customerNavItems.length,
+                separatorBuilder:
+                    (_, __) => Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: Divider(height: 1, color: Colors.grey.shade100),
+                    ),
+                itemBuilder: (context, index) {
+                  final isSelected = state.index == index;
+                  return Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(16),
+                      onTap: () {
+                        context.read<NavigationCubit>().selectTab(
+                          index,
+                          subTitle: 0,
+                        );
+                      },
+                      child: AnimatedContainer(
+                        duration: const Duration(milliseconds: 220),
+                        curve: Curves.easeInOut,
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 13,
+                          horizontal: 22,
+                        ),
+                        margin: EdgeInsets.symmetric(
+                          vertical: isSelected ? 3 : 0,
+                          horizontal: isSelected ? 6 : 0,
+                        ),
+                        decoration: BoxDecoration(
+                          color:
+                              isSelected
+                                  ? AppColors.themeBlue.withOpacity(0.09)
+                                  : Colors.transparent,
+                          borderRadius: BorderRadius.circular(13),
+                          border:
+                              isSelected
+                                  ? Border.all(
+                                    color: AppColors.themeBlue.withOpacity(
+                                      0.21,
+                                    ),
+                                    width: 1.3,
+                                  )
+                                  : null,
+                        ),
+                        child: Text(
+                          customerNavItems[index]['label']!,
+                          style: context.textTheme.titleMedium?.copyWith(
+                            color:
+                                isSelected
+                                    ? AppColors.themeBlue
+                                    : Colors.black.withOpacity(0.85),
+                            fontWeight:
+                                isSelected
+                                    ? FontWeight.bold
+                                    : FontWeight.normal,
+                            letterSpacing: 0.14,
                           ),
                         ),
                       ),
-                    );
-                  }),
-                ],
+                    ),
+                  );
+                },
               ),
             ),
           ],

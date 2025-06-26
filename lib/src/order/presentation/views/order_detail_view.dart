@@ -8,71 +8,88 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
-import '../../../../core/config/theme/font_manager.dart';
 import '../../../simulation/data/models/download_model.dart';
 import '../models/order_model.dart';
 
-/// Main order detail view
 class OrderDetailView extends StatelessWidget {
   const OrderDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final double horizontalPadding =
+        MediaQuery.of(context).size.width < 800 ? 8 : 30;
+
     return BlocBuilder<OrderBloc, OrderInitialState>(
       builder: (context, orderState) {
         final downloadPageBloc = context.watch<DownloadPageBloc>();
         final OrdersDetails orderDetails = downloadPageBloc.ordersDetails;
         final List<DownloadedData> downloads =
             downloadPageBloc.state.orders ?? <DownloadedData>[];
-
-        // Get downloads for this order only
         final List<DownloadedData> matchingDownloads =
             downloads.where((d) => d.orderId == orderDetails.id).toList();
-
         final theme = Theme.of(context);
-        final primaryColor = theme.primaryColor;
 
-        return Padding(
-          padding: const EdgeInsets.all(16.0),
+        return Container(
+          color: const Color(0xFFF7F8FC),
+          width: double.infinity,
           child: ListView(
+            padding: EdgeInsets.symmetric(
+              vertical: 36,
+              horizontal: horizontalPadding,
+            ),
             children: [
-              _buildOrderInfo(orderDetails),
-              const SizedBox(height: 24),
-              _buildDownloadsSection(
-                orderDetails,
-                matchingDownloads,
-                primaryColor,
-              ),
-              const SizedBox(height: 32),
-              _buildOrderDetailsSection(orderDetails, matchingDownloads),
-              const SizedBox(height: 32),
-              _buildOrderAgainButton(primaryColor),
-              verticalSpace(10),
-              _buildAddressBox(
-                context: context,
-                title: "Billing address",
-                content: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      orderDetails.billing?.firstName ?? "",
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                    Text(
-                      orderDetails.billing?.postcode ?? "",
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                    Text(
-                      orderDetails.billing?.country ?? "",
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                    Text(
-                      orderDetails.billing?.email ?? "",
-                      style: const TextStyle(fontStyle: FontStyle.italic),
-                    ),
-                  ],
+              _SectionCard(child: _buildOrderInfo(orderDetails, context)),
+              verticalSpace(18),
+              _SectionCard(
+                child: _buildDownloadsSection(
+                  context,
+                  orderDetails,
+                  matchingDownloads,
                 ),
               ),
+              verticalSpace(18),
+              _SectionCard(
+                child: _buildOrderDetailsSection(
+                  orderDetails,
+                  matchingDownloads,
+                ),
+              ),
+              verticalSpace(18),
+              _SectionCard(
+                child: _buildAddressBox(
+                  context: context,
+                  title: "Billing Address",
+                  content: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        orderDetails.billing?.firstName ?? "",
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        orderDetails.billing?.postcode ?? "",
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        orderDetails.billing?.country ?? "",
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                      Text(
+                        orderDetails.billing?.email ?? "",
+                        style: const TextStyle(fontStyle: FontStyle.italic),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              verticalSpace(28),
+              Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
+                ),
+                child: _buildOrderAgainButton(theme.primaryColor),
+              ),
+              verticalSpace(20),
             ],
           ),
         );
@@ -85,147 +102,245 @@ class OrderDetailView extends StatelessWidget {
     required String title,
     required Widget content,
   }) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
-      width: 355,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            color: AppColors.lightGreyBg,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Align(
-                  alignment: Alignment.topLeft,
-                  child: Text(
-                    title,
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      color: AppColors.lightPrimary,
-                      fontWeight: FontManager.medium,
-                    ),
-                  ),
-                ),
-              ],
-            ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          title,
+          style: context.textTheme.titleLarge?.copyWith(
+            color: AppColors.themeBlue,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.6,
+            fontSize: 18,
           ),
-          Padding(padding: const EdgeInsets.all(12), child: content),
+        ),
+        const Divider(thickness: 1.1, height: 22),
+        content,
+      ],
+    );
+  }
+}
+
+class _SectionCard extends StatelessWidget {
+  final Widget child;
+  const _SectionCard({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      margin: const EdgeInsets.only(bottom: 2),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+        boxShadow: const [
+          BoxShadow(
+            color: Color(0x14365788),
+            blurRadius: 24,
+            offset: Offset(0, 6),
+          ),
         ],
+        border: Border.all(color: Colors.grey.shade200, width: 1),
+      ),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 32),
+        child: child,
       ),
     );
   }
 }
 
-Widget _buildOrderInfo(OrdersDetails orderDetails) {
+Widget _buildOrderInfo(OrdersDetails orderDetails, BuildContext context) {
   final statusText =
       orderDetails.status == 'completed'
           ? 'Completed'
-          : orderDetails.status ?? '';
+          : (orderDetails.status ?? '');
   final statusColor =
-      orderDetails.status == 'completed' ? Colors.green : Colors.orange;
+      orderDetails.status == 'completed'
+          ? Colors.green[700]
+          : Colors.orange[800];
   final orderDate = orderDetails.dateCreated ?? '';
-  return Text.rich(
-    TextSpan(
-      text: 'Order #${orderDetails.id} ',
-      children: [
-        const TextSpan(
-          text: 'was placed on ',
-          style: TextStyle(color: Colors.black),
+
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        "Order Summary",
+        style: context.textTheme.titleLarge?.copyWith(
+          fontWeight: FontWeight.bold,
+          fontSize: 22,
+          color: AppColors.themeBlue,
         ),
-        TextSpan(
-          text: _formatDate(orderDate),
-          style: const TextStyle(fontWeight: FontWeight.bold),
-        ),
-        const TextSpan(
-          text: ' and is currently ',
-          style: TextStyle(color: Colors.black),
-        ),
-        TextSpan(
-          text: '$statusText.',
-          style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
-        ),
-      ],
-      style: const TextStyle(fontSize: 16),
-    ),
+      ),
+      const SizedBox(height: 16),
+      Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Container(
+            decoration: BoxDecoration(
+              color: AppColors.themeBlue.withOpacity(0.13),
+              borderRadius: BorderRadius.circular(14),
+            ),
+            padding: const EdgeInsets.all(11),
+            child: Icon(
+              Icons.receipt_long_rounded,
+              color: AppColors.themeBlue,
+              size: 30,
+            ),
+          ),
+          const SizedBox(width: 20),
+          Expanded(
+            child: RichText(
+              text: TextSpan(
+                style: const TextStyle(fontSize: 16, color: Colors.black87),
+                children: [
+                  TextSpan(
+                    text: 'Order #${orderDetails.id} ',
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  const TextSpan(text: 'was placed on '),
+                  TextSpan(
+                    text: _formatDate(orderDate),
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                    ),
+                  ),
+                  const TextSpan(text: ' and is currently '),
+                  TextSpan(
+                    text: '$statusText.',
+                    style: TextStyle(
+                      color: statusColor,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
   );
 }
 
 Widget _buildDownloadsSection(
+  BuildContext context,
   OrdersDetails orderDetails,
   List<DownloadedData> matchingDownloads,
-  Color primaryColor,
 ) {
+  if (matchingDownloads.isEmpty) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: Colors.orange[400], size: 24),
+          const SizedBox(width: 10),
+          const Text(
+            "No downloads available for this order.",
+            style: TextStyle(fontSize: 16),
+          ),
+        ],
+      ),
+    );
+  }
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
       Text(
         'Downloads',
         style: TextStyle(
-          fontSize: 20,
-          color: primaryColor,
           fontWeight: FontWeight.bold,
+          fontSize: 19,
+          color: AppColors.themeBlue,
+          letterSpacing: 0.3,
         ),
       ),
-      const SizedBox(height: 12),
-      Table(
-        columnWidths: const {
-          0: FlexColumnWidth(3),
-          1: FlexColumnWidth(2),
-          2: FlexColumnWidth(2),
-          3: FlexColumnWidth(3),
-        },
-        border: TableBorder.all(color: Colors.grey),
-        children: [
-          _buildTableRow(
-            isHeader: true,
-            values: const [
-              'Product',
-              'Downloads remaining',
-              'Expires',
-              'Download',
-            ],
-          ),
-          ...matchingDownloads.map((download) {
-            final lineItem = _findLineItemForDownload(orderDetails, download);
-            return _buildTableRow(
-              values: [
-                lineItem?.name ?? download.productName ?? '',
-                download.downloadsRemaining?.toString() ?? '',
-                _formatDate(download.accessExpires),
-                '',
-              ],
-              buttons: [
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
+      const SizedBox(height: 18),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SizedBox(
+              width: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    headingRowColor: MaterialStateProperty.all(
+                      const Color(0xFFF4F6FB),
+                    ),
+                    dataRowMinHeight: 52,
+                    dataRowMaxHeight: 60,
+                    headingTextStyle: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.5,
+                      color: Color(0xFF1F2233),
+                      letterSpacing: 0.15,
+                    ),
+                    columns: const [
+                      DataColumn(label: Text('Product')),
+                      DataColumn(label: Text('Remaining')),
+                      DataColumn(label: Text('Expires')),
+                      DataColumn(label: Text('Actions')),
+                    ],
+                    rows:
+                        matchingDownloads.map((download) {
+                          final lineItem = _findLineItemForDownload(
+                            orderDetails,
+                            download,
+                          );
+                          return DataRow(
+                            cells: [
+                              DataCell(
+                                Text(
+                                  lineItem?.name ?? download.productName ?? '',
+                                  style: const TextStyle(
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                              DataCell(
+                                Text(
+                                  download.downloadsRemaining?.toString() ??
+                                      '-',
+                                ),
+                              ),
+                              DataCell(
+                                download.accessExpires == null
+                                    ? const Text('-')
+                                    : Text(_formatDate(download.accessExpires)),
+                              ),
+                              DataCell(
+                                Row(
+                                  children: [
+                                    _ModernIconBtn(
+                                      icon: Icons.download_rounded,
+                                      label: "Download",
+                                      color: AppColors.themeBlue,
+                                      onTap: () {},
+                                    ),
+                                    const SizedBox(width: 8),
+                                    _ModernIconBtn(
+                                      icon: Icons.play_circle_fill_rounded,
+                                      label: "Practice",
+                                      color: Colors.green[600]!,
+                                      onTap: () {},
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
                   ),
-                  onPressed: () {
-                    // Download logic here, e.g. launch URL
-                    if (download.fileUrl != null &&
-                        download.fileUrl!.isNotEmpty) {
-                      // TODO: Use url_launcher or similar package to download
-                    }
-                  },
-                  child: Text('Download'),
                 ),
-                const SizedBox(height: 8),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: primaryColor,
-                  ),
-                  onPressed: () {
-                    // Practice online logic here
-                  },
-                  child: const Text('Practice Online'),
-                ),
-              ],
+              ),
             );
-          }).toList(),
-        ],
+          },
+        ),
       ),
     ],
   );
@@ -236,130 +351,152 @@ Widget _buildOrderDetailsSection(
   List<DownloadedData> matchingDownloads,
 ) {
   const currency = '€';
+
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      const Text(
-        'Order details',
+      Text(
+        'Order Details',
         style: TextStyle(
-          fontSize: 20,
-          color: Colors.deepPurple,
           fontWeight: FontWeight.bold,
+          fontSize: 19,
+          color: AppColors.themeBlue,
+          letterSpacing: 0.3,
         ),
       ),
-      const SizedBox(height: 12),
-      Table(
-        columnWidths: const {0: FlexColumnWidth(6), 1: FlexColumnWidth(2)},
-        border: TableBorder.all(color: Colors.grey),
-        children: [
-          const TableRow(
-            children: [
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'Product',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8),
-                child: Text(
-                  'Total',
-                  style: TextStyle(fontWeight: FontWeight.bold),
-                ),
-              ),
-            ],
-          ),
-          ...matchingDownloads.map((download) {
-            final lineItem = _findLineItemForDownload(orderDetails, download);
-            return TableRow(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    '${lineItem?.name ?? download.productName ?? ''} × ${lineItem?.quantity ?? 1}',
+      const SizedBox(height: 18),
+      ClipRRect(
+        borderRadius: BorderRadius.circular(13),
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            return SizedBox(
+              width: double.infinity,
+              child: SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: ConstrainedBox(
+                  constraints: BoxConstraints(minWidth: constraints.maxWidth),
+                  child: DataTable(
+                    headingRowColor: MaterialStateProperty.all(
+                      const Color(0xFFF4F6FB),
+                    ),
+                    dataRowMinHeight: 52,
+                    dataRowMaxHeight: 60,
+                    headingTextStyle: const TextStyle(
+                      fontWeight: FontWeight.w700,
+                      fontSize: 15.5,
+                      color: Color(0xFF1F2233),
+                      letterSpacing: 0.15,
+                    ),
+                    columns: const [
+                      DataColumn(label: Text('Product')),
+                      DataColumn(label: Text('Total')),
+                    ],
+                    rows: [
+                      ...matchingDownloads.map((download) {
+                        final lineItem = _findLineItemForDownload(
+                          orderDetails,
+                          download,
+                        );
+                        return DataRow(
+                          cells: [
+                            DataCell(
+                              Text(
+                                '${lineItem?.name ?? download.productName ?? ''} × ${lineItem?.quantity ?? 1}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                            DataCell(
+                              Text(
+                                '${lineItem?.total ?? download.productMeta?.price ?? '0.00'} $currency',
+                              ),
+                            ),
+                          ],
+                        );
+                      }),
+                      DataRow(
+                        cells: [
+                          const DataCell(Text('Payment method:')),
+                          DataCell(Text(orderDetails.paymentTitle ?? 'N/A')),
+                        ],
+                      ),
+                      DataRow(
+                        cells: [
+                          const DataCell(
+                            Text(
+                              'Total:',
+                              style: TextStyle(fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                          DataCell(
+                            Text(
+                              '${orderDetails.total ?? '0.00'} $currency EUR',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(8),
-                  child: Text(
-                    '${lineItem?.total ?? download.productMeta?.price ?? '0.00'} $currency',
-                  ),
-                ),
-              ],
+              ),
             );
-          }).toList(),
-          TableRow(
-            children: [
-              const Padding(
-                padding: EdgeInsets.all(8),
-                child: Text('Payment method:'),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text(orderDetails.paymentTitle ?? 'N/A'),
-              ),
-            ],
-          ),
-          TableRow(
-            children: [
-              const Padding(padding: EdgeInsets.all(8), child: Text('Total:')),
-              Padding(
-                padding: const EdgeInsets.all(8),
-                child: Text('${orderDetails.total ?? '0.00'} $currency EUR'),
-              ),
-            ],
-          ),
-        ],
+          },
+        ),
       ),
     ],
   );
 }
 
 Widget _buildOrderAgainButton(Color primaryColor) {
-  return Align(
-    alignment: Alignment.centerLeft,
-    child: ElevatedButton(
-      style: ElevatedButton.styleFrom(
-        backgroundColor: primaryColor,
-        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      ),
-      onPressed: () {},
-      child: const Text('Order again'),
+  return OutlinedButton.icon(
+    icon: const Icon(Icons.shopping_cart_checkout_rounded),
+    style: OutlinedButton.styleFrom(
+      foregroundColor: primaryColor,
+      backgroundColor: const Color(0xFFF2F5FD),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+      side: BorderSide(color: primaryColor.withOpacity(0.26), width: 1.2),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+      textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
     ),
+    onPressed: () {},
+    label: const Text('Order again'),
   );
 }
 
-TableRow _buildTableRow({
-  required List<String> values,
-  bool isHeader = false,
-  List<Widget>? buttons,
-}) {
-  return TableRow(
-    children:
-        values.asMap().entries.map((entry) {
-          final index = entry.key;
-          final value = entry.value;
+class _ModernIconBtn extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final Color color;
+  final VoidCallback onTap;
+  const _ModernIconBtn({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
-          if (index == values.length - 1 && buttons != null) {
-            return Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Wrap(children: buttons),
-            );
-          }
-
-          return Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              value,
-              style:
-                  isHeader
-                      ? const TextStyle(fontWeight: FontWeight.bold)
-                      : const TextStyle(fontSize: 14),
-            ),
-          );
-        }).toList(),
-  );
+  @override
+  Widget build(BuildContext context) {
+    return TextButton.icon(
+      style: TextButton.styleFrom(
+        foregroundColor: color,
+        backgroundColor: color.withOpacity(0.08),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(34, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      ),
+      icon: Icon(icon, size: 18),
+      label: Text(
+        label,
+        style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+      ),
+      onPressed: onTap,
+    );
+  }
 }
 
 String _formatDate(String? isoTimestamp) {
@@ -372,7 +509,6 @@ String _formatDate(String? isoTimestamp) {
   }
 }
 
-/// Helper: get the line item from order for a download
 LineItem? _findLineItemForDownload(
   OrdersDetails orderDetails,
   DownloadedData download,

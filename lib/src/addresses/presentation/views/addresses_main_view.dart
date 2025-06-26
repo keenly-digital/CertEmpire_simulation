@@ -14,201 +14,217 @@ class AddressView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final isWide = MediaQuery.of(context).size.width > 820;
     return Scaffold(
+      backgroundColor: const Color(0xFFF7F8FC),
       body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0),
+        padding: EdgeInsets.symmetric(
+          horizontal: isWide ? 40 : 12,
+          vertical: isWide ? 38 : 18,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              "The following addresses will be used on the checkout page by default.",
-              style: TextStyle(fontSize: 16),
-            ),
-            const SizedBox(height: 20),
-
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-
-              children: [
-                // Billing Address
-                BlocBuilder<UserBloc, UserInitialState>(
-                  builder: (context, state) {
-                    return Expanded(
-                      child: _addressBox(
-                        context: context,
-                        title: "Billing address",
-                        actionLabel: "Edit Billing address",
-                        onActionTap: () {
-                          context.read<NavigationCubit>().selectTab(
-                            7,
-                            subTitle: 1,
-                          );
-                        },
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              state.userData?.billing?.firstName ??
-                                  "First Name",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.company ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.address1 ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.address2 ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.city ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.postcode ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.billing?.country ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ],
-                        ),
-                        color: AppColors.purple,
-                      ),
-                    );
-                  },
+            Card(
+              elevation: 0,
+              margin: const EdgeInsets.only(bottom: 22),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              color: const Color(0xFFF2F4FB),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 22,
+                  vertical: 18,
                 ),
-
-                SpacerUtil.horizontalLarge(),
-                BlocBuilder<UserBloc, UserInitialState>(
-                  builder: (context, state) {
-                    return Expanded(
-                      child: _addressBox(
-                        context: context,
-                        title: "Shipping address",
-                        actionLabel: "Add Shipping address",
-                        onActionTap: () {
-                          context.read<NavigationCubit>().selectTab(
-                            7,
-                            subTitle: 2,
-                          );
-                        },
-                        content: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-
-                          children: [
-                            if (state.userData?.shipping == null)
-                              Text(
-                                "You have not set up this type of address yet.",
-                                style: TextStyle(fontStyle: FontStyle.italic),
-                              ),
-
-                            Text(
-                              state.userData?.shipping?.firstName ??
-                                  "First Name",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.company ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.address1 ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.address2 ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.city ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.postcode ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                            Text(
-                              state.userData?.shipping?.country ?? "",
-                              style: TextStyle(fontStyle: FontStyle.italic),
-                            ),
-                          ],
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: AppColors.themeBlue,
+                      size: 26,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        "The following addresses will be used on the checkout page by default.",
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.themeBlue,
+                          fontWeight: FontManager.semiBold,
+                          fontSize: 16.2,
                         ),
-                        color: AppColors.purple,
                       ),
-                    );
-                  },
+                    ),
+                  ],
                 ),
-              ],
+              ),
             ),
+            isWide
+                ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _BillingCard()),
+                    SpacerUtil.horizontalLarge(),
+                    Expanded(child: _ShippingCard()),
+                  ],
+                )
+                : Column(
+                  children: [
+                    _BillingCard(),
+                    const SizedBox(height: 30),
+                    _ShippingCard(),
+                  ],
+                ),
           ],
         ),
       ),
     );
   }
+}
 
-  Widget _addressBox({
-    required BuildContext context,
-    required String title,
-    required String actionLabel,
-    required VoidCallback onActionTap,
-    required Widget content,
-    required Color color,
-  }) {
-    return Container(
-      decoration: BoxDecoration(
-        border: Border.all(color: Colors.grey.shade300),
-      ),
+class _BillingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserBloc, UserInitialState>(
+      builder: (context, state) {
+        final billing = state.userData?.billing;
+        return _ModernAddressCard(
+          title: "Billing Address",
+          actionLabel: "Edit Billing address",
+          onActionTap: () {
+            context.read<NavigationCubit>().selectTab(7, subTitle: 1);
+          },
+          fields: [
+            billing?.firstName ?? "First Name",
+            billing?.company ?? "",
+            billing?.address1 ?? "",
+            billing?.address2 ?? "",
+            billing?.city ?? "",
+            billing?.postcode ?? "",
+            billing?.country ?? "",
+          ],
+        );
+      },
+    );
+  }
+}
 
-      width: 355,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            height: 120,
-            color: AppColors.lightGreyBg,
-            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+class _ShippingCard extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<UserBloc, UserInitialState>(
+      builder: (context, state) {
+        final shipping = state.userData?.shipping;
+        final isEmpty =
+            shipping == null ||
+            (shipping.firstName?.isEmpty ?? true) &&
+                (shipping.company?.isEmpty ?? true) &&
+                (shipping.address1?.isEmpty ?? true) &&
+                (shipping.address2?.isEmpty ?? true) &&
+                (shipping.city?.isEmpty ?? true) &&
+                (shipping.postcode?.isEmpty ?? true) &&
+                (shipping.country?.isEmpty ?? true);
+
+        return _ModernAddressCard(
+          title: "Shipping Address",
+          actionLabel:
+              isEmpty ? "Add Shipping address" : "Edit Shipping address",
+          onActionTap: () {
+            context.read<NavigationCubit>().selectTab(7, subTitle: 2);
+          },
+          fields:
+              isEmpty
+                  ? ["You have not set up this type of address yet."]
+                  : [
+                    shipping?.firstName ?? "First Name",
+                    shipping?.company ?? "",
+                    shipping?.address1 ?? "",
+                    shipping?.address2 ?? "",
+                    shipping?.city ?? "",
+                    shipping?.postcode ?? "",
+                    shipping?.country ?? "",
+                  ],
+        );
+      },
+    );
+  }
+}
+
+class _ModernAddressCard extends StatelessWidget {
+  final String title;
+  final String actionLabel;
+  final VoidCallback onActionTap;
+  final List<String> fields;
+
+  const _ModernAddressCard({
+    required this.title,
+    required this.actionLabel,
+    required this.onActionTap,
+    required this.fields,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      color: Colors.white,
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Align(
-                  alignment: Alignment.topLeft,
+                Icon(
+                  Icons.location_on_rounded,
+                  color: AppColors.themeBlue,
+                  size: 22,
+                ),
+                const SizedBox(width: 8),
+                Expanded(
                   child: Text(
                     title,
-                    style: context.textTheme.headlineSmall?.copyWith(
-                      color: AppColors.lightPrimary,
-                      fontWeight: FontManager.medium,
+                    style: context.textTheme.titleLarge?.copyWith(
+                      color: AppColors.themeBlue,
+                      fontWeight: FontManager.bold,
+                      fontSize: 19,
                     ),
                   ),
                 ),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.click,
-                    child: GestureDetector(
-                      onTap: onActionTap,
-                      child: Text(
-                        actionLabel,
-                        style: TextStyle(
-                          color: color,
-                          fontSize: 14,
-                          decoration: TextDecoration.underline,
-                        ),
+                TextButton(
+                  onPressed: onActionTap,
+                  style: TextButton.styleFrom(
+                    foregroundColor: AppColors.purple,
+                    textStyle: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                  child: Text(actionLabel),
+                ),
+              ],
+            ),
+            const Divider(thickness: 1.1, height: 30),
+            ...fields
+                .where((line) => line.isNotEmpty)
+                .map(
+                  (line) => Padding(
+                    padding: const EdgeInsets.only(bottom: 5),
+                    child: Text(
+                      line,
+                      style: const TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 15,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
                 ),
-              ],
-            ),
-          ),
-          Padding(padding: const EdgeInsets.all(12), child: content),
-        ],
+          ],
+        ),
       ),
     );
   }
