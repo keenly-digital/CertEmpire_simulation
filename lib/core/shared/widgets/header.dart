@@ -1,3 +1,6 @@
+import 'dart:html' as html;
+
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
@@ -18,7 +21,9 @@ Widget header() {
         ),
         const Spacer(),
         ElevatedButton.icon(
-          onPressed: () {},
+          onPressed: () {
+            html.window.location.href = "${AppStrings.baseUrl}";
+          },
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.black),
           label: const Text(
             'Main Website',

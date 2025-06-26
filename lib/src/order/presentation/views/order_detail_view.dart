@@ -12,33 +12,39 @@ import '../../../../core/config/theme/font_manager.dart';
 import '../../../simulation/data/models/download_model.dart';
 import '../models/order_model.dart';
 
-
-/// zohaib
+/// Main order detail view
 class OrderDetailView extends StatelessWidget {
   const OrderDetailView({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // var list = context.read<OrderBloc>().state.orders?.where((element) {
-    //   return element.id == context.read<DownloadPageBloc>().ordersDetails.id;
-    // });
-
     return BlocBuilder<OrderBloc, OrderInitialState>(
-      builder: (context, state) {
+      builder: (context, orderState) {
+        final downloadPageBloc = context.watch<DownloadPageBloc>();
+        final OrdersDetails orderDetails = downloadPageBloc.ordersDetails;
+        final List<DownloadedData> downloads =
+            downloadPageBloc.state.orders ?? <DownloadedData>[];
+
+        // Get downloads for this order only
+        final List<DownloadedData> matchingDownloads =
+            downloads.where((d) => d.orderId == orderDetails.id).toList();
+
         final theme = Theme.of(context);
-        final downloadPageBloc = context.read<DownloadPageBloc>();
-        final orderDetails = downloadPageBloc.ordersDetails;
         final primaryColor = theme.primaryColor;
 
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: ListView(
             children: [
-              _buildOrderInfo(primaryColor),
+              _buildOrderInfo(orderDetails),
               const SizedBox(height: 24),
-              _buildDownloadsSection(primaryColor, state, context),
+              _buildDownloadsSection(
+                orderDetails,
+                matchingDownloads,
+                primaryColor,
+              ),
               const SizedBox(height: 32),
-              _buildOrderDetailsSection(context, state),
+              _buildOrderDetailsSection(orderDetails, matchingDownloads),
               const SizedBox(height: 32),
               _buildOrderAgainButton(primaryColor),
               verticalSpace(10),
@@ -114,26 +120,33 @@ class OrderDetailView extends StatelessWidget {
   }
 }
 
-Widget _buildOrderInfo(Color primaryColor) {
+Widget _buildOrderInfo(OrdersDetails orderDetails) {
+  final statusText =
+      orderDetails.status == 'completed'
+          ? 'Completed'
+          : orderDetails.status ?? '';
+  final statusColor =
+      orderDetails.status == 'completed' ? Colors.green : Colors.orange;
+  final orderDate = orderDetails.dateCreated ?? '';
   return Text.rich(
     TextSpan(
-      text: 'Order #41383 ',
+      text: 'Order #${orderDetails.id} ',
       children: [
         const TextSpan(
           text: 'was placed on ',
           style: TextStyle(color: Colors.black),
         ),
-        const TextSpan(
-          text: 'June 24, 2025 ',
-          style: TextStyle(fontWeight: FontWeight.bold),
+        TextSpan(
+          text: _formatDate(orderDate),
+          style: const TextStyle(fontWeight: FontWeight.bold),
         ),
         const TextSpan(
-          text: 'and is currently ',
+          text: ' and is currently ',
           style: TextStyle(color: Colors.black),
         ),
         TextSpan(
-          text: 'Completed.',
-          style: TextStyle(color: primaryColor, fontWeight: FontWeight.bold),
+          text: '$statusText.',
+          style: TextStyle(color: statusColor, fontWeight: FontWeight.bold),
         ),
       ],
       style: const TextStyle(fontSize: 16),
@@ -142,17 +155,10 @@ Widget _buildOrderInfo(Color primaryColor) {
 }
 
 Widget _buildDownloadsSection(
+  OrdersDetails orderDetails,
+  List<DownloadedData> matchingDownloads,
   Color primaryColor,
-  OrderInitialState state,
-  BuildContext context,
 ) {
-  final downloadPageBloc = context.read<DownloadPageBloc>();
-  final orderDetails = downloadPageBloc.ordersDetails;
-  final matchingDownloads =
-      downloadPageBloc.state.orders
-          ?.where((download) => download.productId == orderDetails.id)
-          .toList();
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -183,18 +189,13 @@ Widget _buildDownloadsSection(
               'Download',
             ],
           ),
-          ...?matchingDownloads?.map((download) {
-            final lineItem = _findMatchingUpper(
-              state,
-              download.orderId,
-              context,
-            );
-
+          ...matchingDownloads.map((download) {
+            final lineItem = _findLineItemForDownload(orderDetails, download);
             return _buildTableRow(
               values: [
-                lineItem?.productName ?? '',
+                lineItem?.name ?? download.productName ?? '',
                 download.downloadsRemaining?.toString() ?? '',
-                _formatDate(download.accessExpires?.toString()),
+                _formatDate(download.accessExpires),
                 '',
               ],
               buttons: [
@@ -202,20 +203,28 @@ Widget _buildDownloadsSection(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                   ),
-                  onPressed: () {},
-                  child: Text(lineItem?.productName ?? 'Download'),
+                  onPressed: () {
+                    // Download logic here, e.g. launch URL
+                    if (download.fileUrl != null &&
+                        download.fileUrl!.isNotEmpty) {
+                      // TODO: Use url_launcher or similar package to download
+                    }
+                  },
+                  child: Text('Download'),
                 ),
                 const SizedBox(height: 8),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     backgroundColor: primaryColor,
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    // Practice online logic here
+                  },
                   child: const Text('Practice Online'),
                 ),
               ],
             );
-          }),
+          }).toList(),
         ],
       ),
     ],
@@ -223,18 +232,10 @@ Widget _buildDownloadsSection(
 }
 
 Widget _buildOrderDetailsSection(
-  BuildContext context,
-  OrderInitialState state,
+  OrdersDetails orderDetails,
+  List<DownloadedData> matchingDownloads,
 ) {
-  final downloadPageBloc = context.read<DownloadPageBloc>();
-  final orderDetails = downloadPageBloc.ordersDetails;
-  final matchingDownloads =
-      downloadPageBloc.state.orders
-          ?.where((download) => download.orderId == orderDetails.id)
-          .toList();
-
   const currency = '€';
-
   return Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
@@ -269,24 +270,25 @@ Widget _buildOrderDetailsSection(
               ),
             ],
           ),
-          ...?matchingDownloads?.map((download) {
-            final lineItem = _findMatchingLineItem(state, download.orderId);
-
+          ...matchingDownloads.map((download) {
+            final lineItem = _findLineItemForDownload(orderDetails, download);
             return TableRow(
               children: [
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: Text(
-                    '${lineItem?.name ?? 'Unknown Product'} × ${lineItem?.quantity ?? 1}',
+                    '${lineItem?.name ?? download.productName ?? ''} × ${lineItem?.quantity ?? 1}',
                   ),
                 ),
                 Padding(
                   padding: const EdgeInsets.all(8),
-                  child: Text('${lineItem?.total ?? '0.00'} $currency'),
+                  child: Text(
+                    '${lineItem?.total ?? download.productMeta?.price ?? '0.00'} $currency',
+                  ),
                 ),
               ],
             );
-          }),
+          }).toList(),
           TableRow(
             children: [
               const Padding(
@@ -361,46 +363,25 @@ TableRow _buildTableRow({
 }
 
 String _formatDate(String? isoTimestamp) {
-  if (isoTimestamp == null) return '';
-
+  if (isoTimestamp == null || isoTimestamp.isEmpty) return '';
   try {
     final dateTime = DateTime.parse(isoTimestamp);
     return DateFormat('MMMM d, yyyy').format(dateTime);
   } catch (_) {
-    return '';
+    return isoTimestamp;
   }
 }
 
-LineItem? _findMatchingLineItem(OrderInitialState state, int? productId) {
-  debugPrint('No matching line item found for productId11111: $productId');
-
-  final matchingItem =
-      state.orders?.expand((order) => order.lineItems ?? []).where((item) {
-        print("sdlsakd880 ${item}");
-        return item.productId == productId;
-      }).firstOrNull;
-
-  if (matchingItem == null) {
-    debugPrint('No matching line item found for productId: $productId');
-  }
-}
-
-DownloadedData? _findMatchingUpper(
-  OrderInitialState state,
-  int? productId,
-  BuildContext context,
+/// Helper: get the line item from order for a download
+LineItem? _findLineItemForDownload(
+  OrdersDetails orderDetails,
+  DownloadedData download,
 ) {
-  debugPrint('No matching line item found for productId11111: $productId');
-
-  final matchingItem =
-      context.read<DownloadPageBloc>().state.orders?.where((item) {
-        print("sdlsakd880 ${item}");
-        return item.orderId == productId;
-      }).firstOrNull;
-
-  if (matchingItem == null) {
-    debugPrint('No matching line item found for productId: $productId');
+  try {
+    return orderDetails.lineItems?.firstWhere(
+      (li) => li.productId == download.productId,
+    );
+  } catch (_) {
+    return null;
   }
-  print("Matching item: ${matchingItem?.toJson()}");
-  return matchingItem;
 }
