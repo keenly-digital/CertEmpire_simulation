@@ -25,6 +25,20 @@ class UserData {
     "Error": error,
     "Data": data?.toJson(),
   };
+
+  UserData copyWith({
+    bool? success,
+    String? message,
+    String? error,
+    UserInfoData? data,
+  }) {
+    return UserData(
+      success: success ?? this.success,
+      message: message ?? this.message,
+      error: error ?? this.error,
+      data: data ?? this.data,
+    );
+  }
 }
 
 class UserInfoData {
@@ -79,8 +93,11 @@ class UserInfoData {
     shipping: json["shipping"] == null ? null : Ing.fromJson(json["shipping"]),
     isPayingCustomer: json["is_paying_customer"],
     avatarUrl: json["avatar_url"],
-    currencyOptions: json["currency_options"] == null ? [] : List<SelectedCurrency>.from(json["currency_options"]!.map((x) => SelectedCurrency.fromJson(x))),
-    selectedCurrency: json["selected_currency"] == null ? null : SelectedCurrency.fromJson(json["selected_currency"]),
+    currencyOptions: json["currency_options"] == null
+        ? []
+        : List<SelectedCurrency>.from(json["currency_options"]!.map((x) => SelectedCurrency.fromJson(x))),
+    selectedCurrency:
+    json["selected_currency"] == null ? null : SelectedCurrency.fromJson(json["selected_currency"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -101,6 +118,44 @@ class UserInfoData {
     "currency_options": currencyOptions == null ? [] : List<dynamic>.from(currencyOptions!.map((x) => x.toJson())),
     "selected_currency": selectedCurrency?.toJson(),
   };
+
+  UserInfoData copyWith({
+    int? id,
+    DateTime? dateCreated,
+    DateTime? dateCreatedGmt,
+    DateTime? dateModified,
+    DateTime? dateModifiedGmt,
+    String? email,
+    String? firstName,
+    String? lastName,
+    String? role,
+    String? username,
+    Ing? billing,
+    Ing? shipping,
+    bool? isPayingCustomer,
+    String? avatarUrl,
+    List<SelectedCurrency>? currencyOptions,
+    SelectedCurrency? selectedCurrency,
+  }) {
+    return UserInfoData(
+      id: id ?? this.id,
+      dateCreated: dateCreated ?? this.dateCreated,
+      dateCreatedGmt: dateCreatedGmt ?? this.dateCreatedGmt,
+      dateModified: dateModified ?? this.dateModified,
+      dateModifiedGmt: dateModifiedGmt ?? this.dateModifiedGmt,
+      email: email ?? this.email,
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      role: role ?? this.role,
+      username: username ?? this.username,
+      billing: billing ?? this.billing,
+      shipping: shipping ?? this.shipping,
+      isPayingCustomer: isPayingCustomer ?? this.isPayingCustomer,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
+      currencyOptions: currencyOptions ?? this.currencyOptions,
+      selectedCurrency: selectedCurrency ?? this.selectedCurrency,
+    );
+  }
 }
 
 class Ing {
@@ -157,6 +212,34 @@ class Ing {
     "email": email,
     "phone": phone,
   };
+
+  Ing copyWith({
+    String? firstName,
+    String? lastName,
+    String? company,
+    String? address1,
+    String? address2,
+    String? city,
+    String? postcode,
+    String? country,
+    String? state,
+    String? email,
+    String? phone,
+  }) {
+    return Ing(
+      firstName: firstName ?? this.firstName,
+      lastName: lastName ?? this.lastName,
+      company: company ?? this.company,
+      address1: address1 ?? this.address1,
+      address2: address2 ?? this.address2,
+      city: city ?? this.city,
+      postcode: postcode ?? this.postcode,
+      country: country ?? this.country,
+      state: state ?? this.state,
+      email: email ?? this.email,
+      phone: phone ?? this.phone,
+    );
+  }
 }
 
 class SelectedCurrency {
@@ -181,4 +264,16 @@ class SelectedCurrency {
     "symbol": symbol,
     "name": name,
   };
+
+  SelectedCurrency copyWith({
+    String? code,
+    String? symbol,
+    String? name,
+  }) {
+    return SelectedCurrency(
+      code: code ?? this.code,
+      symbol: symbol ?? this.symbol,
+      name: name ?? this.name,
+    );
+  }
 }

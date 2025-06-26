@@ -1,5 +1,7 @@
 import 'package:certempiree/core/utils/log_util.dart';
+import 'package:certempiree/src/dashboard/models/user_model.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_events.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -123,7 +125,29 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Submit logic
+                    final currentUser = context.read<UserBloc>();
+                    final existingUserData = currentUser.state.userData;
+
+                    final updatedBilling = Ing(
+                      firstName: firstNameController.text,
+                      lastName: lastNameController.text,
+                      company: companyName.text,
+                      country: country.text,
+                      address1: streetAddress.text,
+                      address2: streetAddress2.text,
+                      city: townCity.text,
+                      state: state.text,
+                      postcode: postCode.text,
+                      phone: phone.text,
+                    );
+
+                    final updatedUserData = existingUserData?.copyWith(
+                      billing: updatedBilling,
+                    );
+
+                    context.read<UserBloc>().add(
+                      UpdateUserEvent(userInfoData: updatedUserData!),
+                    );
                   }
                 },
                 child: const Text("Save Changes"),

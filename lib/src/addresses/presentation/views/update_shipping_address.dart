@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/shared/widgets/spaces.dart';
+import '../../../dashboard/models/user_model.dart';
+import '../../../dashboard/presentation/bloc/user_bloc/user_events.dart';
 
 class UpdateShippingAddress extends StatefulWidget {
   const UpdateShippingAddress({super.key});
@@ -32,9 +34,8 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
   void initState() {
     super.initState();
     var userBloc = context.read<UserBloc>().state;
-    LogUtil.debug("lsjdlksajdlksajuweoiwqu ${userBloc.userData?.toJson()}");
-    firstNameController.text = userBloc.userData?.firstName ?? "";
-    lastNameController.text = userBloc.userData?.lastName ?? "";
+    firstNameController.text = userBloc.userData?.shipping?.firstName ?? "";
+    lastNameController.text = userBloc.userData?.shipping?.lastName ?? "";
     companyName.text = userBloc.userData?.shipping?.company ?? "";
     country.text = userBloc.userData?.shipping?.country ?? "";
     streetAddress.text = userBloc.userData?.shipping?.address1 ?? "";
@@ -43,7 +44,7 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
     state.text = userBloc.userData?.shipping?.state ?? "";
     postCode.text = userBloc.userData?.shipping?.postcode ?? "";
     phone.text = userBloc.userData?.shipping?.phone ?? "";
-    email.text = userBloc.userData?.email ?? "";
+    email.text = userBloc.userData?.shipping?.email ?? "";
   }
 
   @override
@@ -110,9 +111,32 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    // Submit logic
+                    final currentUser = context.read<UserBloc>();
+                    final existingUserData = currentUser.state.userData;
+
+                    final updatedShipping = Ing(
+                      firstName: firstNameController.text,
+                      lastName: lastNameController.text,
+                      company: companyName.text,
+                      country: country.text,
+                      address1: streetAddress.text,
+                      address2: streetAddress2.text,
+                      city: townCity.text,
+                      state: state.text,
+                      postcode: postCode.text,
+                      phone: phone.text,
+                    );
+
+                    final updatedUserData = existingUserData?.copyWith(
+                      shipping: updatedShipping,
+                    );
+
+                    context.read<UserBloc>().add(
+                      UpdateUserEvent(userInfoData: updatedUserData!),
+                    );
                   }
                 },
+
                 child: const Text("Save Addresses"),
               ),
             ],

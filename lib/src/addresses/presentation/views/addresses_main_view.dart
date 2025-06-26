@@ -48,13 +48,15 @@ class AddressView extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              state.userData?.firstName ?? "First Name",
+                              state.userData?.billing?.firstName ??
+                                  "First Name",
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
                             Text(
                               state.userData?.billing?.company ?? "",
                               style: TextStyle(fontStyle: FontStyle.italic),
-                            ),Text(
+                            ),
+                            Text(
                               state.userData?.billing?.address1 ?? "",
                               style: TextStyle(fontStyle: FontStyle.italic),
                             ),
@@ -83,25 +85,64 @@ class AddressView extends StatelessWidget {
                 ),
 
                 SpacerUtil.horizontalLarge(),
-                // Shipping Address
-                Expanded(
-                  child: _addressBox(
-                    context: context,
-                    title: "Shipping address",
-                    actionLabel: "Add Shipping address",
-                    onActionTap: () {
-                      context.read<NavigationCubit>().selectTab(7, subTitle: 2);
-                    },
-                    content: Column(
-                      children: [
-                        const Text(
-                          "You have not set up this type of address yet.",
-                          style: TextStyle(fontStyle: FontStyle.italic),
+                BlocBuilder<UserBloc, UserInitialState>(
+                  builder: (context, state) {
+                    return Expanded(
+                      child: _addressBox(
+                        context: context,
+                        title: "Shipping address",
+                        actionLabel: "Add Shipping address",
+                        onActionTap: () {
+                          context.read<NavigationCubit>().selectTab(
+                            7,
+                            subTitle: 2,
+                          );
+                        },
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+
+                          children: [
+                            if (state.userData?.shipping == null)
+                              Text(
+                                "You have not set up this type of address yet.",
+                                style: TextStyle(fontStyle: FontStyle.italic),
+                              ),
+
+                            Text(
+                              state.userData?.shipping?.firstName ??
+                                  "First Name",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.company ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.address1 ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.address2 ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.city ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.postcode ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                            Text(
+                              state.userData?.shipping?.country ?? "",
+                              style: TextStyle(fontStyle: FontStyle.italic),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    color: AppColors.purple,
-                  ),
+                        color: AppColors.purple,
+                      ),
+                    );
+                  },
                 ),
               ],
             ),

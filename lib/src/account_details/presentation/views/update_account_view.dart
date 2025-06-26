@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:certempiree/core/shared/widgets/spaces.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:flutter/material.dart';
@@ -141,11 +139,11 @@ class _UpdateAccountState extends State<UpdateAccount> {
                                     value: currency.name,
                                     child: Row(
                                       children: [
-                                            Text(
-                                              HtmlUnescape().convert(
-                                                currency.symbol ?? "",
-                                              ),
-                                            ),
+                                        Text(
+                                          HtmlUnescape().convert(
+                                            currency.symbol ?? "",
+                                          ),
+                                        ),
                                         horizontalSpace(5),
 
                                         Text(currency.name ?? ""),

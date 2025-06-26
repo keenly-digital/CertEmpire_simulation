@@ -1,9 +1,11 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/res/app_strings.dart';
+import '../bloc/user_bloc/user_events.dart';
 
 class UserMainView extends StatefulWidget {
   const UserMainView({super.key});
@@ -13,6 +15,12 @@ class UserMainView extends StatefulWidget {
 }
 
 class _UserMainViewState extends State<UserMainView> {
+  @override
+  void initState() {
+    context.read<UserBloc>().add(GetUserEvent(userId: AppStrings.id));
+    super.initState();
+  }
+
   @override
   Widget build(BuildContext context) {
     // Mock data - we will replace this with real data from your UserBloc later
@@ -58,8 +66,8 @@ class _UserMainViewState extends State<UserMainView> {
                       Expanded(
                         flex: 3,
                         child: SizedBox(
-                          height:
-                              585, // 👈 Adjust this value as you want (e.g., 400–600)
+                          height: 585,
+                          // 👈 Adjust this value as you want (e.g., 400–600)
                           child: _buildUpdatesFeed(context),
                         ),
                       ),
@@ -294,7 +302,8 @@ class _UserMainViewState extends State<UserMainView> {
       physics: const NeverScrollableScrollPhysics(),
       crossAxisSpacing: 20,
       mainAxisSpacing: 20,
-      childAspectRatio: 2.2, // Adjusted aspect ratio for better look
+      childAspectRatio: 2.2,
+      // Adjusted aspect ratio for better look
       children: [
         _summaryCard(
           context: context,
