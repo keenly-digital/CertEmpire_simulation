@@ -22,7 +22,7 @@ class AppStrings {
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = 'Report Answer as Incorrect';
 
-  static String fileId = 'af8d8736-1d46-46d7-97bd-bc4385f80b2f';
+  static String fileId = 'f9699361-dfd0-4336-83c0-8eccb5b8b472';
   static String authToken = "";
 
   static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
@@ -31,5 +31,5 @@ class AppStrings {
 
   static int id = 10860;
 
-  static String name = "Ahmed R";
+  static String name = "Ali R Zain";
 }

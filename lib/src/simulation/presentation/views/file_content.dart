@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../data/models/file_content_model.dart';
 import '../widgets/admin_question_overview.dart';
 import '../widgets/file_casestudy_row.dart';
-import '../widgets/file_topic_row.dart';
+import '../widgets/file_topic_row.dart'; // FIX: This import was missing
 
 typedef ContentChanged = void Function({bool scrollToTop});
 

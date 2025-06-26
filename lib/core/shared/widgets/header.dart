@@ -21,7 +21,7 @@ Widget header() {
           onPressed: () {},
           icon: const Icon(Icons.arrow_back_rounded, color: AppColors.black),
           label: const Text(
-            'Back to main website',
+            'Main Website',
             style: TextStyle(color: AppColors.black),
           ),
           style: ElevatedButton.styleFrom(
@@ -33,7 +33,7 @@ Widget header() {
             // slight shadow
             padding: EdgeInsets.symmetric(
               // comfortable touch target
-              horizontal: 16.w,
+              horizontal: 7.w,
               vertical: 12.h,
             ),
             shape: RoundedRectangleBorder(

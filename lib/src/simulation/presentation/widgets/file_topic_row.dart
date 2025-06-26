@@ -2,9 +2,7 @@ import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../core/res/asset.dart';
-import '../../../../core/utils/spacer_utility.dart';
 import '../../data/models/file_content_model.dart';
-import 'border_box.dart';
 
 class FileTopicRowWidget extends StatelessWidget {
   final Topic topic;
@@ -13,47 +11,55 @@ class FileTopicRowWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return BorderBox(
-      margin: SpacerUtil.only(top: SpacerUtil.instance.small),
-      child: Padding(
-        padding: SpacerUtil.allPadding(SpacerUtil.instance.xxSmall),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
+    // This is the simple, integrated layout from your screenshot
+    return Padding(
+      // Padding to give it space, but no card background
+      padding: const EdgeInsets.fromLTRB(16.0, 24.0, 16.0, 16.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // The folder icon
+          Image.asset(
+            Assets.topic, 
+            width: 28,
+            height: 28,
+            color: Colors.black.withOpacity(0.7),
+          ),
+          const SizedBox(width: 16),
+          // Column for the title and subtitle
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Container(
-                  margin: EdgeInsets.only(left: 5, top: 5),
-                  child: Image.asset(
-                    Assets.topic,
-                    width: 22,
-                    height: 22,
-                    color: Colors.black,
+                // Use RichText to add the "Topic: " label
+                RichText(
+                  text: TextSpan(
+                    style: context.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black87,
+                    ),
+                    children: [
+                      const TextSpan(
+                        text: "Topic: ",
+                        style: TextStyle(fontWeight: FontWeight.w500) // Slightly less bold label
+                      ),
+                      TextSpan(text: topic.title),
+                    ],
                   ),
                 ),
-
-                SpacerUtil.horizontalSmall(),
-                Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(topic.title, style: context.textTheme.titleSmall),
-                    Row(
-                      children: [
-                        Text(
-                          "Case Studies : ${topic.getCaseStudyCount()}",
-                          style: context.textTheme.labelMedium,
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
+                if (topic.getCaseStudyCount() > 0) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    "Case Studies: ${topic.getCaseStudyCount()}",
+                    style: context.textTheme.labelMedium
+                        ?.copyWith(color: Colors.grey.shade600),
+                  ),
+                ]
               ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
