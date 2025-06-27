@@ -45,30 +45,22 @@ class ExamQuestionPage extends StatefulWidget {
 
 class _ExamQuestionPageState extends State<ExamQuestionPage> {
   int pageNumber = 1;
-
   bool _isSingleQuestionView = true;
-
   int _currentQuestionIndex = 0;
-
   bool _shouldGoToLastItemOnLoad = false;
-
   int? _pendingGoToIndex;
-
   final TextEditingController _goToController = TextEditingController();
-
   bool _showGoToField = false;
 
   @override
   void initState() {
     super.initState();
-
     fetchSimulationData();
   }
 
   @override
   void dispose() {
     _goToController.dispose();
-
     super.dispose();
   }
 
@@ -76,7 +68,6 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     context.read<SimulationBloc>().add(
       FetchSimulationDataEvent(
         fieldId: AppStrings.fileId,
-
         pageNumber: pageNumber,
       ),
     );
@@ -210,153 +201,122 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
             setState(() {
               _currentQuestionIndex =
                   (state.simulationData?.items.length ?? 1) - 1;
-
               _shouldGoToLastItemOnLoad = false;
             });
           }
-
           if (_pendingGoToIndex != null) {
             setState(() {
               _currentQuestionIndex = _pendingGoToIndex!;
-
               _pendingGoToIndex = null;
             });
           }
         }
       },
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final isWide = constraints.maxWidth > 852;
+          final horizontalPadding = isWide ? 64.0 : 16.0;
 
-      child: Scaffold(
-        backgroundColor: Colors.grey.shade100,
+          return SingleChildScrollView(
+            padding: EdgeInsets.symmetric(
+              horizontal: horizontalPadding,
+              vertical: 24.0,
+            ),
+            child: BlocBuilder<SimulationBloc, SimulationInitState>(
+              builder: (context, state) {
+                final simulationState = state as SimulationState;
+                if (simulationState.loading &&
+                    (simulationState.simulationData?.items.isEmpty ?? true)) {
+                  return const Center(
+                    child: CircularProgressIndicator(
+                      color: AppColors.themePurple,
+                    ),
+                  );
+                }
 
-        body: BlocBuilder<SimulationBloc, SimulationInitState>(
-          builder: (context, state) {
-            final simulationState = state as SimulationState;
+                final originalItems =
+                    simulationState.simulationData?.items ?? [];
+                final allQuestionsOnPage = _getAllQuestions(originalItems);
+                final totalQuestionsInExam =
+                    simulationState.totalItemLength ?? 0;
+                Topic? parentTopic;
+                CaseStudy? parentCaseStudy;
+                Question? currentQuestion;
 
-            if (simulationState.loading &&
-                (simulationState.simulationData?.items.isEmpty ?? true)) {
-              return const Center(
-                child: CircularProgressIndicator(color: AppColors.themePurple),
-              );
-            }
+                if (_isSingleQuestionView && allQuestionsOnPage.isNotEmpty) {
+                  if (_currentQuestionIndex >= allQuestionsOnPage.length) {
+                    _currentQuestionIndex = allQuestionsOnPage.length - 1;
+                  }
+                  currentQuestion = allQuestionsOnPage[_currentQuestionIndex];
+                  parentTopic = _findParentTopic(
+                    currentQuestion,
+                    originalItems,
+                  );
+                  parentCaseStudy = _findParentCaseStudy(
+                    currentQuestion,
+                    originalItems,
+                  );
+                }
 
-            final originalItems = simulationState.simulationData?.items ?? [];
-
-            final allQuestionsOnPage = _getAllQuestions(originalItems);
-
-            final totalQuestionsInExam = simulationState.totalItemLength ?? 0;
-
-            Topic? parentTopic;
-
-            CaseStudy? parentCaseStudy;
-
-            Question? currentQuestion;
-
-            if (_isSingleQuestionView && allQuestionsOnPage.isNotEmpty) {
-              if (_currentQuestionIndex >= allQuestionsOnPage.length) {
-                _currentQuestionIndex = allQuestionsOnPage.length - 1;
-              }
-
-              currentQuestion = allQuestionsOnPage[_currentQuestionIndex];
-
-              parentTopic = _findParentTopic(currentQuestion, originalItems);
-
-              parentCaseStudy = _findParentCaseStudy(
-                currentQuestion,
-                originalItems,
-              );
-            }
-
-            return LayoutBuilder(
-              builder: (context, constraints) {
-                final isWide = constraints.maxWidth > 852;
-
-                final horizontalPadding = isWide ? 64.0 : 16.0;
-
-                return SingleChildScrollView(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: horizontalPadding,
-                    vertical: 24.0,
-                  ),
-
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-
-                    children: [
-                      _buildHeader(context, simulationState, isWide),
-
-                      AnimatedContainer(
-                        duration: const Duration(milliseconds: 300),
-
-                        height: _showGoToField ? 60 : 0,
-
-                        child:
-                            _showGoToField
-                                ? _buildGoToField(totalQuestionsInExam)
-                                : null,
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    _buildHeader(context, simulationState, isWide),
+                    AnimatedContainer(
+                      duration: const Duration(milliseconds: 300),
+                      height: _showGoToField ? 60 : 0,
+                      child:
+                          _showGoToField
+                              ? _buildGoToField(totalQuestionsInExam)
+                              : null,
+                    ),
+                    const SizedBox(height: 16),
+                    Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: Colors.grey.shade200),
                       ),
-
-                      const SizedBox(height: 16),
-
-                      Container(
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-
-                          borderRadius: BorderRadius.circular(12),
-
-                          border: Border.all(color: Colors.grey.shade200),
-                        ),
-
-                        child:
-                            _isSingleQuestionView && currentQuestion != null
-                                ? Column(
-                                  children: [
-                                    if (parentTopic != null)
-                                      FileTopicRowWidget(topic: parentTopic),
-
-                                    if (parentCaseStudy != null)
-                                      FileCaseStudyRowWidget(
-                                        caseStudy: parentCaseStudy,
-                                      ),
-
-                                    AdminQuestionOverviewWidget(
-                                      question: currentQuestion,
-
-                                      questionIndex: currentQuestion.q,
-
-                                      onContentChanged:
-                                          ({bool scrollToTop = false}) {},
+                      child:
+                          _isSingleQuestionView && currentQuestion != null
+                              ? Column(
+                                children: [
+                                  if (parentTopic != null)
+                                    FileTopicRowWidget(topic: parentTopic),
+                                  if (parentCaseStudy != null)
+                                    FileCaseStudyRowWidget(
+                                      caseStudy: parentCaseStudy,
                                     ),
-                                  ],
-                                )
-                                : FileContentWidget(
-                                  fileContent:
-                                      simulationState.simulationData ??
-                                      FileContent(),
-
-                                  searchQuery:
-                                      context
-                                          .watch<SearchQuestionCubit>()
-                                          .state,
-
-                                  onContentChanged:
-                                      ({bool scrollToTop = false}) => {},
-                                ),
+                                  AdminQuestionOverviewWidget(
+                                    question: currentQuestion,
+                                    questionIndex: currentQuestion.q,
+                                    onContentChanged:
+                                        ({bool scrollToTop = false}) {},
+                                  ),
+                                ],
+                              )
+                              : FileContentWidget(
+                                fileContent:
+                                    simulationState.simulationData ??
+                                    FileContent(),
+                                searchQuery:
+                                    context.watch<SearchQuestionCubit>().state,
+                                onContentChanged:
+                                    ({bool scrollToTop = false}) => {},
+                              ),
+                    ),
+                    const SizedBox(height: 24),
+                    if (totalQuestionsInExam > 0)
+                      _buildPagination(
+                        totalQuestionsInExam,
+                        allQuestionsOnPage,
                       ),
-
-                      const SizedBox(height: 24),
-
-                      if (totalQuestionsInExam > 0)
-                        _buildPagination(
-                          totalQuestionsInExam,
-                          allQuestionsOnPage,
-                        ),
-                    ],
-                  ),
+                  ],
                 );
               },
-            );
-          },
-        ),
+            ),
+          );
+        },
       ),
     );
   }

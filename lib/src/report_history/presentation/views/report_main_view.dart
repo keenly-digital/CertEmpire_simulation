@@ -29,114 +29,97 @@ class _ReportMainViewState extends State<ReportMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      body: BlocBuilder<GetAllReportsBloc, ReportInitialState>(
-        builder: (context, state) {
-          if (state is GetAllReportState) {
-            final moveNext =
-                (state.reportData?.length ?? 0) < (state.results ?? 0);
-            final reports = state.reportData ?? [];
-            return Center(
-              child: Container(
-                constraints: const BoxConstraints(maxWidth: 1100),
-                padding: const EdgeInsets.symmetric(
-                  vertical: 38,
-                  horizontal: 18,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      "My Reports",
-                      style: TextStyle(
-                        fontSize: 27,
-                        fontWeight: FontWeight.w800,
-                        color: AppColors.themeBlue,
-                        letterSpacing: 0.3,
+    return BlocBuilder<GetAllReportsBloc, ReportInitialState>(
+      builder: (context, state) {
+        if (state is GetAllReportState) {
+          final moveNext =
+              (state.reportData?.length ?? 0) < (state.results ?? 0);
+          final reports = state.reportData ?? [];
+          return Center(
+            child: Container(
+              constraints: const BoxConstraints(maxWidth: 1100),
+              padding: const EdgeInsets.symmetric(vertical: 38, horizontal: 18),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    "My Reports",
+                    style: TextStyle(
+                      fontSize: 27,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.themeBlue,
+                      letterSpacing: 0.3,
+                    ),
+                  ),
+                  const SizedBox(height: 22),
+                  // Modern table header
+                  _ModernTableHeader(),
+                  const Divider(
+                    height: 0,
+                    thickness: 2,
+                    color: Color(0xFFDEEDFE),
+                  ),
+                  // REMOVE Expanded; just show the list
+                  reports.isEmpty
+                      ? Center(
+                        child: Text(
+                          "No reports found.",
+                          style: TextStyle(color: Colors.black54, fontSize: 17),
+                        ),
+                      )
+                      : Column(
+                        children: List.generate(reports.length, (index) {
+                          final report = reports[index];
+                          return _ModernTableRow(
+                            report: report,
+                            isOdd: index % 2 == 1,
+                            onViewReason:
+                                report.status == "Unapproved"
+                                    ? () {
+                                      context.read<GetAllReportsBloc>().add(
+                                        GetReasonEvent(
+                                          reportId: report.id ?? "",
+                                          context: context,
+                                          report: report,
+                                        ),
+                                      );
+                                    }
+                                    : null,
+                          );
+                        }),
                       ),
-                    ),
-                    const SizedBox(height: 22),
-                    // Modern table header
-                    _ModernTableHeader(),
-                    const Divider(
-                      height: 0,
-                      thickness: 2,
-                      color: Color(0xFFDEEDFE),
-                    ),
-                    Expanded(
-                      child:
-                          reports.isEmpty
-                              ? Center(
-                                child: Text(
-                                  "No reports found.",
-                                  style: TextStyle(
-                                    color: Colors.black54,
-                                    fontSize: 17,
-                                  ),
-                                ),
-                              )
-                              : ListView.separated(
-                                padding: EdgeInsets.zero,
-                                itemCount: reports.length,
-                                separatorBuilder:
-                                    (c, i) => const SizedBox(height: 2),
-                                itemBuilder: (context, index) {
-                                  final report = reports[index];
-                                  return _ModernTableRow(
-                                    report: report,
-                                    isOdd: index % 2 == 1,
-                                    onViewReason:
-                                        report.status == "Unapproved"
-                                            ? () {
-                                              context
-                                                  .read<GetAllReportsBloc>()
-                                                  .add(
-                                                    GetReasonEvent(
-                                                      reportId: report.id ?? "",
-                                                      context: context,
-                                                      report: report,
-                                                    ),
-                                                  );
-                                            }
-                                            : null,
-                                  );
-                                },
-                              ),
-                    ),
-                    const SizedBox(height: 18),
-                    _ModernPager(
-                      pageNumber: pageNumber,
-                      total: state.results ?? 0,
-                      shown: reports.length,
-                      canPrev: pageNumber > 1,
-                      canNext: moveNext,
-                      onPrev: () {
-                        if (pageNumber > 1) {
-                          setState(() => pageNumber--);
-                          fetchReports();
-                        }
-                      },
-                      onNext: () {
-                        if (moveNext) {
-                          setState(() => pageNumber++);
-                          fetchReports();
-                        } else {
-                          CommonHelper.showToast(message: "No More Reports");
-                        }
-                      },
-                    ),
-                  ],
-                ),
+                  const SizedBox(height: 18),
+                  _ModernPager(
+                    pageNumber: pageNumber,
+                    total: state.results ?? 0,
+                    shown: reports.length,
+                    canPrev: pageNumber > 1,
+                    canNext: moveNext,
+                    onPrev: () {
+                      if (pageNumber > 1) {
+                        setState(() => pageNumber--);
+                        fetchReports();
+                      }
+                    },
+                    onNext: () {
+                      if (moveNext) {
+                        setState(() => pageNumber++);
+                        fetchReports();
+                      } else {
+                        CommonHelper.showToast(message: "No More Reports");
+                      }
+                    },
+                  ),
+                ],
               ),
-            );
-          } else {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
-            );
-          }
-        },
-      ),
+            ),
+          );
+        } else {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.purple),
+          );
+        }
+      },
     );
   }
 
@@ -151,6 +134,7 @@ class _ReportMainViewState extends State<ReportMainView> {
   }
 }
 
+// ... rest of the code is 100% unchanged ...
 class _ModernTableHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {

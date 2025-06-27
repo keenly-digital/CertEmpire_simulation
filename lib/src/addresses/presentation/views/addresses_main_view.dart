@@ -15,68 +15,62 @@ class AddressView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isWide = MediaQuery.of(context).size.width > 820;
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      body: Padding(
-        padding: EdgeInsets.symmetric(
-          horizontal: isWide ? 40 : 12,
-          vertical: isWide ? 38 : 18,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Card(
-              elevation: 0,
-              margin: const EdgeInsets.only(bottom: 22),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(18),
-              ),
-              color: const Color(0xFFF2F4FB),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 22,
-                  vertical: 18,
-                ),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.info_outline_rounded,
-                      color: AppColors.themeBlue,
-                      size: 26,
-                    ),
-                    const SizedBox(width: 14),
-                    Expanded(
-                      child: Text(
-                        "The following addresses will be used on the checkout page by default.",
-                        style: context.textTheme.bodyMedium?.copyWith(
-                          color: AppColors.themeBlue,
-                          fontWeight: FontManager.semiBold,
-                          fontSize: 16.2,
-                        ),
+    return Padding(
+      padding: EdgeInsets.symmetric(
+        horizontal: isWide ? 40 : 12,
+        vertical: isWide ? 38 : 18,
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Card(
+            elevation: 0,
+            margin: const EdgeInsets.only(bottom: 22),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(18),
+            ),
+            color: const Color(0xFFF2F4FB),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.info_outline_rounded,
+                    color: AppColors.themeBlue,
+                    size: 26,
+                  ),
+                  const SizedBox(width: 14),
+                  Expanded(
+                    child: Text(
+                      "The following addresses will be used on the checkout page by default.",
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.themeBlue,
+                        fontWeight: FontManager.semiBold,
+                        fontSize: 16.2,
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-            isWide
-                ? Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Expanded(child: _BillingCard()),
-                    SpacerUtil.horizontalLarge(),
-                    Expanded(child: _ShippingCard()),
-                  ],
-                )
-                : Column(
-                  children: [
-                    _BillingCard(),
-                    const SizedBox(height: 30),
-                    _ShippingCard(),
-                  ],
-                ),
-          ],
-        ),
+          ),
+          isWide
+              ? Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(child: _BillingCard()),
+                  SpacerUtil.horizontalLarge(),
+                  Expanded(child: _ShippingCard()),
+                ],
+              )
+              : Column(
+                children: [
+                  _BillingCard(),
+                  const SizedBox(height: 30),
+                  _ShippingCard(),
+                ],
+              ),
+        ],
       ),
     );
   }

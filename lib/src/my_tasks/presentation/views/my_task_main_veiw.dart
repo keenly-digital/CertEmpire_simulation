@@ -28,143 +28,133 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      body: BlocBuilder<GetAllTaskBloc, GetAllTaskState>(
-        builder: (context, state) {
-          final moveNext =
-              (state.taskItem?.length ?? 0) < (state.totalItemLength ?? 0);
+    return BlocBuilder<GetAllTaskBloc, GetAllTaskState>(
+      builder: (context, state) {
+        final moveNext =
+            (state.taskItem?.length ?? 0) < (state.totalItemLength ?? 0);
 
-          if (state.isLoading == true) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
-            );
-          }
-          if ((state.taskItem?.isEmpty ?? false) || (state.taskItem == null)) {
-            return Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 24,
-                  vertical: 32,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x14006fff),
-                      blurRadius: 22,
-                      offset: Offset(0, 7),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.task_alt_rounded,
-                      color: AppColors.themeBlue,
-                      size: 54,
-                    ),
-                    const SizedBox(height: 16),
-                    Text(
-                      "No Pending Task",
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black87,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          // Tasks exist
-          return Container(
-            width: double.infinity, // Full width
-            padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 14),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Icon(Icons.task, color: AppColors.themeBlue, size: 30),
-                    const SizedBox(width: 10),
-                    Text(
-                      "My Pending Tasks",
-                      style: TextStyle(
-                        color: AppColors.themeBlue,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 23,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 20),
-                Expanded(
-                  child: ListView.separated(
-                    padding: EdgeInsets.zero,
-                    itemCount: state.taskItem?.length ?? 0,
-                    separatorBuilder: (c, i) => const SizedBox(height: 14),
-                    itemBuilder: (context, index) {
-                      final task = state.taskItem?[index];
-                      final isOdd = index % 2 == 1;
-                      return Card(
-                        elevation: isOdd ? 2 : 0,
-                        shadowColor: AppColors.themeBlue.withOpacity(0.09),
-                        color: isOdd ? const Color(0xFFF7FAFE) : Colors.white,
-                        margin: EdgeInsets.zero,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          side: BorderSide(
-                            color:
-                                isOdd
-                                    ? AppColors.themeBlue.withOpacity(0.06)
-                                    : Colors.grey.withOpacity(0.07),
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 16,
-                            vertical: 19,
-                          ),
-                          child: TaskCard(task: task),
-                        ),
-                      );
-                    },
+        if (state.isLoading == true) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.purple),
+          );
+        }
+        if ((state.taskItem?.isEmpty ?? false) || (state.taskItem == null)) {
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 32),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x14006fff),
+                    blurRadius: 22,
+                    offset: Offset(0, 7),
                   ),
-                ),
-                const SizedBox(height: 18),
-                // Modern Pager
-                _ModernPager(
-                  pageNumber: pageNumber,
-                  shown: state.taskItem?.length ?? 0,
-                  total: state.totalItemLength ?? 0,
-                  canPrev: pageNumber > 1,
-                  canNext: moveNext,
-                  onPrev: () {
-                    if (pageNumber > 1) {
-                      setState(() => pageNumber--);
-                      fetchTasks();
-                    }
-                  },
-                  onNext: () {
-                    if (moveNext) {
-                      setState(() => pageNumber++);
-                      fetchTasks();
-                    } else {
-                      CommonHelper.showToast(message: "No More Tasks");
-                    }
-                  },
-                ),
-                const SizedBox(height: 4),
-              ],
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    Icons.task_alt_rounded,
+                    color: AppColors.themeBlue,
+                    size: 54,
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    "No Pending Task",
+                    style: TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black87,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
+              ),
             ),
           );
-        },
-      ),
+        }
+        // Tasks exist
+        return Container(
+          width: double.infinity, // Full width
+          padding: const EdgeInsets.symmetric(vertical: 30, horizontal: 14),
+          child: Column(
+            children: [
+              Row(
+                children: [
+                  Icon(Icons.task, color: AppColors.themeBlue, size: 30),
+                  const SizedBox(width: 10),
+                  Text(
+                    "My Pending Tasks",
+                    style: TextStyle(
+                      color: AppColors.themeBlue,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 23,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 20),
+              // Do NOT use Expanded/ListView - just use Column with spacing
+              ...List.generate(state.taskItem?.length ?? 0, (index) {
+                final task = state.taskItem?[index];
+                final isOdd = index % 2 == 1;
+                return Padding(
+                  padding: const EdgeInsets.only(bottom: 14),
+                  child: Card(
+                    elevation: isOdd ? 2 : 0,
+                    shadowColor: AppColors.themeBlue.withOpacity(0.09),
+                    color: isOdd ? const Color(0xFFF7FAFE) : Colors.white,
+                    margin: EdgeInsets.zero,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color:
+                            isOdd
+                                ? AppColors.themeBlue.withOpacity(0.06)
+                                : Colors.grey.withOpacity(0.07),
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 16,
+                        vertical: 19,
+                      ),
+                      child: TaskCard(task: task),
+                    ),
+                  ),
+                );
+              }),
+              const SizedBox(height: 18),
+              _ModernPager(
+                pageNumber: pageNumber,
+                shown: state.taskItem?.length ?? 0,
+                total: state.totalItemLength ?? 0,
+                canPrev: pageNumber > 1,
+                canNext: moveNext,
+                onPrev: () {
+                  if (pageNumber > 1) {
+                    setState(() => pageNumber--);
+                    fetchTasks();
+                  }
+                },
+                onNext: () {
+                  if (moveNext) {
+                    setState(() => pageNumber++);
+                    fetchTasks();
+                  } else {
+                    CommonHelper.showToast(message: "No More Tasks");
+                  }
+                },
+              ),
+              const SizedBox(height: 4),
+            ],
+          ),
+        );
+      },
     );
   }
 
@@ -179,6 +169,7 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
   }
 }
 
+// _ModernPager remains unchanged.
 class _ModernPager extends StatelessWidget {
   final int pageNumber;
   final int shown;

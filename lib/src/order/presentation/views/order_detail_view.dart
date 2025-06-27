@@ -22,103 +22,115 @@ class OrderDetailView extends StatelessWidget {
     return BlocBuilder<OrderBloc, OrderInitialState>(
       builder: (context, orderState) {
         final downloadPageBloc = context.watch<DownloadPageBloc>();
-        final OrdersDetails orderDetails = downloadPageBloc.ordersDetails;
+        final OrdersDetails? orderDetails = downloadPageBloc.ordersDetails;
+        print('Order Details loaded in Detail View: $orderDetails');
+
+        if (orderDetails == null) {
+          return const Center(child: Text('No order details found.'));
+        }
         final List<DownloadedData> downloads =
             downloadPageBloc.state.orders ?? <DownloadedData>[];
         final List<DownloadedData> matchingDownloads =
             downloads.where((d) => d.orderId == orderDetails.id).toList();
         final theme = Theme.of(context);
 
+        // ✅ Only change: no Scaffold, no top-level SingleChildScrollView.
         return Container(
           color: const Color(0xFFF7F8FC),
           width: double.infinity,
-          child: ListView(
+          child: SingleChildScrollView(
             padding: EdgeInsets.symmetric(
               vertical: 36,
               horizontal: horizontalPadding,
             ),
-            children: [
-              _SectionCard(child: _buildOrderInfo(orderDetails, context)),
-              verticalSpace(18),
-              _SectionCard(
-                child: _buildDownloadsSection(
-                  context,
-                  orderDetails,
-                  matchingDownloads,
-                ),
-              ),
-              verticalSpace(18),
-              _SectionCard(
-                child: _buildOrderDetailsSection(
-                  orderDetails,
-                  matchingDownloads,
-                ),
-              ),
-              verticalSpace(18),
-              _SectionCard(
-                child: _buildAddressBox(
-                  context: context,
-                  title: "Billing Address",
-                  content: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        orderDetails.billing?.firstName ?? "",
-                        style: const TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        orderDetails.billing?.postcode ?? "",
-                        style: const TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        orderDetails.billing?.country ?? "",
-                        style: const TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                      Text(
-                        orderDetails.billing?.email ?? "",
-                        style: const TextStyle(fontStyle: FontStyle.italic),
-                      ),
-                    ],
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                _SectionCard(child: _buildOrderInfo(orderDetails, context)),
+                verticalSpace(18),
+                _SectionCard(
+                  child: _buildDownloadsSection(
+                    context,
+                    orderDetails,
+                    matchingDownloads,
                   ),
                 ),
-              ),
-              verticalSpace(28),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
+                verticalSpace(18),
+                _SectionCard(
+                  child: _buildOrderDetailsSection(
+                    orderDetails,
+                    matchingDownloads,
+                  ),
                 ),
-                child: _buildOrderAgainButton(theme.primaryColor),
-              ),
-              verticalSpace(20),
-            ],
+                verticalSpace(18),
+                _SectionCard(
+                  child: _buildAddressBox(
+                    context: context,
+                    title: "Billing Address",
+                    content: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          orderDetails.billing?.firstName ?? "",
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          orderDetails.billing?.postcode ?? "",
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          orderDetails.billing?.country ?? "",
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                        Text(
+                          orderDetails.billing?.email ?? "",
+                          style: const TextStyle(fontStyle: FontStyle.italic),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                verticalSpace(28),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                    horizontal:
+                        MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
+                  ),
+                  child: _buildOrderAgainButton(theme.primaryColor),
+                ),
+                verticalSpace(20),
+              ],
+            ),
           ),
         );
       },
     );
   }
+}
 
-  Widget _buildAddressBox({
-    required BuildContext context,
-    required String title,
-    required Widget content,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          title,
-          style: context.textTheme.titleLarge?.copyWith(
-            color: AppColors.themeBlue,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.6,
-            fontSize: 18,
-          ),
+// ---- Everything below this line is TOP-LEVEL (outside any class) ----
+
+Widget _buildAddressBox({
+  required BuildContext context,
+  required String title,
+  required Widget content,
+}) {
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        title,
+        style: context.textTheme.titleLarge?.copyWith(
+          color: AppColors.themeBlue,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.6,
+          fontSize: 18,
         ),
-        const Divider(thickness: 1.1, height: 22),
-        content,
-      ],
-    );
-  }
+      ),
+      const Divider(thickness: 1.1, height: 22),
+      content,
+    ],
+  );
 }
 
 class _SectionCard extends StatelessWidget {

@@ -279,7 +279,13 @@ class _AdminQuestionOverviewWidgetState
                       widget.question.correctAnswerIndices.contains(i) &&
                       _showAnswer;
                   final String optionLetter = String.fromCharCode(65 + i);
-                  final String optionText = widget.question.options[i] ?? '';
+                  String optionText = widget.question.options[i] ?? '';
+
+                  // Remove leading "A. ", "B. " etc. if present
+                  optionText = optionText.replaceFirst(
+                    RegExp(r'^[A-Ea-e]\.\s*'),
+                    '',
+                  );
 
                   return AnimatedContainer(
                     duration: const Duration(milliseconds: 140),
@@ -316,7 +322,7 @@ class _AdminQuestionOverviewWidgetState
                         horizontal: 14,
                       ),
                       child: inlineTextWithImages(
-                        "$optionLetter. $optionText", // The label is prepended here
+                        "$optionLetter. $optionText", // <-- No double "A." even if input has it
                         style: TextStyle(
                           fontSize: 15,
                           fontWeight:
@@ -460,6 +466,7 @@ class _AdminQuestionOverviewWidgetState
     );
   }
 
+  /// Convert 0→A, 1→B, etc.
   String convertIndicesToLetters(List<int> indices) =>
       indices.map((i) => String.fromCharCode(65 + i)).join(", ");
 }

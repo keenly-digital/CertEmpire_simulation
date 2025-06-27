@@ -3,8 +3,6 @@ import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
-
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../../core/shared/widgets/toast.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
@@ -26,153 +24,6 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
     fetchReward();
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      body: BlocBuilder<MyRewardBloc, RewardInitialState>(
-        builder: (context, state) {
-          final moveNext =
-              (state.rewardData?.length ?? 0) < (state.itemLength ?? 0);
-
-          if (state.loading == true) {
-            return const Center(
-              child: CircularProgressIndicator(color: AppColors.purple),
-            );
-          }
-          if ((state.rewardData?.isEmpty ?? true)) {
-            return Center(
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 30,
-                  vertical: 38,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
-                  boxShadow: const [
-                    BoxShadow(
-                      color: Color(0x11006fff),
-                      blurRadius: 18,
-                      offset: Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(Icons.redeem, color: AppColors.themeBlue, size: 54),
-                    const SizedBox(height: 18),
-                    Text(
-                      "No Reward Found",
-                      style: TextStyle(
-                        fontSize: 19,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black54,
-                        letterSpacing: 0.2,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            );
-          }
-          // Rewards exist
-          return Container(
-            width: double.infinity,
-            padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 34),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Card(
-                  elevation: 1,
-                  margin: const EdgeInsets.only(bottom: 26),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  color: const Color(0xFFF6F8FE),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 24,
-                      vertical: 20,
-                    ),
-                    child: Text(
-                      "My Rewards module is based on the rewards that you have earned by helping our community.\n"
-                      "You can send only one withdrawal request per order. Only apply for withdrawal when you believe that you cannot earn more credits. "
-                      "Withdrawal credits cannot exceed the initial order amount as the withdrawals are issued in the form of refunds.",
-                      style: TextStyle(
-                        color: AppColors.themeBlue,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 15.5,
-                        height: 1.54,
-                        letterSpacing: 0.09,
-                      ),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: ListView.separated(
-                    itemCount: state.rewardData?.length ?? 0,
-                    separatorBuilder:
-                        (context, index) => const SizedBox(height: 16),
-                    itemBuilder: (context, index) {
-                      return Card(
-                        margin: EdgeInsets.zero,
-                        color: Colors.white,
-                        elevation: 3,
-                        shadowColor: AppColors.themeBlue.withOpacity(0.09),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(18),
-                          side: BorderSide(
-                            color: AppColors.themeBlue.withOpacity(0.08),
-                            width: 1,
-                          ),
-                        ),
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 18,
-                            vertical: 22,
-                          ),
-                          child: ReportSummaryCard(
-                            rewardData: state.rewardData?[index],
-                            index: index,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ),
-                const SizedBox(height: 22),
-                _ModernPager(
-                  pageNumber: pageNumber,
-                  shown: state.rewardData?.length ?? 0,
-                  total: state.itemLength ?? 0,
-                  canPrev: pageNumber > 1,
-                  canNext: moveNext,
-                  onPrev: () {
-                    if (pageNumber > 1) {
-                      setState(() => pageNumber--);
-                      fetchReward();
-                    }
-                  },
-                  onNext: () {
-                    if (moveNext) {
-                      setState(() => pageNumber++);
-                      fetchReward();
-                    } else {
-                      CommonHelper.showToast(message: "No More Reward");
-                    }
-                  },
-                ),
-                const SizedBox(height: 10),
-              ],
-            ),
-          );
-        },
-      ),
-    );
-  }
-
   void fetchReward() {
     context.read<MyRewardBloc>().add(
       GetRewardsEvent(
@@ -182,9 +33,148 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
       ),
     );
   }
+
+  @override
+  Widget build(BuildContext context) {
+    return BlocBuilder<MyRewardBloc, RewardInitialState>(
+      builder: (context, state) {
+        final moveNext =
+            (state.rewardData?.length ?? 0) < (state.itemLength ?? 0);
+
+        if (state.loading == true) {
+          return const Center(
+            child: CircularProgressIndicator(color: AppColors.purple),
+          );
+        }
+        if ((state.rewardData?.isEmpty ?? true)) {
+          return Center(
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 38),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(18),
+                boxShadow: const [
+                  BoxShadow(
+                    color: Color(0x11006fff),
+                    blurRadius: 18,
+                    offset: Offset(0, 4),
+                  ),
+                ],
+              ),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(Icons.redeem, color: AppColors.themeBlue, size: 54),
+                  const SizedBox(height: 18),
+                  Text(
+                    "No Reward Found",
+                    style: TextStyle(
+                      fontSize: 19,
+                      fontWeight: FontWeight.w700,
+                      color: Colors.black54,
+                      letterSpacing: 0.2,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          );
+        }
+        // Rewards exist
+        return SingleChildScrollView(
+          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 34),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Card(
+                elevation: 1,
+                margin: const EdgeInsets.only(bottom: 26),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                color: const Color(0xFFF6F8FE),
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 24,
+                    vertical: 20,
+                  ),
+                  child: Text(
+                    "My Rewards module is based on the rewards that you have earned by helping our community.\n"
+                    "You can send only one withdrawal request per order. Only apply for withdrawal when you believe that you cannot earn more credits. "
+                    "Withdrawal credits cannot exceed the initial order amount as the withdrawals are issued in the form of refunds.",
+                    style: TextStyle(
+                      color: AppColors.themeBlue,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 15.5,
+                      height: 1.54,
+                      letterSpacing: 0.09,
+                    ),
+                  ),
+                ),
+              ),
+              ListView.separated(
+                shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
+                itemCount: state.rewardData?.length ?? 0,
+                separatorBuilder:
+                    (context, index) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  return Card(
+                    margin: EdgeInsets.zero,
+                    color: Colors.white,
+                    elevation: 3,
+                    shadowColor: AppColors.themeBlue.withOpacity(0.09),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(18),
+                      side: BorderSide(
+                        color: AppColors.themeBlue.withOpacity(0.08),
+                        width: 1,
+                      ),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 22,
+                      ),
+                      child: ReportSummaryCard(
+                        rewardData: state.rewardData?[index],
+                        index: index,
+                      ),
+                    ),
+                  );
+                },
+              ),
+              const SizedBox(height: 22),
+              _ModernPager(
+                pageNumber: pageNumber,
+                shown: state.rewardData?.length ?? 0,
+                total: state.itemLength ?? 0,
+                canPrev: pageNumber > 1,
+                canNext: moveNext,
+                onPrev: () {
+                  if (pageNumber > 1) {
+                    setState(() => pageNumber--);
+                    fetchReward();
+                  }
+                },
+                onNext: () {
+                  if (moveNext) {
+                    setState(() => pageNumber++);
+                    fetchReward();
+                  } else {
+                    CommonHelper.showToast(message: "No More Reward");
+                  }
+                },
+              ),
+              const SizedBox(height: 10),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
 
-// Modern full-width pager
 class _ModernPager extends StatelessWidget {
   final int pageNumber;
   final int shown;

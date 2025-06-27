@@ -1,7 +1,3 @@
-/// @Author: Ehsan
-/// @Email: muhammad.ehsan@barq.com.pk
-/// @Date: 25/06/2025
-
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
 import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_bloc.dart';
@@ -16,167 +12,340 @@ import '../models/order_model.dart';
 
 class OrderTableView extends StatelessWidget {
   const OrderTableView({super.key, required this.orders});
-
   final List<OrdersDetails>? orders;
 
   @override
   Widget build(BuildContext context) {
-    return Table(
-      border: TableBorder.all(color: Colors.grey.shade300),
-      columnWidths: const {
-        0: FlexColumnWidth(),
-        1: FlexColumnWidth(),
-        2: FlexColumnWidth(),
-        3: FlexColumnWidth(2), // Slightly more horizontal space for 'Total'
-        4: FlexColumnWidth(),
-      },
-      defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-      children: [
-        // Header row
-        TableRow(
-          decoration: BoxDecoration(color: Colors.grey.shade50),
-          children: [
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 14.0),
-              child: Text(
-                'Order',
-                style: context.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontManager.semiBold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Date',
-                style: context.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontManager.semiBold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Status',
-                style: context.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontManager.semiBold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Total',
-                style: context.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontManager.semiBold,
-                ),
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Text(
-                'Actions',
-                style: context.textTheme.labelMedium?.copyWith(
-                  fontWeight: FontManager.semiBold,
-                ),
-              ),
-            ),
-          ],
-        ),
-        // Data rows
-        ...orders!.map(
-          (order) => TableRow(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: InkWell(
-                  onTap: () {
-                    context.read<NavigationCubit>().selectTab(1, subTitle: 1);
-                  },
-                  child: Text(
-                    '#${order.id}',
-                    style: context.textTheme.labelMedium?.copyWith(
-                      color: AppColors.lightPrimary,
-                      fontWeight: FontManager.semiBold,
-                    ),
-                  ),
-                ),
-              ),
+    final orderList = orders ?? [];
 
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  convertDate(order.dateCreated ?? ""),
-                  style: context.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontManager.regular,
+    if (orderList.isEmpty) {
+      return Center(
+        child: Text("No orders found.", style: context.textTheme.titleLarge),
+      );
+    }
+
+    // --- SINGLE ORDER: Show as card ---
+    if (orderList.length == 1) {
+      final order = orderList.first;
+      final statusColor =
+          (order.status == 'completed')
+              ? Colors.green[700]
+              : AppColors.themeBlue;
+
+      return Card(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+        elevation: 2.5,
+        color: Colors.white,
+        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 28),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Order number and status
+              Row(
+                children: [
+                  Icon(
+                    Icons.receipt_long_rounded,
+                    color: AppColors.themeBlue,
+                    size: 28,
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  order.status ?? "",
-                  style: context.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontManager.regular,
+                  const SizedBox(width: 14),
+                  Text(
+                    '#${order.id}',
+                    style: context.textTheme.titleLarge?.copyWith(
+                      color: AppColors.themeBlue,
+                      fontWeight: FontManager.bold,
+                    ),
                   ),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''} for ${order.lineItems?.length ?? ''}",
-                  style: context.textTheme.bodySmall?.copyWith(
-                    fontWeight: FontManager.regular,
-                  ),
-                ),
-              ),
-              InkWell(
-                onTap: () {
-                  context.read<DownloadPageBloc>().ordersDetails = order;
-                  context.read<NavigationCubit>().selectTab(1, subTitle: 1);
-                },
-                child: Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: Align(
-                    alignment: Alignment.topLeft,
-                    child: ConstrainedBox(
-                      constraints: const BoxConstraints(
-                        maxWidth: 90,
-                        maxHeight: 44,
-                        minHeight: 44,
-                        minWidth: 40,
-                      ),
-                      child: Container(
-                        decoration: BoxDecoration(
-                          color: AppColors.lightPrimary,
-                          // Use your exact blue/purple
-                          borderRadius: BorderRadius.circular(
-                            1,
-                          ), // Slightly rounded corners
-                        ),
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 6,
-                          horizontal: 8,
-                        ),
-                        child: Center(
-                          child: Text(
-                            "View",
-                            style: context.textTheme.labelMedium?.copyWith(
-                              color: AppColors.lightBackgroundpurple,
-                              fontWeight: FontManager.semiBold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
+                  const Spacer(),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: statusColor!.withOpacity(0.11),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 6,
+                    ),
+                    child: Text(
+                      order.status ?? "",
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        color: statusColor,
+                        fontWeight: FontManager.semiBold,
                       ),
                     ),
                   ),
-                ),
+                ],
+              ),
+              const SizedBox(height: 18),
+              Row(
+                children: [
+                  Icon(Icons.calendar_today, color: Colors.grey[600], size: 18),
+                  const SizedBox(width: 8),
+                  Text(
+                    convertDate(order.dateCreated ?? ""),
+                    style: context.textTheme.bodyMedium,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.shopping_bag_outlined,
+                    color: AppColors.themeBlue,
+                    size: 22,
+                  ),
+                  const SizedBox(width: 10),
+                  Expanded(
+                    child: Text(
+                      getProductNames(order),
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontManager.bold,
+                        fontSize: 15.5,
+                      ),
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                  const SizedBox(width: 15),
+                  Text(
+                    "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
+                    style: context.textTheme.titleMedium?.copyWith(
+                      color: AppColors.themeBlue,
+                      fontWeight: FontManager.bold,
+                      fontSize: 17,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              Row(
+                children: [
+                  OutlinedButton.icon(
+                    icon: Icon(Icons.visibility_rounded),
+                    label: Text("View Details"),
+                    style: OutlinedButton.styleFrom(
+                      backgroundColor: AppColors.themeBlue.withOpacity(0.13),
+                      foregroundColor: AppColors.themeBlue,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 22,
+                        vertical: 11,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(11),
+                      ),
+                      textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                    ),
+                    onPressed: () {
+                      context.read<DownloadPageBloc>().ordersDetails = order;
+                      context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                    },
+                  ),
+                  // Add more action buttons if needed
+                ],
               ),
             ],
           ),
         ),
-      ],
+      );
+    }
+
+    // --- MULTIPLE ORDERS: Show as table ---
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      elevation: 2.5,
+      color: Colors.white,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(18),
+          child: Table(
+            border: TableBorder(
+              horizontalInside: BorderSide(
+                color: Colors.grey.shade100,
+                width: 1,
+              ),
+            ),
+            columnWidths: const {
+              0: FlexColumnWidth(),
+              1: FlexColumnWidth(),
+              2: FlexColumnWidth(),
+              3: FlexColumnWidth(2),
+              4: FlexColumnWidth(),
+            },
+            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
+            children: [
+              // Header row
+              TableRow(
+                decoration: BoxDecoration(
+                  color: AppColors.themeBlue.withOpacity(0.08),
+                ),
+                children: [
+                  _headerCell(context, 'Order'),
+                  _headerCell(context, 'Date'),
+                  _headerCell(context, 'Status'),
+                  _headerCell(context, 'Total'),
+                  _headerCell(context, 'Actions'),
+                ],
+              ),
+              // Data rows
+              ...orderList.asMap().entries.map((entry) {
+                final index = entry.key;
+                final order = entry.value;
+                final isEven = index % 2 == 0;
+                final statusColor =
+                    (order.status == 'completed')
+                        ? Colors.green[700]
+                        : AppColors.themeBlue;
+
+                return TableRow(
+                  decoration: BoxDecoration(
+                    color: isEven ? Colors.grey[50] : Colors.white,
+                  ),
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 12,
+                      ),
+                      child: InkWell(
+                        onTap: () {
+                          context.read<NavigationCubit>().selectTab(
+                            1,
+                            subTitle: 1,
+                          );
+                        },
+                        child: Text(
+                          '#${order.id}',
+                          style: context.textTheme.labelMedium?.copyWith(
+                            color: AppColors.lightPrimary,
+                            fontWeight: FontManager.semiBold,
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        convertDate(order.dateCreated ?? ""),
+                        style: context.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontManager.regular,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 12,
+                      ),
+                      child: Row(
+                        children: [
+                          Container(
+                            decoration: BoxDecoration(
+                              color: statusColor!.withOpacity(0.11),
+                              borderRadius: BorderRadius.circular(7),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 5,
+                            ),
+                            child: Text(
+                              order.status ?? "",
+                              style: context.textTheme.bodySmall?.copyWith(
+                                color: statusColor,
+                                fontWeight: FontManager.semiBold,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 12,
+                      ),
+                      child: Text(
+                        "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''} for ${order.lineItems?.length ?? ''}",
+                        style: context.textTheme.bodySmall?.copyWith(
+                          fontWeight: FontManager.regular,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 8,
+                        vertical: 10,
+                      ),
+                      child: Align(
+                        alignment: Alignment.centerLeft,
+                        child: InkWell(
+                          onTap: () {
+                            context.read<DownloadPageBloc>().ordersDetails =
+                                order;
+                            context.read<NavigationCubit>().selectTab(
+                              1,
+                              subTitle: 1,
+                            );
+                          },
+                          borderRadius: BorderRadius.circular(22),
+                          child: Container(
+                            decoration: BoxDecoration(
+                              color: AppColors.themeBlue,
+                              borderRadius: BorderRadius.circular(22),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: AppColors.themeBlue.withOpacity(0.11),
+                                  blurRadius: 8,
+                                  offset: const Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 7,
+                              horizontal: 22,
+                            ),
+                            child: Text(
+                              "View",
+                              style: context.textTheme.labelMedium?.copyWith(
+                                color: Colors.white,
+                                fontWeight: FontManager.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                );
+              }),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _headerCell(BuildContext context, String text) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
+      child: Text(
+        text,
+        style: context.textTheme.titleSmall?.copyWith(
+          fontWeight: FontManager.bold,
+          color: AppColors.themeBlue,
+          letterSpacing: 0.3,
+        ),
+      ),
     );
   }
 
@@ -191,51 +360,56 @@ class OrderTableView extends StatelessWidget {
 
   String formatCurrency(num amount, String currencyCode) {
     final currencyLocaleMap = {
-      'USD': 'en_US', // US Dollar
-      'EUR': 'fr_FR', // Euro (France - symbol after amount)
-      'GBP': 'en_GB', // British Pound
-      'JPY': 'ja_JP', // Japanese Yen
-      'CNY': 'zh_CN', // Chinese Yuan
-      'INR': 'hi_IN', // Indian Rupee
-      'PKR': 'ur_PK', // Pakistani Rupee
-      'AUD': 'en_AU', // Australian Dollar
-      'CAD': 'en_CA', // Canadian Dollar
-      'CHF': 'de_CH', // Swiss Franc
-      'SEK': 'sv_SE', // Swedish Krona
-      'NOK': 'nb_NO', // Norwegian Krone
-      'DKK': 'da_DK', // Danish Krone
-      'RUB': 'ru_RU', // Russian Ruble
-      'BRL': 'pt_BR', // Brazilian Real
-      'MXN': 'es_MX', // Mexican Peso
-      'ZAR': 'en_ZA', // South African Rand
-      'TRY': 'tr_TR', // Turkish Lira
-      'SAR': 'ar_SA', // Saudi Riyal
-      'AED': 'ar_AE', // UAE Dirham
-      'SGD': 'en_SG', // Singapore Dollar
-      'HKD': 'zh_HK', // Hong Kong Dollar
-      'KRW': 'ko_KR', // South Korean Won
-      'THB': 'th_TH', // Thai Baht
-      'IDR': 'id_ID', // Indonesian Rupiah
-      'MYR': 'ms_MY', // Malaysian Ringgit
-      'PLN': 'pl_PL', // Polish Zloty
-      'CZK': 'cs_CZ', // Czech Koruna
-      'HUF': 'hu_HU', // Hungarian Forint
-      'ILS': 'he_IL', // Israeli Shekel
-      'EGP': 'ar_EG', // Egyptian Pound
-      'NGN': 'en_NG', // Nigerian Naira
-      'BDT': 'bn_BD', // Bangladeshi Taka
-      'LKR': 'si_LK', // Sri Lankan Rupee
-      'VND': 'vi_VN', // Vietnamese Dong
-      // Add more as needed
+      'USD': 'en_US',
+      'EUR': 'fr_FR',
+      'GBP': 'en_GB',
+      'JPY': 'ja_JP',
+      'CNY': 'zh_CN',
+      'INR': 'hi_IN',
+      'PKR': 'ur_PK',
+      'AUD': 'en_AU',
+      'CAD': 'en_CA',
+      'CHF': 'de_CH',
+      'SEK': 'sv_SE',
+      'NOK': 'nb_NO',
+      'DKK': 'da_DK',
+      'RUB': 'ru_RU',
+      'BRL': 'pt_BR',
+      'MXN': 'es_MX',
+      'ZAR': 'en_ZA',
+      'TRY': 'tr_TR',
+      'SAR': 'ar_SA',
+      'AED': 'ar_AE',
+      'SGD': 'en_SG',
+      'HKD': 'zh_HK',
+      'KRW': 'ko_KR',
+      'THB': 'th_TH',
+      'IDR': 'id_ID',
+      'MYR': 'ms_MY',
+      'PLN': 'pl_PL',
+      'CZK': 'cs_CZ',
+      'HUF': 'hu_HU',
+      'ILS': 'he_IL',
+      'EGP': 'ar_EG',
+      'NGN': 'en_NG',
+      'BDT': 'bn_BD',
+      'LKR': 'si_LK',
+      'VND': 'vi_VN',
     };
 
     final locale = currencyLocaleMap[currencyCode] ?? 'en';
-
     final format = NumberFormat.simpleCurrency(
       locale: locale,
       name: currencyCode,
     );
-
     return format.format(amount);
+  }
+
+  String getProductNames(OrdersDetails order) {
+    if (order.lineItems == null || order.lineItems!.isEmpty) return "—";
+    return order.lineItems!
+        .map((li) => li.name)
+        .where((name) => name != null && name.isNotEmpty)
+        .join(', ');
   }
 }

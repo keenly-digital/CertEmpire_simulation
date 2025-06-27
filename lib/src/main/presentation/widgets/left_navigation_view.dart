@@ -28,18 +28,7 @@ class LeftNavigationView extends StatelessWidget {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const SizedBox(height: 28),
-            Padding(
-              padding: const EdgeInsets.only(left: 12.0, bottom: 14),
-              child: Text(
-                "${customerNavItems[state.index]['label']}",
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  color: AppColors.themeBlue,
-                  fontWeight: FontWeight.w700,
-                  letterSpacing: 0.4,
-                ),
-              ),
-            ),
+            //const SizedBox(height: 0),
             Container(
               width: 255,
               margin: const EdgeInsets.symmetric(horizontal: 0),
@@ -111,9 +100,7 @@ class LeftNavigationView extends StatelessWidget {
                                     ? AppColors.themeBlue
                                     : Colors.black.withOpacity(0.85),
                             fontWeight:
-                                isSelected
-                                    ? FontWeight.bold
-                                    : FontWeight.normal,
+                                isSelected ? FontWeight.w600 : FontWeight.w500,
                             letterSpacing: 0.14,
                           ),
                         ),

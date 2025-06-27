@@ -23,20 +23,13 @@ class _DownloadMainViewState extends State<DownloadMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(1.0),
-        child: Column(
-          children: [
-            BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
-              builder: (context, state) {
-                return Expanded(
-                  child: DownloadTableView(download: state.orders ?? []),
-                );
-              },
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.all(1.0),
+      child: BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
+        builder: (context, state) {
+          // Just return your table view directly.
+          return DownloadTableView(download: state.orders ?? []);
+        },
       ),
     );
   }

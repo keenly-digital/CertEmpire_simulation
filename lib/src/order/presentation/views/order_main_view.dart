@@ -19,7 +19,9 @@ class _OrderMainViewState extends State<OrderMainView> {
   @override
   void initState() {
     super.initState();
-    context.read<OrderBloc>().add(GetOrderEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId));
+    context.read<OrderBloc>().add(
+      GetOrderEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
+    );
     context.read<DownloadPageBloc>().add(
       GetDownloadsEvent(pageNumber: 1, pageSize: 10, userId: AppStrings.userId),
     );
@@ -27,18 +29,14 @@ class _OrderMainViewState extends State<OrderMainView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 20),
-        child: Column(
-          children: [
-            BlocBuilder<OrderBloc, OrderInitialState>(
-              builder: (context, state) {
-                return Expanded(child: OrderTableView(orders: state.orders ?? []));
-              },
-            ),
-          ],
-        ),
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: BlocBuilder<OrderBloc, OrderInitialState>(
+        builder: (context, state) {
+          return SingleChildScrollView(
+            child: OrderTableView(orders: state.orders ?? []),
+          );
+        },
       ),
     );
   }

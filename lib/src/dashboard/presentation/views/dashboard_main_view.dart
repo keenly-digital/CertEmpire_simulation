@@ -30,71 +30,66 @@ class _UserMainViewState extends State<UserMainView> {
     final int questionsAnswered = 35;
     final int totalQuestions = 150;
 
-    return Scaffold(
-      backgroundColor: Colors.grey[50],
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildWelcomeHeader(userName),
-            const SizedBox(height: 24.0),
-            LayoutBuilder(
-              builder: (context, constraints) {
-                // Use a two-column layout for wider screens (laptops/tablets)
-                if (constraints.maxWidth > 950) {
-                  return Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      // ----- CHANGE: Left column now contains Continue card AND summary cards -----
-                      Expanded(
-                        flex: 5,
-                        child: Column(
-                          children: [
-                            _buildContinueStudyingCard(
-                              context,
-                              fileName: lastStudiedFile,
-                              answered: questionsAnswered,
-                              total: totalQuestions,
-                            ),
-                            const SizedBox(height: 24),
-                            _buildSummarySection(context),
-                          ],
+    // === NO Scaffold or SingleChildScrollView here! ===
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildWelcomeHeader(userName),
+        const SizedBox(height: 24.0),
+        LayoutBuilder(
+          builder: (context, constraints) {
+            // Use a two-column layout for wider screens (laptops/tablets)
+            if (constraints.maxWidth > 950) {
+              return Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Left column: Continue card + summary
+                  Expanded(
+                    flex: 5,
+                    child: Column(
+                      children: [
+                        _buildContinueStudyingCard(
+                          context,
+                          fileName: lastStudiedFile,
+                          answered: questionsAnswered,
+                          total: totalQuestions,
                         ),
-                      ),
-                      const SizedBox(width: 24.0),
-                      Expanded(
-                        flex: 3,
-                        child: SizedBox(
-                          height: 585,
-                          // 👈 Adjust this value as you want (e.g., 400–600)
-                          child: _buildUpdatesFeed(context),
-                        ),
-                      ),
-                    ],
-                  );
-                } else {
-                  // Stack vertically on narrower screens (mobile)
-                  return Column(
-                    children: [
-                      _buildContinueStudyingCard(
-                        context,
-                        fileName: lastStudiedFile,
-                        answered: questionsAnswered,
-                        total: totalQuestions,
-                      ),
-                      const SizedBox(height: 24.0),
-                      _buildUpdatesFeed(context),
-                      const SizedBox(height: 24.0),
-                      _buildSummarySection(context),
-                    ],
-                  );
-                }
-              },
-            ),
-          ],
+                        const SizedBox(height: 24),
+                        _buildSummarySection(context),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 24.0),
+                  Expanded(
+                    flex: 3,
+                    child: SizedBox(
+                      height: 585,
+                      // 👈 Adjust this value as you want (e.g., 400–600)
+                      child: _buildUpdatesFeed(context),
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              // Stack vertically on narrower screens (mobile)
+              return Column(
+                children: [
+                  _buildContinueStudyingCard(
+                    context,
+                    fileName: lastStudiedFile,
+                    answered: questionsAnswered,
+                    total: totalQuestions,
+                  ),
+                  const SizedBox(height: 24.0),
+                  _buildUpdatesFeed(context),
+                  const SizedBox(height: 24.0),
+                  _buildSummarySection(context),
+                ],
+              );
+            }
+          },
         ),
-      ),
+      ],
     );
   }
 
