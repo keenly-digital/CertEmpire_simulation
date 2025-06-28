@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_events.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
 import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_reward_bloc.dart';
 import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';

@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:certempiree/core/shared/widgets/spaces.dart';
+import 'package:certempiree/src/dashboard/models/user_model.dart';
+import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_events.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -227,7 +231,24 @@ class _UpdateAccountState extends State<UpdateAccount> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
-                              // Submit logic here
+                              final currentUser = context.read<UserBloc>();
+                              final existingUserData =
+                                  currentUser.state.userData;
+                              final updatedUserData = existingUserData
+                                  ?.copyWith(
+                                    firstName: firstNameController.text,
+                                    lastName: lastNameController.text,
+                                    username: displayNameController.text,
+                                    email: emailController.text,
+                                    selectedCurrency:
+                                        existingUserData.selectedCurrency,
+                                    currentPassword:
+                                        currentPasswordController.text,
+                                    newPassword: newPasswordController.text,
+                                  );
+                              context.read<UserBloc>().updateUserProfile(
+                                updatedUserData!,
+                              );
                             }
                           },
                         ),
