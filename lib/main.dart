@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_events.dart';
 import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
@@ -26,24 +25,30 @@ import 'core/shared/widgets/snakbar.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await setupDependencies();
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
-class MyApp extends StatefulWidget {
-  const MyApp({super.key});
+/// Bootstraps app, loads user data ONCE before showing the rest of the app.
+/// Can show splash/loading as needed.
+class AppBootstrapper extends StatefulWidget {
+  final Widget child;
+  const AppBootstrapper({required this.child, super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  State<AppBootstrapper> createState() => _AppBootstrapperState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _AppBootstrapperState extends State<AppBootstrapper> {
+  bool _initialized = false;
+
   @override
   void initState() {
     super.initState();
-    _handleIncomingLink();
+    _initUser();
   }
 
-  void _handleIncomingLink() {
+  Future<void> _initUser() async {
+    // Extract and set userId (from URL or keep your own logic here)
     final uri = Uri.base;
     final encodedData = uri.queryParameters['auth_token'];
     if (encodedData != null) {
@@ -59,7 +64,25 @@ class _MyAppState extends State<MyApp> {
     } else {
       debugPrint("No data received in query.");
     }
+
+    // Always dispatch UserBloc event ONCE on app load
+    context.read<UserBloc>().add(GetUserEvent(userId: AppStrings.id));
+
+    setState(() => _initialized = true);
   }
+
+  @override
+  Widget build(BuildContext context) {
+    // (Optional) Splash/loader until user is loaded, can use Bloc selector if you want!
+    if (!_initialized) {
+      return const Material(child: Center(child: CircularProgressIndicator()));
+    }
+    return widget.child;
+  }
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -83,15 +106,17 @@ class _MyAppState extends State<MyApp> {
             BlocProvider(create: (context) => UserBloc()),
             BlocProvider(create: (context) => DownloadPageBloc()),
           ],
-          child: MaterialApp.router(
-            scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
-            debugShowCheckedModeBanner: false,
-            title: AppStrings.appName,
-            theme: ThemeConfig.lightTheme(),
-            darkTheme: ThemeConfig.lightTheme(),
-            themeMode: ThemeMode.system,
-            routerConfig: AppRouter.router,
-            localizationsDelegates: [FlutterQuillLocalizations.delegate],
+          child: AppBootstrapper(
+            child: MaterialApp.router(
+              scaffoldMessengerKey: Snackbar.scaffoldMessengerKey,
+              debugShowCheckedModeBanner: false,
+              title: AppStrings.appName,
+              theme: ThemeConfig.lightTheme(),
+              darkTheme: ThemeConfig.lightTheme(),
+              themeMode: ThemeMode.system,
+              routerConfig: AppRouter.router,
+              localizationsDelegates: [FlutterQuillLocalizations.delegate],
+            ),
           ),
         );
       },
