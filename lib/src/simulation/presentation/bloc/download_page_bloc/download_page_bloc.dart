@@ -1,11 +1,11 @@
 import 'dart:async';
+import 'dart:html' as html;
 
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/src/simulation/data/models/urls_model.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../../order/presentation/models/order_model.dart';
@@ -91,32 +91,63 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     }
   }
 
-  /// Triggers file export request and opens the resulting PDF link.
-  Future<void> exportFile(String fileId) async {
+  /// Triggers file export request and downloads file with proper name & format.
+  Future<void> exportFile(
+    String fileId, {
+    String format = "pdf",
+    bool forceDownload = false,
+    String? fileName,
+  }) async {
     final dio = Dio();
     const url =
         'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
 
+    // Clean the filename for safety (no spaces, no special chars)
+    String safeName = (fileName ?? "download")
+        .replaceAll(RegExp(r'[^\w\s-]'), '')
+        .replaceAll(' ', '_');
+
+    final downloadFileName = "$safeName.$format";
+
     try {
       final response = await dio.get(
         url,
-        queryParameters: {'fileId': fileId, 'type': 'pdf'},
-        options: Options(headers: {'Content-Type': 'application/json'}),
+        queryParameters: {'fileId': fileId, 'type': format},
+        options: Options(
+          responseType: ResponseType.bytes,
+          headers: {'Content-Type': 'application/json'},
+        ),
       );
 
-      if (response.data['Success'] == true) {
-        await _launchURL(response.data['Data']);
+      if (response.statusCode == 200) {
+        // 1. If backend returns raw bytes (PDF, QZS, etc. directly)
+        if (response.data is List<int>) {
+          final bytes = response.data as List<int>;
+          final blob = html.Blob([bytes]);
+          final url2 = html.Url.createObjectUrlFromBlob(blob);
+          final anchor =
+              html.AnchorElement(href: url2)
+                ..setAttribute('download', downloadFileName)
+                ..style.display = 'none';
+          html.document.body?.append(anchor);
+          anchor.click();
+          anchor.remove();
+          html.Url.revokeObjectUrl(url2);
+        }
+        // 2. If backend returns a JSON with a file URL as 'Data'
+        else if (response.data is Map && response.data['Data'] != null) {
+          final fileUrl = response.data['Data'] as String;
+          final anchor =
+              html.AnchorElement(href: fileUrl)
+                ..setAttribute('download', downloadFileName)
+                ..style.display = 'none';
+          html.document.body?.append(anchor);
+          anchor.click();
+          anchor.remove();
+        }
       }
     } catch (e) {
       debugPrint('Export file error: $e');
-    }
-  }
-
-  /// Launches the given URL in the browser.
-  Future<void> _launchURL(String url) async {
-    final uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      debugPrint('Could not launch $url');
     }
   }
 }

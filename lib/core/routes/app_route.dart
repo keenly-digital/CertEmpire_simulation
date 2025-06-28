@@ -1,8 +1,16 @@
 enum AppRoute {
-  simulation,
-  report,
-  myRewardMainView,
-  myTasks,
+  Downloads,
+  Report,
+  MyRewards,
+  MyTasks,
   main,
-  updateBillingAddress
+  Address,
+  Orders,
+  AccountDetails,
+  MySubmissions,
+  Logout,
+  OrderDetail,
+  DownloadsSimulation,
+  BillingAddress,
+  ShippingAddress,
 }
