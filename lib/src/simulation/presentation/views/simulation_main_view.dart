@@ -9,6 +9,7 @@ import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 
 import 'package:certempiree/src/simulation/data/models/question_model.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 
@@ -555,37 +556,92 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     // --- Conditionally define the download button ---
     // FIX: Replaced the missing 'appButton' with the standard ElevatedButton.
+    // In your build method...
     final downloadButton =
         isMobile
-            // Mobile: A smaller, icon-only button to save space.
-            ? ElevatedButton(
-              onPressed: () {
-                // Add your download logic here
+            // Mobile: icon-only with popup
+            ? PopupMenuButton<String>(
+              tooltip: "Download",
+              offset: const Offset(0, 40), // popup opens below button
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'pdf',
+                      child: Text('Download as PDF'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'qzs',
+                      child: Text('Download as QZS'),
+                    ),
+                  ],
+              onSelected: (value) async {
+                if (value == 'pdf') {
+                  // Replace with your download logic
+                  await downloadAssetPdf(
+                    'MB-330_Dumps.pdf',
+                    'MB-330_Dumps.pdf',
+                  );
+                } else if (value == 'qzs') {
+                  // If you have a QZS download, handle here
+                  await downloadAssetPdf(
+                    'MB-330_Dumps.pdf',
+                    'MB-330_Dumps.pdf',
+                  );
+                }
               },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.themePurple,
-                foregroundColor: Colors.white,
-                shape: const CircleBorder(),
-                padding: const EdgeInsets.all(12),
-              ),
-              child: const Icon(Icons.download, size: 20),
-            )
-            // Wide screen: A standard button with text and an icon.
-            : ElevatedButton.icon(
-              onPressed: () {
-                // Add your download logic here
-              },
-              icon: const Icon(Icons.download, size: 18),
-              label: const Text('Download'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.themePurple,
-                foregroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 14,
+              child: ElevatedButton(
+                onPressed: null, // disables direct press
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.themePurple,
+                  foregroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(12),
                 ),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
+                child: const Icon(Icons.download, size: 20),
+              ),
+            )
+            // Desktop: button with text, popup menu
+            : PopupMenuButton<String>(
+              tooltip: "Download",
+              offset: const Offset(0, 52),
+              itemBuilder:
+                  (context) => [
+                    const PopupMenuItem(
+                      value: 'pdf',
+                      child: Text('Download as PDF'),
+                    ),
+                    const PopupMenuItem(
+                      value: 'qzs',
+                      child: Text('Download as QZS'),
+                    ),
+                  ],
+              onSelected: (value) async {
+                if (value == 'pdf') {
+                  await downloadAssetPdf(
+                    'MB-330_Dumps.pdf',
+                    'MB-330_Dumps.pdf',
+                  );
+                } else if (value == 'qzs') {
+                  await downloadAssetPdf(
+                    'MB-330_Dumps.pdf',
+                    'MB-330_Dumps.pdf',
+                  );
+                }
+              },
+              child: ElevatedButton.icon(
+                onPressed: null, // disables direct press
+                icon: const Icon(Icons.download, size: 18),
+                label: const Text('Download'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.themePurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
                 ),
               ),
             );

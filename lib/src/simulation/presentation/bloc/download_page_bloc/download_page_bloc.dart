@@ -1,11 +1,11 @@
 import 'dart:async';
-
+import 'dart:html' as html;
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/src/simulation/data/models/urls_model.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:flutter/services.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../../order/presentation/models/order_model.dart';
@@ -92,7 +92,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
   }
 
   /// Triggers file export request and opens the resulting PDF link.
-  Future<void> exportFile(String fileId) async {
+  Future<void> exportFile(String fileId, String type) async {
     final dio = Dio();
     const url =
         'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
@@ -100,23 +100,59 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     try {
       final response = await dio.get(
         url,
-        queryParameters: {'fileId': fileId, 'type': 'pdf'},
+        queryParameters: {'fileId': fileId, 'type': type},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.data['Success'] == true) {
-        await _launchURL(response.data['Data']);
+        final downloadUrl = response.data['Data'];
+        final filename = _extractFilenameFromUrl(downloadUrl); // see below
+        await _downloadFile(downloadUrl, filename);
       }
     } catch (e) {
       debugPrint('Export file error: $e');
     }
   }
 
-  /// Launches the given URL in the browser.
-  Future<void> _launchURL(String url) async {
+  /// Returns the filename from a URL, or default if missing.
+  String _extractFilenameFromUrl(String url) {
     final uri = Uri.parse(url);
-    if (!await launchUrl(uri)) {
-      debugPrint('Could not launch $url');
+    final segments = uri.pathSegments;
+    if (segments.isNotEmpty) {
+      return segments.last;
     }
+    return 'downloaded_file';
   }
+
+  Future<void> _downloadFile(String url, String filename) async {
+    // Only works on web!
+    final anchor =
+        html.AnchorElement(href: url)
+          ..download = filename
+          ..style.display = 'none';
+    html.document.body!.append(anchor);
+    anchor.click();
+    anchor.remove();
+  }
+}
+
+Future<void> downloadAssetPdf(String assetPath, String filename) async {
+  // 1. Load PDF file as bytes
+  final bytes = await rootBundle.load(assetPath);
+  final buffer = bytes.buffer;
+
+  // 2. Create a Blob from bytes
+  final blob = html.Blob([buffer.asUint8List()]);
+
+  // 3. Create ObjectUrl
+  final url = html.Url.createObjectUrlFromBlob(blob);
+
+  // 4. Create anchor element and trigger download
+  final anchor =
+      html.AnchorElement(href: url)
+        ..download = filename
+        ..click();
+
+  // 5. Cleanup: revoke object url after a tick
+  html.Url.revokeObjectUrl(url);
 }

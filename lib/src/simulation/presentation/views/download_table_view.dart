@@ -234,13 +234,10 @@ class DownloadTableView extends StatelessWidget {
   // Helper function to avoid duplicating the button list
   List<Widget> _getButtonList(BuildContext context, DownloadedData item) {
     return [
-      _ModernActionBtn(
+      _DownloadActionBtn(
         label: "Download",
         icon: Icons.download_rounded,
         color: AppColors.themeBlue,
-        onTap:
-            () =>
-                context.read<DownloadPageBloc>().exportFile(item.fileId ?? ""),
       ),
       const SizedBox(width: 8), // This SizedBox works for both Row and Wrap
       _ModernActionBtn(
@@ -306,5 +303,93 @@ class _ModernActionBtn extends StatelessWidget {
       ),
       onPressed: onTap,
     );
+  }
+}
+
+class _DownloadActionBtn extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _DownloadActionBtn({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
+
+  Future<void> _showLoader(BuildContext context) async {
+    return showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Future<void> _hideLoader(BuildContext context) async {
+    if (Navigator.canPop(context)) {
+      Navigator.of(context).pop();
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (label == "Download") {
+      return PopupMenuButton<String>(
+        offset: const Offset(0, 40), // 40 = button height, adjust as needed
+        tooltip: label,
+        onSelected: (value) async {
+          final bloc = context.read<DownloadPageBloc>();
+          final fileId = AppStrings.fileId; // Pass fileId as needed!
+
+          // 1. Show loader
+          // await _showLoader(context);
+
+          // 2. Call API
+          if (value == 'pdf') {
+            // await bloc.exportFile(fileId, "pdf");
+
+            await downloadAssetPdf('MB-330_Dumps.pdf', 'MB-330_Dumps.pdf');
+          } else if (value == 'qzs') {
+            // await bloc.exportFile(fileId, "qzs");
+
+            await downloadAssetPdf('MB-330_Dumps.pdf', 'MB-330_Dumps.pdf');
+          }
+
+          // 3. Hide loader
+          // _hideLoader(context);
+
+          // 4. If you want: Show toast/snackbar for result or errors!
+        },
+        itemBuilder:
+            (context) => [
+              const PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+              const PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
+            ],
+        child: TextButton.icon(
+          icon: Icon(icon, size: 18, color: color),
+          label: Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.5,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            backgroundColor: color.withOpacity(0.09),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            minimumSize: const Size(45, 40),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          ),
+          onPressed: null, // Prevent direct press
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 }
