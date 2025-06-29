@@ -29,8 +29,6 @@ class _UserMainViewState extends State<UserMainView> {
     final int questionsAnswered = 35;
     final int totalQuestions = 150;
 
-    // FIX #1: The entire page Column is wrapped in a SingleChildScrollView.
-    // This makes the dashboard vertically scrollable and fixes all bottom overflows.
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
       child: Column(
@@ -40,7 +38,6 @@ class _UserMainViewState extends State<UserMainView> {
           const SizedBox(height: 24.0),
           LayoutBuilder(
             builder: (context, constraints) {
-              // Your responsive logic for web/mobile is great and remains unchanged.
               if (constraints.maxWidth > 950) {
                 return Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -289,14 +286,30 @@ class _UserMainViewState extends State<UserMainView> {
     );
   }
 
+  // --- REFACTORED WIDGET ---
   Widget _buildSummarySection(BuildContext context) {
+    // Get the screen width to determine the layout.
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Define the breakpoint for switching to a single column.
+    const mobileBreakpoint = 600;
+
+    // Dynamically set the number of columns based on screen width.
+    final int crossAxisCount = screenWidth < mobileBreakpoint ? 1 : 2;
+
+    // Dynamically set the aspect ratio. Single-column cards can be wider.
+    final double aspectRatio = screenWidth < mobileBreakpoint ? 3.0 : 1.8;
+
+    // Dynamically set the spacing. Less horizontal spacing is needed for a single column.
+    final double crossAxisSpacing = screenWidth < mobileBreakpoint ? 0 : 20;
+
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 20,
+      crossAxisSpacing: crossAxisSpacing,
       mainAxisSpacing: 20,
-      childAspectRatio: 2.2,
+      childAspectRatio: aspectRatio,
       children: [
         _summaryCard(
           context: context,
@@ -361,13 +374,12 @@ class _UserMainViewState extends State<UserMainView> {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // FIX #2: Wrapped the Text widget in Expanded.
-                // This tells the text to take up the available flexible space
-                // and prevents it from pushing the icon out of bounds.
                 Expanded(
                   child: Text(
                     title,
@@ -376,7 +388,6 @@ class _UserMainViewState extends State<UserMainView> {
                       fontSize: 16,
                       fontWeight: FontWeight.w500,
                     ),
-                    // Adding an overflow handler is good practice.
                     overflow: TextOverflow.ellipsis,
                     maxLines: 1,
                   ),
@@ -384,13 +395,16 @@ class _UserMainViewState extends State<UserMainView> {
                 Icon(icon, color: color, size: 28),
               ],
             ),
-            const Spacer(),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+                maxLines: 1,
               ),
             ),
           ],

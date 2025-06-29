@@ -17,9 +17,16 @@ class ExplanationReportTask extends StatelessWidget {
   Widget build(BuildContext context) {
     return LayoutBuilder(
       builder: (context, constraints) {
+        // The breakpoint is set to 600px for consistency.
+        final bool isWide = constraints.maxWidth > 600;
+
         return Center(
           child: Container(
-            padding: const EdgeInsets.all(16),
+            // On narrow screens, reduce horizontal padding to give content more space
+            padding: EdgeInsets.symmetric(
+              vertical: 16,
+              horizontal: isWide ? 16 : 8,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               border: Border.all(color: AppColors.purple),
@@ -33,16 +40,20 @@ class ExplanationReportTask extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        taskItem?.reportType != "Answer"
-                            ? 'Incorrect Explanation'
-                            : 'Incorrect Answer',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                          color: AppColors.black,
+                      // Using Flexible prevents long titles from causing an overflow.
+                      Flexible(
+                        child: Text(
+                          taskItem?.reportType != "Answer"
+                              ? 'Incorrect Explanation'
+                              : 'Incorrect Answer',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.black,
+                          ),
                         ),
                       ),
+                      horizontalSpace(16),
                       InkWell(
                         onTap: () => Navigator.pop(context),
                         child: Image.asset(Assets.cross, height: 20, width: 20),
@@ -83,16 +94,19 @@ class ExplanationReportTask extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            Text(
-                              taskItem?.questionNumber ?? 'Question',
-                              style: TextStyle(
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.black,
+                            // Using Flexible here as well for robustness.
+                            Flexible(
+                              child: Text(
+                                taskItem?.questionNumber ?? 'Question',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.black,
+                                ),
                               ),
                             ),
                             horizontalSpace(8),
                             InkWell(
-                              onTap: () {},
+                              onTap: () {}, // Business logic is untouched
                               child: Text(
                                 'View on File',
                                 style: TextStyle(
@@ -176,7 +190,6 @@ class ExplanationReportTask extends StatelessWidget {
                           style: TextStyle(
                             fontWeight: FontWeight.bold,
                             color: AppColors.purple,
-
                             decoration: TextDecoration.underline,
                             decorationColor: AppColors.purple,
                           ),
@@ -201,77 +214,9 @@ class ExplanationReportTask extends StatelessWidget {
 
                   verticalSpace(10),
 
-                  /// Buttons
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      OutlinedButton(
-                        onPressed: () {
-                          showDialog(
-
-                            barrierColor: Colors.transparent,
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: QuestionExplanationTask(
-                                  taskItem: taskItem,
-                                  approved: false,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.purple),
-                          foregroundColor: AppColors.purple,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        child: Text('No, Disapprove'),
-                      ),
-                      OutlinedButton(
-                        onPressed: () {
-                          showDialog(
-
-                            barrierColor: Colors.transparent,
-                            context: context,
-                            barrierDismissible: true,
-                            builder: (BuildContext context) {
-                              return Dialog(
-                                insetPadding: EdgeInsets.symmetric(
-                                  horizontal: 10.w,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12.r),
-                                ),
-                                child: QuestionExplanationTask(
-                                  taskItem: taskItem,
-                                  approved: true,
-                                ),
-                              );
-                            },
-                          );
-                        },
-                        style: OutlinedButton.styleFrom(
-                          side: BorderSide(color: AppColors.purple),
-                          backgroundColor: AppColors.purple,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                        ),
-                        child: Text('Yes, Approve'),
-                      ),
-                    ],
-                  ),
+                  /// --- RESPONSIVE ACTION BUTTONS ---
+                  // This new method builds a Row or Column based on screen width.
+                  _buildActionButtons(context, isWide),
 
                   verticalSpace(12),
 
@@ -293,6 +238,89 @@ class ExplanationReportTask extends StatelessWidget {
           ),
         );
       },
+    );
+  }
+
+  /// Builds the action buttons adaptively.
+  /// Returns a [Row] for wide screens and a [Column] for narrow screens.
+  Widget _buildActionButtons(BuildContext context, bool isWide) {
+    // Define the "Disapprove" button to avoid repetition.
+    // The onPressed logic is preserved exactly.
+    final disapproveButton = OutlinedButton(
+      onPressed: () {
+        showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return Dialog(
+              insetPadding: EdgeInsets.symmetric(horizontal: 10.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: QuestionExplanationTask(
+                taskItem: taskItem,
+                approved: false,
+              ),
+            );
+          },
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.purple),
+        foregroundColor: AppColors.purple,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      child: Text('No, Disapprove'),
+    );
+
+    // Define the "Approve" button.
+    final approveButton = OutlinedButton(
+      onPressed: () {
+        showDialog(
+          barrierColor: Colors.transparent,
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return Dialog(
+              insetPadding: EdgeInsets.symmetric(horizontal: 10.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              child: QuestionExplanationTask(
+                taskItem: taskItem,
+                approved: true,
+              ),
+            );
+          },
+        );
+      },
+      style: OutlinedButton.styleFrom(
+        side: BorderSide(color: AppColors.purple),
+        backgroundColor: AppColors.purple,
+        foregroundColor: Colors.white,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+      ),
+      child: Text('Yes, Approve'),
+    );
+
+    // If the screen is wide, return a Row.
+    if (isWide) {
+      return Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [disapproveButton, approveButton],
+      );
+    }
+
+    // Otherwise, return a Column for narrow screens.
+    // CrossAxisAlignment.stretch makes the buttons fill the width.
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        approveButton, // Primary action first
+        verticalSpace(8),
+        disapproveButton,
+      ],
     );
   }
 }

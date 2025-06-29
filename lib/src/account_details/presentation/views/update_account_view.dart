@@ -45,63 +45,46 @@ class _UpdateAccountState extends State<UpdateAccount> {
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFF7F8FC),
-      appBar: AppBar(
-        title: const Text("Update Account"),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 1,
-      ),
-      body: ListView(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 34),
-        children: [
-          // Main form section, full width but with padding on the sides
-          Padding(
+    // No Scaffold, AppBar, or ListView! Only return the content card.
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth < 700 ? 6 : 30,
+          vertical: screenWidth < 500 ? 18 : 36,
+        ),
+        child: Card(
+          elevation: 5,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(24),
+          ),
+          child: Padding(
             padding: EdgeInsets.symmetric(
-              horizontal: screenWidth < 700 ? 12 : 36,
+              horizontal: screenWidth < 500 ? 12 : 40,
+              vertical: screenWidth < 500 ? 18 : 40,
             ),
-            child: Card(
-              elevation: 5,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 40,
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: BlocBuilder<UserBloc, UserInitialState>(
-                    builder: (context, state) {
-                      return Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Two columns on wide screens, stacked on mobile
-                          LayoutBuilder(
-                            builder: (context, constraints) {
-                              bool wide = constraints.maxWidth > 650;
-                              return Wrap(
-                                spacing: 32,
-                                runSpacing: 0,
+            child: Form(
+              key: _formKey,
+              child: BlocBuilder<UserBloc, UserInitialState>(
+                builder: (context, state) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      // Responsive name fields
+                      LayoutBuilder(
+                        builder: (context, constraints) {
+                          bool wide = constraints.maxWidth > 650;
+                          return wide
+                              ? Row(
                                 children: [
-                                  SizedBox(
-                                    width:
-                                        wide
-                                            ? constraints.maxWidth / 2 - 18
-                                            : double.infinity,
+                                  Expanded(
                                     child: _buildTitleInput(
                                       "First name",
                                       firstNameController,
                                       required: true,
                                     ),
                                   ),
-                                  SizedBox(
-                                    width:
-                                        wide
-                                            ? constraints.maxWidth / 2 - 18
-                                            : double.infinity,
+                                  const SizedBox(width: 32),
+                                  Expanded(
                                     child: _buildTitleInput(
                                       "Last name",
                                       lastNameController,
@@ -109,158 +92,165 @@ class _UpdateAccountState extends State<UpdateAccount> {
                                     ),
                                   ),
                                 ],
+                              )
+                              : Column(
+                                children: [
+                                  _buildTitleInput(
+                                    "First name",
+                                    firstNameController,
+                                    required: true,
+                                  ),
+                                  _buildTitleInput(
+                                    "Last name",
+                                    lastNameController,
+                                    required: true,
+                                  ),
+                                ],
                               );
-                            },
+                        },
+                      ),
+                      const SizedBox(height: 12),
+                      _buildTitleInput(
+                        "Display name",
+                        displayNameController,
+                        required: true,
+                      ),
+                      Padding(
+                        padding: const EdgeInsets.only(
+                          left: 2,
+                          bottom: 13,
+                          top: 2,
+                        ),
+                        child: Text(
+                          "This will be how your name will be displayed in the account section and in reviews.",
+                          style: TextStyle(
+                            color: Colors.black.withOpacity(0.67),
+                            fontSize: 13,
                           ),
-                          const SizedBox(height: 12),
-                          _buildTitleInput(
-                            "Display name",
-                            displayNameController,
-                            required: true,
+                        ),
+                      ),
+                      _buildTitleInput(
+                        "Email address",
+                        emailController,
+                        required: true,
+                      ),
+                      const SizedBox(height: 20),
+                      Divider(
+                        thickness: 1.1,
+                        color: Colors.grey.shade200,
+                        height: 32,
+                      ),
+                      _buildTitleInput(
+                        "Current password (leave blank to leave unchanged)",
+                        currentPasswordController,
+                        obscure: true,
+                      ),
+                      _buildTitleInput(
+                        "New password",
+                        newPasswordController,
+                        obscure: true,
+                      ),
+                      _buildTitleInput(
+                        "Confirm new password",
+                        confirmPasswordController,
+                        obscure: true,
+                      ),
+                      const SizedBox(height: 22),
+                      const Text(
+                        "Default currency",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 15,
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      DropdownButtonFormField<String>(
+                        value: state.userData?.selectedCurrency?.name ?? "USD",
+                        decoration: InputDecoration(
+                          isDense: true,
+                          contentPadding: const EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 15,
                           ),
-                          Padding(
-                            padding: const EdgeInsets.only(
-                              left: 2,
-                              bottom: 13,
-                              top: 2,
-                            ),
-                            child: Text(
-                              "This will be how your name will be displayed in the account section and in reviews.",
-                              style: TextStyle(
-                                color: Colors.black.withOpacity(0.67),
-                                fontSize: 13,
-                              ),
-                            ),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide(color: Colors.grey.shade300),
                           ),
-                          _buildTitleInput(
-                            "Email address",
-                            emailController,
-                            required: true,
-                          ),
-                          const SizedBox(height: 20),
-                          Divider(
-                            thickness: 1.1,
-                            color: Colors.grey.shade200,
-                            height: 32,
-                          ),
-                          _buildTitleInput(
-                            "Current password (leave blank to leave unchanged)",
-                            currentPasswordController,
-                            obscure: true,
-                          ),
-                          _buildTitleInput(
-                            "New password",
-                            newPasswordController,
-                            obscure: true,
-                          ),
-                          _buildTitleInput(
-                            "Confirm new password",
-                            confirmPasswordController,
-                            obscure: true,
-                          ),
-                          const SizedBox(height: 22),
-                          const Text(
-                            "Default currency",
-                            style: TextStyle(
-                              fontWeight: FontWeight.bold,
-                              fontSize: 15,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          DropdownButtonFormField<String>(
-                            value:
-                                state.userData?.selectedCurrency?.name ?? "USD",
-                            decoration: InputDecoration(
-                              isDense: true,
-                              contentPadding: const EdgeInsets.symmetric(
-                                horizontal: 12,
-                                vertical: 15,
-                              ),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(8),
-                                borderSide: BorderSide(
-                                  color: Colors.grey.shade300,
-                                ),
-                              ),
-                            ),
-                            items:
-                                (state.userData?.currencyOptions ?? []).map((
-                                  currency,
-                                ) {
-                                  return DropdownMenuItem<String>(
-                                    value: currency.name,
-                                    child: Row(
-                                      children: [
-                                        Text(
-                                          HtmlUnescape().convert(
-                                            currency.symbol ?? "",
-                                          ),
-                                          style: const TextStyle(
-                                            fontWeight: FontWeight.w500,
-                                            fontSize: 16,
-                                          ),
-                                        ),
-                                        horizontalSpace(7),
-                                        Text(currency.name ?? ""),
-                                      ],
+                        ),
+                        items:
+                            (state.userData?.currencyOptions ?? []).map((
+                              currency,
+                            ) {
+                              return DropdownMenuItem<String>(
+                                value: currency.name,
+                                child: Row(
+                                  children: [
+                                    Text(
+                                      HtmlUnescape().convert(
+                                        currency.symbol ?? "",
+                                      ),
+                                      style: const TextStyle(
+                                        fontWeight: FontWeight.w500,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                  );
-                                }).toList(),
-                            onChanged: (value) {
-                              if (value != null) {
-                                setState(() {
-                                  selectedCurrency = value;
-                                });
-                              }
-                            },
-                          ),
-                          const SizedBox(height: 10),
-                          const Text(
-                            "Select your preferred currency for shopping and payments.",
+                                    horizontalSpace(7),
+                                    Text(currency.name ?? ""),
+                                  ],
+                                ),
+                              );
+                            }).toList(),
+                        onChanged: (value) {
+                          if (value != null) {
+                            setState(() {
+                              selectedCurrency = value;
+                            });
+                          }
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      const Text(
+                        "Select your preferred currency for shopping and payments.",
+                        style: TextStyle(
+                          fontStyle: FontStyle.italic,
+                          color: Colors.black54,
+                        ),
+                      ),
+                      const SizedBox(height: 34),
+                      SizedBox(
+                        width: double.infinity,
+                        child: FilledButton.icon(
+                          icon: const Icon(Icons.save_rounded, size: 21),
+                          label: const Text(
+                            "Save Changes",
                             style: TextStyle(
-                              fontStyle: FontStyle.italic,
-                              color: Colors.black54,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 16.5,
                             ),
                           ),
-                          const SizedBox(height: 34),
-                          SizedBox(
-                            width: double.infinity,
-                            child: FilledButton.icon(
-                              icon: const Icon(Icons.save_rounded, size: 21),
-                              label: const Text(
-                                "Save Changes",
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  fontSize: 16.5,
-                                ),
-                              ),
-                              style: FilledButton.styleFrom(
-                                padding: const EdgeInsets.symmetric(
-                                  vertical: 15,
-                                ),
-                                backgroundColor: Theme.of(context).primaryColor,
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                foregroundColor: Colors.white,
-                                elevation: 2,
-                              ),
-                              onPressed: () {
-                                if (_formKey.currentState!.validate()) {
-                                  // Submit logic
-                                }
-                              },
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(vertical: 15),
+                            backgroundColor: Theme.of(context).primaryColor,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
                             ),
+                            foregroundColor: Colors.white,
+                            elevation: 2,
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
+                          onPressed: () {
+                            if (_formKey.currentState!.validate()) {
+                              // Submit logic
+                            }
+                          },
+                        ),
+                      ),
+                    ],
+                  );
+                },
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

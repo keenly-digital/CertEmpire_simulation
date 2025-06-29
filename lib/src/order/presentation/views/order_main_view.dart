@@ -33,9 +33,8 @@ class _OrderMainViewState extends State<OrderMainView> {
       padding: const EdgeInsets.symmetric(horizontal: 20),
       child: BlocBuilder<OrderBloc, OrderInitialState>(
         builder: (context, state) {
-          return SingleChildScrollView(
-            child: OrderTableView(orders: state.orders ?? []),
-          );
+          // Return the content directly. The main page will handle scrolling.
+          return OrderTableView(orders: state.orders ?? []);
         },
       ),
     );

@@ -11,12 +11,13 @@ import 'failed_dialogue.dart';
 
 class ReportSummaryCard extends StatelessWidget {
   final RewardData? rewardData;
-  int index = -1;
+  final int index;
 
-  ReportSummaryCard({super.key, this.rewardData, required this.index});
+  const ReportSummaryCard({super.key, this.rewardData, required this.index});
 
   @override
   Widget build(BuildContext context) {
+    // The main card container with your styling.
     return Container(
       padding: const EdgeInsets.all(16),
       margin: const EdgeInsets.all(12),
@@ -25,125 +26,179 @@ class ReportSummaryCard extends StatelessWidget {
         border: Border.all(color: Colors.purple.shade100),
         borderRadius: BorderRadius.circular(12),
       ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'Order Number #40235',
-                  style: TextStyle(
-                    color: AppColors.purple,
-                    fontWeight: FontWeight.w500,
-                    fontSize: 13,
-                  ),
-                ),
-                SizedBox(height: 4.h),
-                Text(
-                  rewardData?.fileName?.replaceAll("%", "") ?? "",
-                  style: TextStyle(fontSize: 11, color: Colors.black87),
-                ),
-                SizedBox(height: 14.h),
-                SizedBox(
-                  width: ScreenUtil().screenWidth,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: Row(
-                      children: [
-                        _StatBox(
-                          label: 'Reports Submitted',
-                          value: "${rewardData?.reportsSubmitted ?? 0}",
-                        ),
-                        SizedBox(width: 8.w),
-                        _StatBox(
-                          label: 'Reports Approved',
-                          value: "${rewardData?.reportsApproved ?? 0}",
-                        ),
-                        SizedBox(width: 8.w),
-                        _StatBox(
-                          label: 'Voted Reports',
-                          value: "${rewardData?.votedReports ?? 0}",
-                        ),
-                        SizedBox(width: 8.w),
-                        _StatBox(
-                          label: 'Voted Reports Approved',
-                          value: "${rewardData?.votedReportsApproved ?? 0}",
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          SizedBox(
-            height: 100.h, // Adjust height as needed
-            child: VerticalDivider(
-              width: 20, // spacing around the divider
-              thickness: 1.2,
-              color: AppColors.dividerColor,
-            ),
-          ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const Text(
-                'Current Balance',
-                style: TextStyle(fontSize: 14, color: Colors.black87),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                '\$${rewardData?.currentBalance} USD',
-                style: TextStyle(fontSize: 16),
-              ),
-              const SizedBox(height: 12),
-              BlocBuilder<MyRewardBloc, RewardInitialState>(
-                builder: (context, state) {
-                  return (state.withDrawLoading == false &&
-                          index == context.read<MyRewardBloc>().cardIndex)
-                      ? CircularProgressIndicator(color: AppColors.purple)
-                      : OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.purple,
-                          side: BorderSide(color: AppColors.borderColor),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(
-                              2,
-                            ), // Less round
-                          ),
-                        ),
-                        onPressed: () async {
-                          await showDialog<String>(
+      // LayoutBuilder is the key to making the card responsive.
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Set a breakpoint. If the card's width is less than 600, stack the layout.
+          bool isNarrow = constraints.maxWidth < 600;
 
-                            barrierColor: Colors.transparent,
-                            context: context,
-                            builder:
-                                (context) =>
-                                    (rewardData?.currentBalance ?? 0) < 0.0
-                                        ? FailedDialogue()
-                                        : WithdrawRequestDialog(),
-                          );
-                        },
-                        child: Text(
-                          'Withdraw',
-                          style: TextStyle(
-                            color: AppColors.borderColor,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      );
-                },
-              ),
-            ],
-          ),
-        ],
+          if (isNarrow) {
+            // --- NARROW LAYOUT (COLUMN) ---
+            return _buildNarrowLayout(context);
+          } else {
+            // --- WIDE LAYOUT (ROW) ---
+            return _buildWideLayout(context);
+          }
+        },
       ),
+    );
+  }
+
+  /// Builds the layout for wide screens (e.g., tablets, desktops).
+  Widget _buildWideLayout(BuildContext context) {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Expanded(child: _buildOrderDetails(context)),
+        SizedBox(
+          height: 120, // Give the divider a height to be visible
+          child: VerticalDivider(
+            width: 24, // Spacing around the divider
+            thickness: 1,
+            color: Colors.grey.shade200,
+          ),
+        ),
+        // The balance section takes its natural width.
+        _buildBalanceSection(context, isNarrow: false),
+      ],
+    );
+  }
+
+  /// Builds the layout for narrow screens (e.g., mobile phones).
+  Widget _buildNarrowLayout(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _buildOrderDetails(context),
+        Divider(height: 32, color: Colors.grey.shade200, thickness: 1),
+        _buildBalanceSection(context, isNarrow: true),
+      ],
+    );
+  }
+
+  /// Reusable widget for the left side (Order Info & Stats).
+  Widget _buildOrderDetails(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          // Using data from the model instead of hardcoded text
+          'Order Number #${rewardData?.orderNumber ?? ''}',
+          style: TextStyle(
+            color: AppColors.purple,
+            fontWeight: FontWeight.w600,
+            fontSize: 16,
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          rewardData?.fileName?.replaceAll("%", "") ?? "",
+          style: TextStyle(fontSize: 14, color: Colors.black.withOpacity(0.7)),
+        ),
+        const SizedBox(height: 16),
+        // The Wrap widget replaces the SingleChildScrollView.
+        // It automatically wraps stat boxes to the next line if space is limited.
+        Wrap(
+          spacing: 8.0,
+          runSpacing: 8.0,
+          children: [
+            _StatBox(
+              label: 'Reports Submitted',
+              value: "${rewardData?.reportsSubmitted ?? 0}",
+            ),
+            _StatBox(
+              label: 'Reports Approved',
+              value: "${rewardData?.reportsApproved ?? 0}",
+            ),
+            _StatBox(
+              label: 'Voted Reports',
+              value: "${rewardData?.votedReports ?? 0}",
+            ),
+            _StatBox(
+              label: 'Voted Reports Approved',
+              value: "${rewardData?.votedReportsApproved ?? 0}",
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  /// Reusable widget for the right side (Balance & Withdraw Button).
+  Widget _buildBalanceSection(BuildContext context, {required bool isNarrow}) {
+    return Column(
+      // On narrow screens, align everything to the start (left).
+      // On wide screens, align everything to the end (right).
+      crossAxisAlignment:
+          isNarrow ? CrossAxisAlignment.start : CrossAxisAlignment.end,
+      children: [
+        const Text(
+          'Current Balance',
+          style: TextStyle(fontSize: 14, color: Colors.black87),
+        ),
+        const SizedBox(height: 4),
+        Text(
+          '\$${rewardData?.currentBalance ?? '0.00'} USD',
+          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 12),
+        // Your existing BlocBuilder logic is preserved here.
+        BlocBuilder<MyRewardBloc, RewardInitialState>(
+          builder: (context, state) {
+            // Simplified the loading check for clarity
+            bool isLoading =
+                state.withDrawLoading == true &&
+                index == context.read<MyRewardBloc>().cardIndex;
+
+            if (isLoading) {
+              return const SizedBox(
+                width: 24,
+                height: 24,
+                child: CircularProgressIndicator(
+                  strokeWidth: 3,
+                  color: AppColors.purple,
+                ),
+              );
+            }
+
+            return OutlinedButton(
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.purple,
+                side: BorderSide(color: AppColors.borderColor),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 24,
+                  vertical: 12,
+                ),
+              ),
+              onPressed: () async {
+                await showDialog<String>(
+                  context: context,
+                  builder:
+                      (context) =>
+                          (rewardData?.currentBalance ?? 0) <= 0
+                              ? const FailedDialogue()
+                              : const WithdrawRequestDialog(),
+                );
+              },
+              child: Text(
+                'Withdraw',
+                style: TextStyle(
+                  color: AppColors.borderColor,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            );
+          },
+        ),
+      ],
     );
   }
 }
 
+/// The helper widget for stat boxes, now without ScreenUtil.
 class _StatBox extends StatelessWidget {
   final String label;
   final String value;
@@ -153,7 +208,7 @@ class _StatBox extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
       decoration: BoxDecoration(
         color: const Color(0xFFF2EEF7),
         borderRadius: BorderRadius.circular(8),
@@ -163,18 +218,18 @@ class _StatBox extends StatelessWidget {
           Text(
             label,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 11,
+            style: const TextStyle(
+              fontSize: 12,
               color: Colors.black87,
-              fontWeight: FontWeight.bold,
+              fontWeight: FontWeight.w500,
             ),
           ),
-          SizedBox(height: 6.h),
+          const SizedBox(height: 6),
           Text(
             value,
-            style: TextStyle(
+            style: const TextStyle(
               fontWeight: FontWeight.bold,
-              fontSize: 12,
+              fontSize: 16,
               color: Colors.black87,
             ),
           ),

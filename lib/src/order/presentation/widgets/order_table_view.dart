@@ -38,118 +38,120 @@ class OrderTableView extends StatelessWidget {
   }
 
   // --- WIDGET FOR SMALL SCREENS (< 800px) ---
-  /// Builds a vertical ListView of cards.
+  /// Builds a vertical Column of cards.
   Widget _buildMobileListView(
     BuildContext context,
     List<OrdersDetails> orderList,
   ) {
-    // **FIX for vanishing content**: Added shrinkWrap and physics to ensure
-    // the ListView renders correctly within any parent layout.
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: orderList.length,
-      itemBuilder: (context, index) {
-        final order = orderList[index];
-        final statusColor =
-            (order.status == 'completed')
-                ? Colors.green[700]
-                : AppColors.themeBlue;
+    // MODIFIED: Replaced ListView.builder with a simple Column.
+    // The parent layout in main_page_view.dart will handle all scrolling.
+    return Column(
+      children:
+          orderList.map((order) {
+            // The following is the Card widget from your original itemBuilder.
+            final statusColor =
+                (order.status == 'completed')
+                    ? Colors.green[700]
+                    : AppColors.themeBlue;
 
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16),
-          ),
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            return Card(
+              margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
+              elevation: 2,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '#${order.id}',
+                          style: context.textTheme.titleMedium?.copyWith(
+                            color: AppColors.themeBlue,
+                            fontWeight: FontManager.bold,
+                          ),
+                        ),
+                        Container(
+                          decoration: BoxDecoration(
+                            color: statusColor!.withOpacity(0.11),
+                            borderRadius: BorderRadius.circular(7),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 10,
+                            vertical: 5,
+                          ),
+                          child: Text(
+                            order.status ?? "",
+                            style: context.textTheme.bodySmall?.copyWith(
+                              color: statusColor,
+                              fontWeight: FontManager.semiBold,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    const SizedBox(height: 8),
                     Text(
-                      '#${order.id}',
+                      convertDate(order.dateCreated ?? ""),
+                      style: context.textTheme.bodySmall?.copyWith(
+                        color: Colors.grey[600],
+                      ),
+                    ),
+                    const Divider(height: 24),
+                    Text(
+                      getProductNames(order),
+                      style: context.textTheme.bodyMedium?.copyWith(
+                        fontWeight: FontManager.semiBold,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
                       style: context.textTheme.titleMedium?.copyWith(
                         color: AppColors.themeBlue,
                         fontWeight: FontManager.bold,
                       ),
                     ),
-                    Container(
-                      decoration: BoxDecoration(
-                        color: statusColor!.withOpacity(0.11),
-                        borderRadius: BorderRadius.circular(7),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 10,
-                        vertical: 5,
-                      ),
-                      child: Text(
-                        order.status ?? "",
-                        style: context.textTheme.bodySmall?.copyWith(
-                          color: statusColor,
-                          fontWeight: FontManager.semiBold,
+                    const SizedBox(height: 16),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {
+                          context.read<DownloadPageBloc>().ordersDetails =
+                              order;
+                          context.read<NavigationCubit>().selectTab(
+                            1,
+                            subTitle: 1,
+                          );
+                        },
+                        borderRadius: BorderRadius.circular(22),
+                        child: Container(
+                          decoration: BoxDecoration(
+                            color: AppColors.themeBlue,
+                            borderRadius: BorderRadius.circular(22),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 8,
+                            horizontal: 24,
+                          ),
+                          child: Text(
+                            "View",
+                            style: context.textTheme.labelMedium?.copyWith(
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ),
                   ],
                 ),
-                const SizedBox(height: 8),
-                Text(
-                  convertDate(order.dateCreated ?? ""),
-                  style: context.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey[600],
-                  ),
-                ),
-                const Divider(height: 24),
-                Text(
-                  getProductNames(order),
-                  style: context.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontManager.semiBold,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
-                  style: context.textTheme.titleMedium?.copyWith(
-                    color: AppColors.themeBlue,
-                    fontWeight: FontManager.bold,
-                  ),
-                ),
-                const SizedBox(height: 16),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: InkWell(
-                    onTap: () {
-                      context.read<DownloadPageBloc>().ordersDetails = order;
-                      context.read<NavigationCubit>().selectTab(1, subTitle: 1);
-                    },
-                    borderRadius: BorderRadius.circular(22),
-                    child: Container(
-                      decoration: BoxDecoration(
-                        color: AppColors.themeBlue,
-                        borderRadius: BorderRadius.circular(22),
-                      ),
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 8,
-                        horizontal: 24,
-                      ),
-                      child: Text(
-                        "View",
-                        style: context.textTheme.labelMedium?.copyWith(
-                          color: Colors.white,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
+              ),
+            );
+          }).toList(), // .toList() is important to convert the map to a list of widgets
     );
   }
 

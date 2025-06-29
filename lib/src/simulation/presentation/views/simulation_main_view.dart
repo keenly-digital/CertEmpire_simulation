@@ -261,7 +261,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildHeader(context, simulationState, isWide),
+                    _buildHeader(context, simulationState),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       height: _showGoToField ? 60 : 0,
@@ -501,17 +501,16 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
   // In ExamQuestionPage class (_ExamQuestionPageState)
 
-  Widget _buildHeader(
-    BuildContext context,
-    SimulationState state,
-    bool
-    isWide, // This 'isWide' is no longer needed but we'll leave it in the signature
-  ) {
-    // Get the actual screen width for multi-breakpoint logic
+  // PASTE THIS ENTIRE METHOD OVER YOUR EXISTING _buildHeader METHOD
+
+  Widget _buildHeader(BuildContext context, SimulationState state) {
+    // Get the screen width to determine the layout.
     final screenWidth = MediaQuery.of(context).size.width;
+    // Use the new 650px breakpoint for mobile, as you requested.
+    final isMobile = screenWidth <= 650;
 
     // --- Reusable UI Components ---
-    // We define the widgets once and reuse them in the different layouts.
+    // These are defined once and reused in the layouts below.
     final fileName = state.simulationData?.fileName ?? '';
     final title = Tooltip(
       message: fileName,
@@ -527,9 +526,13 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     );
 
     final searchField = TextFormField(
+      // The ScreenUtil dependencies (.w, .h) are removed for better portability.
       onChanged: (v) => context.read<SearchQuestionCubit>().setQuery(v),
       decoration: InputDecoration(
-        contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 12,
+        ),
         hintText: 'Search in this file...',
         hintStyle: const TextStyle(color: Colors.grey),
         filled: true,
@@ -550,15 +553,42 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
       ),
     );
 
-    final downloadButton = appButton(
-      withIcon: true,
-      onPressed: () {},
-      text: 'Download',
-      textColor: Colors.white,
-      borderColor: AppColors.themePurple,
-      background: AppColors.themePurple,
-      borderRadius: 12,
-    );
+    // --- Conditionally define the download button ---
+    // FIX: Replaced the missing 'appButton' with the standard ElevatedButton.
+    final downloadButton =
+        isMobile
+            // Mobile: A smaller, icon-only button to save space.
+            ? ElevatedButton(
+              onPressed: () {
+                // Add your download logic here
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.themePurple,
+                foregroundColor: Colors.white,
+                shape: const CircleBorder(),
+                padding: const EdgeInsets.all(12),
+              ),
+              child: const Icon(Icons.download, size: 20),
+            )
+            // Wide screen: A standard button with text and an icon.
+            : ElevatedButton.icon(
+              onPressed: () {
+                // Add your download logic here
+              },
+              icon: const Icon(Icons.download, size: 18),
+              label: const Text('Download'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: AppColors.themePurple,
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 14,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+            );
 
     final viewModeToggle = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -619,66 +649,44 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
       ),
     );
 
-    // --- Breakpoint-based Layout Logic ---
+    // --- Simplified Layout Logic based on the 650px breakpoint ---
 
-    // DESKTOP LAYOUT (> 1100px)
-    if (screenWidth > 1100) {
+    // WIDE LAYOUT (> 650px)
+    if (!isMobile) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Expanded(child: title), // Use Expanded to give title flexible space
-          const SizedBox(width: 16),
-          viewModeToggle,
-          const SizedBox(width: 16),
-          goToButton,
-          const SizedBox(width: 16),
+          Expanded(child: title),
+          const SizedBox(width: 24),
           SizedBox(width: 250, child: searchField),
           const SizedBox(width: 16),
-          downloadButton,
+          viewModeToggle,
+          const SizedBox(width: 12),
+          goToButton,
+          const SizedBox(width: 12),
+          downloadButton, // The full button with text
         ],
       );
     }
-    // TABLET LAYOUT (> 700px)
-    else if (screenWidth > 700) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(child: title),
-              const SizedBox(width: 16),
-              downloadButton,
-            ],
-          ),
-          const SizedBox(height: 16),
-          Row(
-            children: [
-              viewModeToggle,
-              const SizedBox(width: 12),
-              goToButton,
-              const SizedBox(width: 12),
-              Expanded(child: searchField),
-            ],
-          ),
-        ],
-      );
-    }
-    // MOBILE LAYOUT (< 700px)
+    // MOBILE LAYOUT (<= 650px)
     else {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           title,
           const SizedBox(height: 16),
-          searchField, // Takes full width
-          const SizedBox(height: 12),
-          // All buttons wrap neatly and are aligned to the right.
-          Wrap(
-            alignment: WrapAlignment.end,
-            spacing: 12.0,
-            runSpacing: 12.0,
-            children: [viewModeToggle, goToButton, downloadButton],
+          searchField,
+          const SizedBox(height: 16),
+          // This Row ensures all three action buttons are on the same line.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              viewModeToggle,
+              const SizedBox(width: 8),
+              goToButton,
+              const SizedBox(width: 8),
+              downloadButton, // The compact icon-only button
+            ],
           ),
         ],
       );

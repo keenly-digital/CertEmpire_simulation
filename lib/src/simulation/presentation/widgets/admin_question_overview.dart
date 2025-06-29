@@ -270,42 +270,48 @@ class _AdminQuestionOverviewWidgetState
                 const SizedBox(height: 26),
 
                 // --- Action Buttons: Wrap for responsiveness ---
-                Wrap(
-                  alignment: WrapAlignment.end,
-                  spacing: 8.0,
-                  runSpacing: 8.0,
-                  children: [
-                    _buildReportButton(
-                      text: AppStrings.reportQue,
-                      icon: Icons.flag_outlined,
-                      onPressed: () {
-                        showDialog(
-                          barrierColor: Colors.black.withOpacity(0.07),
-                          context: context,
-                          builder:
-                              (_) => ReportQuestionDialog(
-                                fileId: AppStrings.fileId,
-                                questionId: widget.question.id,
-                                questionIndex: widget.questionIndex,
-                              ),
-                        );
-                      },
-                    ),
-                    _buildPrimaryButton(
-                      text:
-                          !_showAnswer
-                              ? AppStrings.showAnswer
-                              : AppStrings.hideAnswer,
-                      icon:
-                          !_showAnswer
-                              ? Icons.visibility_outlined
-                              : Icons.visibility_off_outlined,
-                      onPressed: () {
-                        setState(() => _showAnswer = !_showAnswer);
-                        widget.onContentChanged();
-                      },
-                    ),
-                  ],
+                Align(
+                  alignment:
+                      Alignment
+                          .centerRight, // This line moves the buttons to the right
+                  child: Wrap(
+                    alignment:
+                        WrapAlignment.end, // Keep this for internal alignment
+                    spacing: 8.0,
+                    runSpacing: 8.0,
+                    children: [
+                      _buildReportButton(
+                        text: AppStrings.reportQue,
+                        icon: Icons.flag_outlined,
+                        onPressed: () {
+                          showDialog(
+                            barrierColor: Colors.black.withOpacity(0.07),
+                            context: context,
+                            builder:
+                                (_) => ReportQuestionDialog(
+                                  fileId: AppStrings.fileId,
+                                  questionId: widget.question.id,
+                                  questionIndex: widget.questionIndex,
+                                ),
+                          );
+                        },
+                      ),
+                      _buildPrimaryButton(
+                        text:
+                            !_showAnswer
+                                ? AppStrings.showAnswer
+                                : AppStrings.hideAnswer,
+                        icon:
+                            !_showAnswer
+                                ? Icons.visibility_outlined
+                                : Icons.visibility_off_outlined,
+                        onPressed: () {
+                          setState(() => _showAnswer = !_showAnswer);
+                          widget.onContentChanged();
+                        },
+                      ),
+                    ],
+                  ),
                 ),
 
                 if (_showAnswer) ...[
@@ -374,7 +380,7 @@ class _AdminQuestionOverviewWidgetState
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
-        "Q${widget.questionIndex}",
+        "Q: ${widget.questionIndex}",
         style: const TextStyle(
           fontSize: 16,
           fontWeight: FontWeight.bold,

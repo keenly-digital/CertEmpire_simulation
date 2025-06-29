@@ -24,32 +24,38 @@ Widget header({VoidCallback? onMenu}) {
               width: 150.h,
             ),
             const Spacer(),
-            ElevatedButton.icon(
-              onPressed: () {
-                html.window.location.href = "${AppStrings.baseUrl}";
-              },
-              icon: const Icon(
-                Icons.arrow_back_rounded,
-                color: AppColors.black,
-              ),
-              label: const Text(
-                'Main Website',
-                style: TextStyle(color: AppColors.black),
-              ),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Color(0xFFF7E5FF),
-                foregroundColor: AppColors.themeBlue,
-                elevation: 4,
-                padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(4),
-                  side: const BorderSide(color: Color(0xFFF7E5FF), width: 1),
+            // --- FIX APPLIED HERE ---
+            // Conditionally show the button only on non-mobile screens
+            if (!isMobile)
+              ElevatedButton.icon(
+                onPressed: () {
+                  html.window.location.href = "${AppStrings.baseUrl}";
+                },
+                icon: const Icon(
+                  Icons.arrow_back_rounded,
+                  color: AppColors.black,
+                ),
+                label: const Text(
+                  'Main Website',
+                  style: TextStyle(color: AppColors.black),
+                ),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: const Color(0xFFF7E5FF),
+                  foregroundColor: AppColors.themeBlue,
+                  elevation: 4,
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 7.w,
+                    vertical: 12.h,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(4),
+                    side: const BorderSide(color: Color(0xFFF7E5FF), width: 1),
+                  ),
                 ),
               ),
-            ),
             // Hamburger icon for mobile
             if (isMobile) ...[
-              SizedBox(width: 12),
+              const SizedBox(width: 12),
               IconButton(
                 icon: const Icon(Icons.menu, size: 30, color: Colors.white),
                 tooltip: "Open navigation menu",

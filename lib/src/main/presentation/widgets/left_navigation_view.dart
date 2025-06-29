@@ -66,12 +66,15 @@ class LeftNavigationView extends StatelessWidget {
                       child: InkWell(
                         borderRadius: BorderRadius.circular(16),
                         onTap: () {
-                          Navigator.of(context).pop();
+                          if (Navigator.of(context).canPop()) {
+                            Navigator.of(context).pop();
+                          }
                           context.read<NavigationCubit>().selectTab(
                             index,
                             subTitle: 0,
                           );
                         },
+
                         child: AnimatedContainer(
                           duration: const Duration(milliseconds: 220),
                           curve: Curves.easeInOut,

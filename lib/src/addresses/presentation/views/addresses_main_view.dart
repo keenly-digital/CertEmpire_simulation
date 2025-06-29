@@ -14,63 +14,73 @@ class AddressView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final isWide = MediaQuery.of(context).size.width > 820;
-    return Padding(
-      padding: EdgeInsets.symmetric(
-        horizontal: isWide ? 40 : 12,
-        vertical: isWide ? 38 : 18,
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Card(
-            elevation: 0,
-            margin: const EdgeInsets.only(bottom: 22),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(18),
-            ),
-            color: const Color(0xFFF2F4FB),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 18),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.info_outline_rounded,
-                    color: AppColors.themeBlue,
-                    size: 26,
-                  ),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Text(
-                      "The following addresses will be used on the checkout page by default.",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: AppColors.themeBlue,
-                        fontWeight: FontManager.semiBold,
-                        fontSize: 16.2,
+    final width = MediaQuery.of(context).size.width;
+    final isWide = width > 820;
+
+    return Center(
+      child: Padding(
+        padding: EdgeInsets.symmetric(
+          horizontal: isWide ? 40 : 10,
+          vertical: isWide ? 38 : 18,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Info Card
+            Card(
+              elevation: 0,
+              margin: const EdgeInsets.only(bottom: 22),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18),
+              ),
+              color: const Color(0xFFF2F4FB),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: width < 500 ? 12 : 22,
+                  vertical: width < 500 ? 12 : 18,
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Icon(
+                      Icons.info_outline_rounded,
+                      color: AppColors.themeBlue,
+                      size: 26,
+                    ),
+                    const SizedBox(width: 14),
+                    Expanded(
+                      child: Text(
+                        "The following addresses will be used on the checkout page by default.",
+                        style: context.textTheme.bodyMedium?.copyWith(
+                          color: AppColors.themeBlue,
+                          fontWeight: FontManager.semiBold,
+                          fontSize: 16.2,
+                        ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          isWide
-              ? Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(child: _BillingCard()),
-                  SpacerUtil.horizontalLarge(),
-                  Expanded(child: _ShippingCard()),
-                ],
-              )
-              : Column(
-                children: [
-                  _BillingCard(),
-                  const SizedBox(height: 30),
-                  _ShippingCard(),
-                ],
-              ),
-        ],
+            // Responsive billing + shipping
+            isWide
+                ? Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(child: _BillingCard()),
+                    SpacerUtil.horizontalLarge(),
+                    Expanded(child: _ShippingCard()),
+                  ],
+                )
+                : Column(
+                  children: [
+                    _BillingCard(),
+                    const SizedBox(height: 30),
+                    _ShippingCard(),
+                  ],
+                ),
+          ],
+        ),
       ),
     );
   }
@@ -159,13 +169,18 @@ class _ModernAddressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
       color: Colors.white,
       margin: EdgeInsets.zero,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 22, vertical: 28),
+        padding: EdgeInsets.symmetric(
+          horizontal: width < 500 ? 14 : 22,
+          vertical: width < 500 ? 14 : 28,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
