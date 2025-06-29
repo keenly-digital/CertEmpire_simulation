@@ -15,7 +15,8 @@ class _LogoutMainViewState extends State<LogoutMainView> {
   void initState() {
     super.initState();
     // Redirect immediately on widget load
-    html.window.location.href = "${AppStrings.baseUrl}?action=logout";
+    html.window.location.href =
+        "${AppStrings.baseUrl}/my-account/?action=logout";
   }
 
   @override

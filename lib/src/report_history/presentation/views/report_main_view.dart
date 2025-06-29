@@ -83,7 +83,7 @@ class _ReportMainViewState extends State<ReportMainView> {
                             report: report,
                             isOdd: index % 2 == 1,
                             onViewReason:
-                                report.status == "Unapproved"
+                                report.status == "Disapprove"
                                     ? () {
                                       context.read<GetAllReportsBloc>().add(
                                         GetReasonEvent(
@@ -201,7 +201,7 @@ class _ModernTableRow extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color bgColor = isOdd ? const Color(0xFFF8FAFF) : Colors.white;
     final bool showViewReason =
-        report.status == "Unapproved" && onViewReason != null;
+        report.status == "Disapprove" && onViewReason != null;
 
     return Container(
       decoration: BoxDecoration(
@@ -303,8 +303,10 @@ class _ModernTableRow extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
         decoration: BoxDecoration(
           color:
-              report.status == "Unapproved"
+              report.status == "Disapprove"
                   ? Colors.red[100]
+                  : report.status == "Pending"
+                  ? Colors.yellow[100]
                   : Colors.green[50],
           borderRadius: BorderRadius.circular(8),
         ),
@@ -314,8 +316,10 @@ class _ModernTableRow extends StatelessWidget {
             fontSize: 13,
             fontWeight: FontWeight.bold,
             color:
-                report.status == "Unapproved"
+                report.status == "Disapprove"
                     ? Colors.red[700]
+                    : report.status == "Pending"
+                    ? Colors.orange
                     : Colors.green[800],
           ),
         ),

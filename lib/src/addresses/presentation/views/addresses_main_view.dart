@@ -6,6 +6,7 @@ import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../main/presentation/bloc/navigation_cubit.dart';
 
@@ -96,7 +97,7 @@ class _BillingCard extends StatelessWidget {
           title: "Billing Address",
           actionLabel: "Edit Billing address",
           onActionTap: () {
-            context.read<NavigationCubit>().selectTab(7, subTitle: 1);
+            context.go("/Address/Billing");
           },
           fields: [
             billing?.firstName ?? "First Name",
@@ -134,7 +135,7 @@ class _ShippingCard extends StatelessWidget {
           actionLabel:
               isEmpty ? "Add Shipping address" : "Edit Shipping address",
           onActionTap: () {
-            context.read<NavigationCubit>().selectTab(7, subTitle: 2);
+            context.go("/Address/Shipping");
           },
           fields:
               isEmpty

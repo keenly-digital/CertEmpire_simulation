@@ -6,6 +6,7 @@ import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
@@ -257,7 +258,7 @@ class DownloadTableView extends StatelessWidget {
           context.read<SimulationBloc>().add(
             FetchSimulationDataEvent(fieldId: item.fileId ?? "", pageNumber: 1),
           );
-          context.read<NavigationCubit>().selectTab(2, subTitle: 1);
+          context.go("/Downloads/Simulation");
         },
       ),
     ];

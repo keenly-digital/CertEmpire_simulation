@@ -240,6 +240,31 @@ class _UpdateAccountState extends State<UpdateAccount> {
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
                               // Submit logic
+                              final currentUser = context.read<UserBloc>();
+                              final existingUserData =
+                                  currentUser.state.userData;
+                              final updatedUserData = existingUserData
+                                  ?.copyWith(
+                                    firstName: firstNameController.text,
+                                    lastName: lastNameController.text,
+                                    username: displayNameController.text,
+                                    email: emailController.text,
+                                    selectedCurrency:
+                                        existingUserData.selectedCurrency,
+                                    currentPassword:
+                                        currentPasswordController.text,
+                                    newPassword: newPasswordController.text,
+                                  );
+                              context.read<UserBloc>().updateUserProfile(
+                                updatedUserData!,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Account Info updated!"),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 2),
+                                ),
+                              );
                             }
                           },
                         ),

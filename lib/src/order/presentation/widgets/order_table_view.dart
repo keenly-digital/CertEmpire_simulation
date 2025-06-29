@@ -4,6 +4,7 @@ import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_bloc.da
 import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
@@ -123,10 +124,7 @@ class OrderTableView extends StatelessWidget {
                         onTap: () {
                           context.read<DownloadPageBloc>().ordersDetails =
                               order;
-                          context.read<NavigationCubit>().selectTab(
-                            1,
-                            subTitle: 1,
-                          );
+                          context.go("/Orders/OrderDetail");
                         },
                         borderRadius: BorderRadius.circular(22),
                         child: Container(
@@ -279,7 +277,7 @@ class OrderTableView extends StatelessWidget {
               child: InkWell(
                 onTap: () {
                   context.read<DownloadPageBloc>().ordersDetails = order;
-                  context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                  context.go("/Orders/OrderDetail");
                 },
                 borderRadius: BorderRadius.circular(22),
                 child: Container(

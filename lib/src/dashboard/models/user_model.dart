@@ -1,16 +1,10 @@
-
 class UserData {
   bool? success;
   String? message;
   String? error;
   UserInfoData? data;
 
-  UserData({
-    this.success,
-    this.message,
-    this.error,
-    this.data,
-  });
+  UserData({this.success, this.message, this.error, this.data});
 
   factory UserData.fromJson(Map<String, dynamic> json) => UserData(
     success: json["Success"],
@@ -52,6 +46,8 @@ class UserInfoData {
   String? lastName;
   String? role;
   String? username;
+  String? currentPassword;
+  String? newPassword;
   Ing? billing;
   Ing? shipping;
   bool? isPayingCustomer;
@@ -70,6 +66,8 @@ class UserInfoData {
     this.lastName,
     this.role,
     this.username,
+    this.currentPassword,
+    this.newPassword,
     this.billing,
     this.shipping,
     this.isPayingCustomer,
@@ -80,10 +78,22 @@ class UserInfoData {
 
   factory UserInfoData.fromJson(Map<String, dynamic> json) => UserInfoData(
     id: json["id"],
-    dateCreated: json["date_created"] == null ? null : DateTime.parse(json["date_created"]),
-    dateCreatedGmt: json["date_created_gmt"] == null ? null : DateTime.parse(json["date_created_gmt"]),
-    dateModified: json["date_modified"] == null ? null : DateTime.parse(json["date_modified"]),
-    dateModifiedGmt: json["date_modified_gmt"] == null ? null : DateTime.parse(json["date_modified_gmt"]),
+    dateCreated:
+        json["date_created"] == null
+            ? null
+            : DateTime.parse(json["date_created"]),
+    dateCreatedGmt:
+        json["date_created_gmt"] == null
+            ? null
+            : DateTime.parse(json["date_created_gmt"]),
+    dateModified:
+        json["date_modified"] == null
+            ? null
+            : DateTime.parse(json["date_modified"]),
+    dateModifiedGmt:
+        json["date_modified_gmt"] == null
+            ? null
+            : DateTime.parse(json["date_modified_gmt"]),
     email: json["email"],
     firstName: json["first_name"],
     lastName: json["last_name"],
@@ -93,11 +103,18 @@ class UserInfoData {
     shipping: json["shipping"] == null ? null : Ing.fromJson(json["shipping"]),
     isPayingCustomer: json["is_paying_customer"],
     avatarUrl: json["avatar_url"],
-    currencyOptions: json["currency_options"] == null
-        ? []
-        : List<SelectedCurrency>.from(json["currency_options"]!.map((x) => SelectedCurrency.fromJson(x))),
+    currencyOptions:
+        json["currency_options"] == null
+            ? []
+            : List<SelectedCurrency>.from(
+              json["currency_options"]!.map(
+                (x) => SelectedCurrency.fromJson(x),
+              ),
+            ),
     selectedCurrency:
-    json["selected_currency"] == null ? null : SelectedCurrency.fromJson(json["selected_currency"]),
+        json["selected_currency"] == null
+            ? null
+            : SelectedCurrency.fromJson(json["selected_currency"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -115,7 +132,10 @@ class UserInfoData {
     "shipping": shipping?.toJson(),
     "is_paying_customer": isPayingCustomer,
     "avatar_url": avatarUrl,
-    "currency_options": currencyOptions == null ? [] : List<dynamic>.from(currencyOptions!.map((x) => x.toJson())),
+    "currency_options":
+        currencyOptions == null
+            ? []
+            : List<dynamic>.from(currencyOptions!.map((x) => x.toJson())),
     "selected_currency": selectedCurrency?.toJson(),
   };
 
@@ -130,6 +150,8 @@ class UserInfoData {
     String? lastName,
     String? role,
     String? username,
+    String? currentPassword,
+    String? newPassword,
     Ing? billing,
     Ing? shipping,
     bool? isPayingCustomer,
@@ -148,6 +170,8 @@ class UserInfoData {
       lastName: lastName ?? this.lastName,
       role: role ?? this.role,
       username: username ?? this.username,
+      currentPassword: currentPassword ?? this.currentPassword,
+      newPassword: newPassword ?? this.newPassword,
       billing: billing ?? this.billing,
       shipping: shipping ?? this.shipping,
       isPayingCustomer: isPayingCustomer ?? this.isPayingCustomer,
@@ -247,17 +271,14 @@ class SelectedCurrency {
   String? symbol;
   String? name;
 
-  SelectedCurrency({
-    this.code,
-    this.symbol,
-    this.name,
-  });
+  SelectedCurrency({this.code, this.symbol, this.name});
 
-  factory SelectedCurrency.fromJson(Map<String, dynamic> json) => SelectedCurrency(
-    code: json["code"],
-    symbol: json["symbol"],
-    name: json["name"],
-  );
+  factory SelectedCurrency.fromJson(Map<String, dynamic> json) =>
+      SelectedCurrency(
+        code: json["code"],
+        symbol: json["symbol"],
+        name: json["name"],
+      );
 
   Map<String, dynamic> toJson() => {
     "code": code,
@@ -265,11 +286,7 @@ class SelectedCurrency {
     "name": name,
   };
 
-  SelectedCurrency copyWith({
-    String? code,
-    String? symbol,
-    String? name,
-  }) {
+  SelectedCurrency copyWith({String? code, String? symbol, String? name}) {
     return SelectedCurrency(
       code: code ?? this.code,
       symbol: symbol ?? this.symbol,
