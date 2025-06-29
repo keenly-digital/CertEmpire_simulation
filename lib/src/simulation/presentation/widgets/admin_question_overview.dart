@@ -183,286 +183,363 @@ class _AdminQuestionOverviewWidgetState
         widget.question.correctAnswerIndices.isNotEmpty;
     final bool hasExplanation = widget.question.answerExplanation.isNotEmpty;
 
-    // --- The beautiful card container is restored here ---
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24.0),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [
-            _showAnswer
-                ? AppColors.lightBackgroundpurple.withOpacity(0.15)
-                : Colors.white,
-            Colors.white,
-          ],
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          stops: const [0.0, 0.6],
-        ),
-        borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: Colors.grey.shade200, width: 1.0),
-        boxShadow: [
-          BoxShadow(
-            color: AppColors.themePurple.withOpacity(0.04),
-            blurRadius: 15,
-            offset: const Offset(0, 5),
-          ),
-        ],
-      ),
-      child: Padding(
-        // The original Padding widget is now inside
-        padding: const EdgeInsets.all(26.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: AppColors.themePurple.withOpacity(0.12),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Text(
-                    "Q${widget.questionIndex}",
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.themePurple,
-                      letterSpacing: 0.2,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 18),
-                Expanded(
-                  child: inlineTextWithImages(
-                    widget.question.questionText,
-                    style: const TextStyle(
-                      fontSize: 17,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                      height: 1.34,
-                      letterSpacing: 0.01,
-                    ),
-                    imageMaxWidth: 400,
-                  ),
-                ),
+    // --- RESPONSIVE LOGIC ---
+    // Use LayoutBuilder to decide which UI to show based on screen width.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // Define if the layout is mobile based on the 600px breakpoint.
+        final bool isMobile = constraints.maxWidth < 600;
+
+        // Define responsive padding.
+        final double leftPadding = isMobile ? 0 : 58.0;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 24.0),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                _showAnswer
+                    ? AppColors.lightBackgroundpurple.withOpacity(0.15)
+                    : Colors.white,
+                Colors.white,
               ],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              stops: const [0.0, 0.6],
             ),
-            if (widget.question.questionDescription.isNotEmpty) ...[
-              const SizedBox(height: 12),
-              Padding(
-                padding: const EdgeInsets.only(left: 58),
-                child: inlineTextWithImages(
-                  widget.question.questionDescription,
-                  style: TextStyle(
-                    color: Colors.grey[700],
-                    fontSize: 15,
-                    height: 1.33,
-                  ),
-                  imageMaxWidth: 350,
-                ),
+            borderRadius: BorderRadius.circular(18),
+            border: Border.all(color: Colors.grey.shade200, width: 1.0),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.themePurple.withOpacity(0.04),
+                blurRadius: 15,
+                offset: const Offset(0, 5),
               ),
             ],
-            const SizedBox(height: 24),
-            Padding(
-              padding: const EdgeInsets.only(left: 58),
-              child: _buildLabel("Options"),
-            ),
-            const SizedBox(height: 8),
-            Padding(
-              padding: const EdgeInsets.only(left: 58.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: List.generate(widget.question.options.length, (i) {
-                  final isCorrect =
-                      widget.question.correctAnswerIndices.contains(i) &&
-                      _showAnswer;
-                  final String optionLetter = String.fromCharCode(65 + i);
-                  String optionText = widget.question.options[i] ?? '';
-
-                  // Remove leading "A. ", "B. " etc. if present
-                  optionText = optionText.replaceFirst(
-                    RegExp(r'^[A-Ea-e]\.\s*'),
-                    '',
-                  );
-
-                  return AnimatedContainer(
-                    duration: const Duration(milliseconds: 140),
-                    margin: const EdgeInsets.symmetric(vertical: 5.5),
-                    decoration: BoxDecoration(
-                      color:
-                          isCorrect
-                              ? const Color(0xFFF4FBF6)
-                              : Colors.transparent,
-                      border: Border.all(
-                        color:
-                            isCorrect
-                                ? const Color(0xFF38b000)
-                                : Colors.grey.shade200,
-                        width: isCorrect ? 1.1 : 1.0,
-                      ),
-                      borderRadius: BorderRadius.circular(8),
-                      boxShadow:
-                          isCorrect
-                              ? [
-                                BoxShadow(
-                                  color: const Color(
-                                    0xFF38b000,
-                                  ).withOpacity(0.10),
-                                  blurRadius: 6,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ]
-                              : [],
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 11.0,
-                        horizontal: 14,
-                      ),
-                      child: inlineTextWithImages(
-                        "$optionLetter. $optionText", // <-- No double "A." even if input has it
-                        style: TextStyle(
-                          fontSize: 15,
-                          fontWeight:
-                              isCorrect ? FontWeight.w500 : FontWeight.normal,
-                          color: Colors.black,
-                          height: 1.35,
-                        ),
-                        imageMaxWidth: 300,
-                      ),
-                    ),
-                  );
-                }),
-              ),
-            ),
-            const SizedBox(height: 26),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
+          ),
+          child: Padding(
+            padding: EdgeInsets.all(isMobile ? 16.0 : 26.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildReportButton(
-                  text: AppStrings.reportQue,
-                  icon: Icons.flag_outlined,
-                  onPressed: () {
-                    showDialog(
-                      barrierColor: Colors.black.withOpacity(0.07),
-                      context: context,
-                      builder:
-                          (_) => ReportQuestionDialog(
-                            fileId: AppStrings.fileId,
-                            questionId: widget.question.id,
-                            questionIndex: widget.questionIndex,
-                          ),
-                    );
-                  },
-                ),
-                const SizedBox(width: 8),
-                _buildPrimaryButton(
-                  text:
-                      !_showAnswer
-                          ? AppStrings.showAnswer
-                          : AppStrings.hideAnswer,
-                  icon:
-                      !_showAnswer
-                          ? Icons.visibility_outlined
-                          : Icons.visibility_off_outlined,
-                  onPressed: () {
-                    setState(() => _showAnswer = !_showAnswer);
-                    widget.onContentChanged();
-                  },
-                ),
-              ],
-            ),
-            if (_showAnswer) ...[
-              const Divider(height: 32, thickness: 1.1),
-              if (hasCorrectAnswer)
-                Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 12),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
+                // --- Question Header: Row for Desktop, Column for Mobile ---
+                if (isMobile)
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        "Correct Answer:",
+                      _buildQuestionNumber(),
+                      const SizedBox(height: 16),
+                      _buildQuestionText(),
+                    ],
+                  )
+                else
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _buildQuestionNumber(),
+                      const SizedBox(width: 18),
+                      Expanded(child: _buildQuestionText()),
+                    ],
+                  ),
+
+                if (widget.question.questionDescription.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  Padding(
+                    padding: EdgeInsets.only(left: isMobile ? 0 : 58),
+                    child: inlineTextWithImages(
+                      widget.question.questionDescription,
+                      style: TextStyle(
+                        color: Colors.grey[700],
+                        fontSize: 15,
+                        height: 1.33,
+                      ),
+                      imageMaxWidth: 350,
+                    ),
+                  ),
+                ],
+                const SizedBox(height: 24),
+                Padding(
+                  padding: EdgeInsets.only(left: leftPadding),
+                  child: _buildLabel("Options"),
+                ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: EdgeInsets.only(left: leftPadding),
+                  child: _buildOptionsList(),
+                ),
+                const SizedBox(height: 26),
+
+                // --- Action Buttons: Wrap for responsiveness ---
+                Wrap(
+                  alignment: WrapAlignment.end,
+                  spacing: 8.0,
+                  runSpacing: 8.0,
+                  children: [
+                    _buildReportButton(
+                      text: AppStrings.reportQue,
+                      icon: Icons.flag_outlined,
+                      onPressed: () {
+                        showDialog(
+                          barrierColor: Colors.black.withOpacity(0.07),
+                          context: context,
+                          builder:
+                              (_) => ReportQuestionDialog(
+                                fileId: AppStrings.fileId,
+                                questionId: widget.question.id,
+                                questionIndex: widget.questionIndex,
+                              ),
+                        );
+                      },
+                    ),
+                    _buildPrimaryButton(
+                      text:
+                          !_showAnswer
+                              ? AppStrings.showAnswer
+                              : AppStrings.hideAnswer,
+                      icon:
+                          !_showAnswer
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                      onPressed: () {
+                        setState(() => _showAnswer = !_showAnswer);
+                        widget.onContentChanged();
+                      },
+                    ),
+                  ],
+                ),
+
+                if (_showAnswer) ...[
+                  const Divider(height: 32, thickness: 1.1),
+                  if (hasCorrectAnswer)
+                    Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      // --- Correct Answer: Column for Mobile, Row for Desktop ---
+                      child:
+                          isMobile
+                              ? _buildMobileCorrectAnswer()
+                              : _buildDesktopCorrectAnswer(),
+                    ),
+                  if (hasExplanation) ...[
+                    const SizedBox(height: 18),
+                    _buildLabel("Explanation"),
+                    const SizedBox(height: 10),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 4),
+                      child: inlineTextWithImages(
+                        widget.question.answerExplanation,
                         style: TextStyle(
-                          color: Colors.grey.shade600,
-                          fontWeight: FontWeight.w600,
-                          fontSize: 13,
-                          letterSpacing: 0.2,
+                          color: Colors.grey[700],
+                          fontSize: 15.5,
+                          height: 1.33,
                         ),
+                        imageMaxWidth: 350,
                       ),
-                      const SizedBox(width: 8),
-                      Text(
-                        convertIndicesToLetters(
-                          widget.question.correctAnswerIndices,
-                        ),
-                        style: const TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 15,
-                          color: Colors.black87,
-                        ),
-                      ),
-                      const Spacer(),
-                      _buildReportButton(
-                        text: AppStrings.reportAnswerAsIncorrect,
-                        icon: Icons.warning_amber_rounded,
+                    ),
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.bottomRight,
+                      child: _buildReportButton(
+                        text: AppStrings.reportExplanation,
+                        icon: Icons.report_gmailerrorred,
                         onPressed: () {
-                          context
-                              .read<ReportAnsCubit>()
-                              .reportAnswerAsIncorrect(widget.question);
                           showDialog(
                             barrierColor: Colors.black.withOpacity(0.1),
                             context: context,
                             builder:
-                                (_) => ReportIncorrectAnswerDialog(
+                                (_) => ReportExplanationDialogue(
                                   questionId: widget.question.id,
+                                  fileId: AppStrings.fileId,
                                 ),
                           );
                         },
                       ),
-                    ],
-                  ),
-                ),
-              if (hasExplanation) ...[
-                const SizedBox(height: 18),
-                _buildLabel("Explanation"),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.only(right: 4),
-                  child: inlineTextWithImages(
-                    widget.question.answerExplanation,
-                    style: TextStyle(
-                      color: Colors.grey[700],
-                      fontSize: 15.5,
-                      height: 1.33,
                     ),
-                    imageMaxWidth: 350,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: Alignment.bottomRight,
-                  child: _buildReportButton(
-                    text: AppStrings.reportExplanation,
-                    icon: Icons.report_gmailerrorred,
-                    onPressed: () {
-                      showDialog(
-                        barrierColor: Colors.black.withOpacity(0.1),
-                        context: context,
-                        builder:
-                            (_) => ReportExplanationDialogue(
-                              questionId: widget.question.id,
-                              fileId: AppStrings.fileId,
-                            ),
-                      );
-                    },
-                  ),
-                ),
+                  ],
+                ],
               ],
-            ],
-          ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  // --- Extracted methods for clarity and reuse ---
+
+  Widget _buildQuestionNumber() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: AppColors.themePurple.withOpacity(0.12),
+        borderRadius: BorderRadius.circular(10),
+      ),
+      child: Text(
+        "Q${widget.questionIndex}",
+        style: const TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.bold,
+          color: AppColors.themePurple,
+          letterSpacing: 0.2,
         ),
       ),
+    );
+  }
+
+  Widget _buildQuestionText() {
+    return inlineTextWithImages(
+      widget.question.questionText,
+      style: const TextStyle(
+        fontSize: 17,
+        fontWeight: FontWeight.w500,
+        color: Colors.black87,
+        height: 1.34,
+        letterSpacing: 0.01,
+      ),
+      imageMaxWidth: 400,
+    );
+  }
+
+  Widget _buildOptionsList() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: List.generate(widget.question.options.length, (i) {
+        final isCorrect =
+            widget.question.correctAnswerIndices.contains(i) && _showAnswer;
+        final String optionLetter = String.fromCharCode(65 + i);
+        String optionText = widget.question.options[i] ?? '';
+        optionText = optionText.replaceFirst(RegExp(r'^[A-Ea-e]\.\s*'), '');
+
+        return AnimatedContainer(
+          duration: const Duration(milliseconds: 140),
+          margin: const EdgeInsets.symmetric(vertical: 5.5),
+          decoration: BoxDecoration(
+            color: isCorrect ? const Color(0xFFF4FBF6) : Colors.transparent,
+            border: Border.all(
+              color: isCorrect ? const Color(0xFF38b000) : Colors.grey.shade200,
+              width: isCorrect ? 1.1 : 1.0,
+            ),
+            borderRadius: BorderRadius.circular(8),
+            boxShadow:
+                isCorrect
+                    ? [
+                      BoxShadow(
+                        color: const Color(0xFF38b000).withOpacity(0.10),
+                        blurRadius: 6,
+                        offset: const Offset(0, 2),
+                      ),
+                    ]
+                    : [],
+          ),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 11.0, horizontal: 14),
+            child: inlineTextWithImages(
+              "$optionLetter. $optionText",
+              style: TextStyle(
+                fontSize: 15,
+                fontWeight: isCorrect ? FontWeight.w500 : FontWeight.normal,
+                color: Colors.black,
+                height: 1.35,
+              ),
+              imageMaxWidth: 300,
+            ),
+          ),
+        );
+      }),
+    );
+  }
+
+  Widget _buildDesktopCorrectAnswer() {
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        Text(
+          "Correct Answer:",
+          style: TextStyle(
+            color: Colors.grey.shade600,
+            fontWeight: FontWeight.w600,
+            fontSize: 13,
+            letterSpacing: 0.2,
+          ),
+        ),
+        const SizedBox(width: 8),
+        Text(
+          convertIndicesToLetters(widget.question.correctAnswerIndices),
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 15,
+            color: Colors.black87,
+          ),
+        ),
+        const Spacer(),
+        _buildReportButton(
+          text: AppStrings.reportAnswerAsIncorrect,
+          icon: Icons.warning_amber_rounded,
+          onPressed: () {
+            context.read<ReportAnsCubit>().reportAnswerAsIncorrect(
+              widget.question,
+            );
+            showDialog(
+              barrierColor: Colors.black.withOpacity(0.1),
+              context: context,
+              builder:
+                  (_) => ReportIncorrectAnswerDialog(
+                    questionId: widget.question.id,
+                  ),
+            );
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildMobileCorrectAnswer() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Text(
+              "Correct Answer:",
+              style: TextStyle(
+                color: Colors.grey.shade600,
+                fontWeight: FontWeight.w600,
+                fontSize: 13,
+                letterSpacing: 0.2,
+              ),
+            ),
+            const SizedBox(width: 8),
+            Text(
+              convertIndicesToLetters(widget.question.correctAnswerIndices),
+              style: const TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 15,
+                color: Colors.black87,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 16),
+        Align(
+          alignment: Alignment.centerRight,
+          child: _buildReportButton(
+            text: AppStrings.reportAnswerAsIncorrect,
+            icon: Icons.warning_amber_rounded,
+            onPressed: () {
+              context.read<ReportAnsCubit>().reportAnswerAsIncorrect(
+                widget.question,
+              );
+              showDialog(
+                barrierColor: Colors.black.withOpacity(0.1),
+                context: context,
+                builder:
+                    (_) => ReportIncorrectAnswerDialog(
+                      questionId: widget.question.id,
+                    ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

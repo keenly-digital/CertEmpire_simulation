@@ -34,13 +34,21 @@ class FileContentWidget extends StatelessWidget {
         return flatItem.item.when(
           question:
               (question) => AdminQuestionOverviewWidget(
+                key: ValueKey('q_${question.id}'), // <-- ADD KEY
                 question: question,
                 questionIndex: question.q,
                 onContentChanged: onContentChanged,
               ),
-          topic: (topic) => FileTopicRowWidget(topic: topic),
+          topic:
+              (topic) => FileTopicRowWidget(
+                key: ValueKey('t_${topic.title}'), // <-- ADD KEY
+                topic: topic,
+              ),
           caseStudy:
-              (caseStudy) => FileCaseStudyRowWidget(caseStudy: caseStudy),
+              (caseStudy) => FileCaseStudyRowWidget(
+                key: ValueKey('cs_${caseStudy.title}'), // <-- ADD KEY
+                caseStudy: caseStudy,
+              ),
         );
       }),
     );

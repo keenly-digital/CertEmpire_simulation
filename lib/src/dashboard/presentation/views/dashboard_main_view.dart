@@ -23,73 +23,73 @@ class _UserMainViewState extends State<UserMainView> {
 
   @override
   Widget build(BuildContext context) {
-    // Mock data - we will replace this with real data from your UserBloc later
     final String userName = AppStrings.name;
     final String lastStudiedFile =
         "MB-330: Microsoft Dynamics 365 Supply Chain Management";
     final int questionsAnswered = 35;
     final int totalQuestions = 150;
 
-    // === NO Scaffold or SingleChildScrollView here! ===
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildWelcomeHeader(userName),
-        const SizedBox(height: 24.0),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // Use a two-column layout for wider screens (laptops/tablets)
-            if (constraints.maxWidth > 950) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left column: Continue card + summary
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                      children: [
-                        _buildContinueStudyingCard(
-                          context,
-                          fileName: lastStudiedFile,
-                          answered: questionsAnswered,
-                          total: totalQuestions,
-                        ),
-                        const SizedBox(height: 24),
-                        _buildSummarySection(context),
-                      ],
+    // FIX #1: The entire page Column is wrapped in a SingleChildScrollView.
+    // This makes the dashboard vertically scrollable and fixes all bottom overflows.
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildWelcomeHeader(userName),
+          const SizedBox(height: 24.0),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              // Your responsive logic for web/mobile is great and remains unchanged.
+              if (constraints.maxWidth > 950) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          _buildContinueStudyingCard(
+                            context,
+                            fileName: lastStudiedFile,
+                            answered: questionsAnswered,
+                            total: totalQuestions,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildSummarySection(context),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 24.0),
-                  Expanded(
-                    flex: 3,
-                    child: SizedBox(
-                      height: 585,
-                      // 👈 Adjust this value as you want (e.g., 400–600)
-                      child: _buildUpdatesFeed(context),
+                    const SizedBox(width: 24.0),
+                    Expanded(
+                      flex: 3,
+                      child: SizedBox(
+                        height: 585,
+                        child: _buildUpdatesFeed(context),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            } else {
-              // Stack vertically on narrower screens (mobile)
-              return Column(
-                children: [
-                  _buildContinueStudyingCard(
-                    context,
-                    fileName: lastStudiedFile,
-                    answered: questionsAnswered,
-                    total: totalQuestions,
-                  ),
-                  const SizedBox(height: 24.0),
-                  _buildUpdatesFeed(context),
-                  const SizedBox(height: 24.0),
-                  _buildSummarySection(context),
-                ],
-              );
-            }
-          },
-        ),
-      ],
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    _buildContinueStudyingCard(
+                      context,
+                      fileName: lastStudiedFile,
+                      answered: questionsAnswered,
+                      total: totalQuestions,
+                    ),
+                    const SizedBox(height: 24.0),
+                    _buildUpdatesFeed(context),
+                    const SizedBox(height: 24.0),
+                    _buildSummarySection(context),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -290,7 +290,6 @@ class _UserMainViewState extends State<UserMainView> {
   }
 
   Widget _buildSummarySection(BuildContext context) {
-    // ----- CHANGE: Grid now has 2 columns to make cards larger -----
     return GridView.count(
       crossAxisCount: 2,
       shrinkWrap: true,
@@ -298,7 +297,6 @@ class _UserMainViewState extends State<UserMainView> {
       crossAxisSpacing: 20,
       mainAxisSpacing: 20,
       childAspectRatio: 2.2,
-      // Adjusted aspect ratio for better look
       children: [
         _summaryCard(
           context: context,
@@ -361,19 +359,26 @@ class _UserMainViewState extends State<UserMainView> {
             ),
           ],
         ),
-        // ----- CHANGE: Restructured card content for better visual hierarchy -----
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                // FIX #2: Wrapped the Text widget in Expanded.
+                // This tells the text to take up the available flexible space
+                // and prevents it from pushing the icon out of bounds.
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    // Adding an overflow handler is good practice.
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
                 Icon(icon, color: color, size: 28),

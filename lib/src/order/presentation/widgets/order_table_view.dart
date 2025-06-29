@@ -24,327 +24,420 @@ class OrderTableView extends StatelessWidget {
       );
     }
 
-    // --- SINGLE ORDER: Show as card ---
-    if (orderList.length == 1) {
-      final order = orderList.first;
-      final statusColor =
-          (order.status == 'completed')
-              ? Colors.green[700]
-              : AppColors.themeBlue;
+    // --- RESPONSIVE LOGIC ---
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        // I've increased the breakpoint to 800px for a better experience on tablets.
+        if (constraints.maxWidth < 800) {
+          return _buildMobileListView(context, orderList);
+        } else {
+          return _buildDesktopView(context, orderList);
+        }
+      },
+    );
+  }
 
-      return Card(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-        elevation: 2.5,
-        color: Colors.white,
-        margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 28),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Order number and status
-              Row(
-                children: [
-                  Icon(
-                    Icons.receipt_long_rounded,
-                    color: AppColors.themeBlue,
-                    size: 28,
-                  ),
-                  const SizedBox(width: 14),
-                  Text(
-                    '#${order.id}',
-                    style: context.textTheme.titleLarge?.copyWith(
-                      color: AppColors.themeBlue,
-                      fontWeight: FontManager.bold,
-                    ),
-                  ),
-                  const Spacer(),
-                  Container(
-                    decoration: BoxDecoration(
-                      color: statusColor!.withOpacity(0.11),
-                      borderRadius: BorderRadius.circular(8),
-                    ),
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 12,
-                      vertical: 6,
-                    ),
-                    child: Text(
-                      order.status ?? "",
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        color: statusColor,
-                        fontWeight: FontManager.semiBold,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 18),
-              Row(
-                children: [
-                  Icon(Icons.calendar_today, color: Colors.grey[600], size: 18),
-                  const SizedBox(width: 8),
-                  Text(
-                    convertDate(order.dateCreated ?? ""),
-                    style: context.textTheme.bodyMedium,
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Icon(
-                    Icons.shopping_bag_outlined,
-                    color: AppColors.themeBlue,
-                    size: 22,
-                  ),
-                  const SizedBox(width: 10),
-                  Expanded(
-                    child: Text(
-                      getProductNames(order),
-                      style: context.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontManager.bold,
-                        fontSize: 15.5,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Text(
-                    "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
-                    style: context.textTheme.titleMedium?.copyWith(
-                      color: AppColors.themeBlue,
-                      fontWeight: FontManager.bold,
-                      fontSize: 17,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  OutlinedButton.icon(
-                    icon: Icon(Icons.visibility_rounded),
-                    label: Text("View Details"),
-                    style: OutlinedButton.styleFrom(
-                      backgroundColor: AppColors.themeBlue.withOpacity(0.13),
-                      foregroundColor: AppColors.themeBlue,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 11,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(11),
-                      ),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w700),
-                    ),
-                    onPressed: () {
-                      context.read<DownloadPageBloc>().ordersDetails = order;
-                      context.read<NavigationCubit>().selectTab(1, subTitle: 1);
-                    },
-                  ),
-                  // Add more action buttons if needed
-                ],
-              ),
-            ],
+  // --- WIDGET FOR SMALL SCREENS (< 800px) ---
+  /// Builds a vertical ListView of cards.
+  Widget _buildMobileListView(
+    BuildContext context,
+    List<OrdersDetails> orderList,
+  ) {
+    // **FIX for vanishing content**: Added shrinkWrap and physics to ensure
+    // the ListView renders correctly within any parent layout.
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
+      itemCount: orderList.length,
+      itemBuilder: (context, index) {
+        final order = orderList[index];
+        final statusColor =
+            (order.status == 'completed')
+                ? Colors.green[700]
+                : AppColors.themeBlue;
+
+        return Card(
+          margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
           ),
-        ),
-      );
-    }
-
-    // --- MULTIPLE ORDERS: Show as table ---
-    return Card(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
-      elevation: 2.5,
-      color: Colors.white,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 12),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(18),
-          child: Table(
-            border: TableBorder(
-              horizontalInside: BorderSide(
-                color: Colors.grey.shade100,
-                width: 1,
-              ),
-            ),
-            columnWidths: const {
-              0: FlexColumnWidth(),
-              1: FlexColumnWidth(),
-              2: FlexColumnWidth(),
-              3: FlexColumnWidth(2),
-              4: FlexColumnWidth(),
-            },
-            defaultVerticalAlignment: TableCellVerticalAlignment.middle,
-            children: [
-              // Header row
-              TableRow(
-                decoration: BoxDecoration(
-                  color: AppColors.themeBlue.withOpacity(0.08),
-                ),
-                children: [
-                  _headerCell(context, 'Order'),
-                  _headerCell(context, 'Date'),
-                  _headerCell(context, 'Status'),
-                  _headerCell(context, 'Total'),
-                  _headerCell(context, 'Actions'),
-                ],
-              ),
-              // Data rows
-              ...orderList.asMap().entries.map((entry) {
-                final index = entry.key;
-                final order = entry.value;
-                final isEven = index % 2 == 0;
-                final statusColor =
-                    (order.status == 'completed')
-                        ? Colors.green[700]
-                        : AppColors.themeBlue;
-
-                return TableRow(
-                  decoration: BoxDecoration(
-                    color: isEven ? Colors.grey[50] : Colors.white,
-                  ),
+          elevation: 2,
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
-                      ),
-                      child: InkWell(
-                        onTap: () {
-                          context.read<NavigationCubit>().selectTab(
-                            1,
-                            subTitle: 1,
-                          );
-                        },
-                        child: Text(
-                          '#${order.id}',
-                          style: context.textTheme.labelMedium?.copyWith(
-                            color: AppColors.lightPrimary,
-                            fontWeight: FontManager.semiBold,
-                          ),
-                        ),
+                    Text(
+                      '#${order.id}',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        color: AppColors.themeBlue,
+                        fontWeight: FontManager.bold,
                       ),
                     ),
-                    Padding(
+                    Container(
+                      decoration: BoxDecoration(
+                        color: statusColor!.withOpacity(0.11),
+                        borderRadius: BorderRadius.circular(7),
+                      ),
                       padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
+                        horizontal: 10,
+                        vertical: 5,
                       ),
                       child: Text(
-                        convertDate(order.dateCreated ?? ""),
+                        order.status ?? "",
                         style: context.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontManager.regular,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            decoration: BoxDecoration(
-                              color: statusColor!.withOpacity(0.11),
-                              borderRadius: BorderRadius.circular(7),
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 10,
-                              vertical: 5,
-                            ),
-                            child: Text(
-                              order.status ?? "",
-                              style: context.textTheme.bodySmall?.copyWith(
-                                color: statusColor,
-                                fontWeight: FontManager.semiBold,
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 12,
-                      ),
-                      child: Text(
-                        "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''} for ${order.lineItems?.length ?? ''}",
-                        style: context.textTheme.bodySmall?.copyWith(
-                          fontWeight: FontManager.regular,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 8,
-                        vertical: 10,
-                      ),
-                      child: Align(
-                        alignment: Alignment.centerLeft,
-                        child: InkWell(
-                          onTap: () {
-                            context.read<DownloadPageBloc>().ordersDetails =
-                                order;
-                            context.read<NavigationCubit>().selectTab(
-                              1,
-                              subTitle: 1,
-                            );
-                          },
-                          borderRadius: BorderRadius.circular(22),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              color: AppColors.themeBlue,
-                              borderRadius: BorderRadius.circular(22),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: AppColors.themeBlue.withOpacity(0.11),
-                                  blurRadius: 8,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 7,
-                              horizontal: 22,
-                            ),
-                            child: Text(
-                              "View",
-                              style: context.textTheme.labelMedium?.copyWith(
-                                color: Colors.white,
-                                fontWeight: FontManager.bold,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ),
+                          color: statusColor,
+                          fontWeight: FontManager.semiBold,
                         ),
                       ),
                     ),
                   ],
-                );
-              }),
-            ],
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  convertDate(order.dateCreated ?? ""),
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: Colors.grey[600],
+                  ),
+                ),
+                const Divider(height: 24),
+                Text(
+                  getProductNames(order),
+                  style: context.textTheme.bodyMedium?.copyWith(
+                    fontWeight: FontManager.semiBold,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: AppColors.themeBlue,
+                    fontWeight: FontManager.bold,
+                  ),
+                ),
+                const SizedBox(height: 16),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: InkWell(
+                    onTap: () {
+                      context.read<DownloadPageBloc>().ordersDetails = order;
+                      context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                    },
+                    borderRadius: BorderRadius.circular(22),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: AppColors.themeBlue,
+                        borderRadius: BorderRadius.circular(22),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 8,
+                        horizontal: 24,
+                      ),
+                      child: Text(
+                        "View",
+                        style: context.textTheme.labelMedium?.copyWith(
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
+        );
+      },
+    );
+  }
+
+  // --- WIDGET FOR LARGE SCREENS (>= 800px) ---
+  /// Contains the logic for showing a single detailed card or a flexible table.
+  Widget _buildDesktopView(
+    BuildContext context,
+    List<OrdersDetails> orderList,
+  ) {
+    if (orderList.length == 1) {
+      // Logic for single order remains the same, it's generally safe.
+      return _buildSingleOrderCard(context, orderList.first);
+    }
+
+    // **FIX for overflowing content**: Replaced the rigid `Table` with a
+    // flexible layout using a Column of Rows with Expanded widgets.
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      elevation: 2.5,
+      color: Colors.white,
+      child: Column(
+        children: [
+          // Custom Table Header
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+            decoration: BoxDecoration(
+              color: AppColors.themeBlue.withOpacity(0.08),
+              borderRadius: const BorderRadius.only(
+                topLeft: Radius.circular(22),
+                topRight: Radius.circular(22),
+              ),
+            ),
+            child: Row(
+              children: [
+                Expanded(flex: 2, child: _headerCell(context, 'Order')),
+                Expanded(flex: 3, child: _headerCell(context, 'Date')),
+                Expanded(flex: 3, child: _headerCell(context, 'Status')),
+                Expanded(flex: 4, child: _headerCell(context, 'Total')),
+                Expanded(flex: 2, child: _headerCell(context, 'Actions')),
+              ],
+            ),
+          ),
+          // Table Rows
+          ...orderList.map((order) => _buildFlexibleDataRow(context, order)),
+        ],
+      ),
+    );
+  }
+
+  /// A single flexible data row for the desktop table.
+  Widget _buildFlexibleDataRow(BuildContext context, OrdersDetails order) {
+    final statusColor =
+        (order.status == 'completed') ? Colors.green[700] : AppColors.themeBlue;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: Colors.grey.shade200, width: 1)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // Order
+          Expanded(
+            flex: 2,
+            child: Text(
+              '#${order.id}',
+              style: context.textTheme.labelMedium?.copyWith(
+                color: AppColors.lightPrimary,
+                fontWeight: FontManager.semiBold,
+              ),
+            ),
+          ),
+          // Date
+          Expanded(
+            flex: 3,
+            child: Text(
+              convertDate(order.dateCreated ?? ""),
+              style: context.textTheme.bodySmall?.copyWith(
+                fontWeight: FontManager.regular,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          // Status
+          Expanded(
+            flex: 3,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: statusColor!.withOpacity(0.11),
+                  borderRadius: BorderRadius.circular(7),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
+                child: Text(
+                  order.status ?? "",
+                  style: context.textTheme.bodySmall?.copyWith(
+                    color: statusColor,
+                    fontWeight: FontManager.semiBold,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          // Total
+          Expanded(
+            flex: 4,
+            child: Text(
+              "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''} for ${order.lineItems?.length ?? ''} item(s)",
+              style: context.textTheme.bodySmall?.copyWith(
+                fontWeight: FontManager.regular,
+                color: Colors.black87,
+              ),
+            ),
+          ),
+          // Actions
+          Expanded(
+            flex: 2,
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: InkWell(
+                onTap: () {
+                  context.read<DownloadPageBloc>().ordersDetails = order;
+                  context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                },
+                borderRadius: BorderRadius.circular(22),
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: AppColors.themeBlue,
+                    borderRadius: BorderRadius.circular(22),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 7,
+                    horizontal: 22,
+                  ),
+                  child: Text(
+                    "View",
+                    style: context.textTheme.labelMedium?.copyWith(
+                      color: Colors.white,
+                      fontWeight: FontManager.bold,
+                    ),
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// The original card view for a single order, extracted for clarity.
+  Widget _buildSingleOrderCard(BuildContext context, OrdersDetails order) {
+    final statusColor =
+        (order.status == 'completed') ? Colors.green[700] : AppColors.themeBlue;
+
+    return Card(
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
+      elevation: 2.5,
+      color: Colors.white,
+      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 16),
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32.0, vertical: 28),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(
+                  Icons.receipt_long_rounded,
+                  color: AppColors.themeBlue,
+                  size: 28,
+                ),
+                const SizedBox(width: 14),
+                Text(
+                  '#${order.id}',
+                  style: context.textTheme.titleLarge?.copyWith(
+                    color: AppColors.themeBlue,
+                    fontWeight: FontManager.bold,
+                  ),
+                ),
+                const Spacer(),
+                Container(
+                  decoration: BoxDecoration(
+                    color: statusColor!.withOpacity(0.11),
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
+                  child: Text(
+                    order.status ?? "",
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      color: statusColor,
+                      fontWeight: FontManager.semiBold,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                Icon(Icons.calendar_today, color: Colors.grey[600], size: 18),
+                const SizedBox(width: 8),
+                Text(
+                  convertDate(order.dateCreated ?? ""),
+                  style: context.textTheme.bodyMedium,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const Icon(
+                  Icons.shopping_bag_outlined,
+                  color: AppColors.themeBlue,
+                  size: 22,
+                ),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    getProductNames(order),
+                    style: context.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontManager.bold,
+                      fontSize: 15.5,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+                const SizedBox(width: 15),
+                Text(
+                  "${formatCurrency(double.parse(order.total ?? "0"), "${order.currency}")} ${order.currency ?? ''}",
+                  style: context.textTheme.titleMedium?.copyWith(
+                    color: AppColors.themeBlue,
+                    fontWeight: FontManager.bold,
+                    fontSize: 17,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            Row(
+              children: [
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.visibility_rounded),
+                  label: const Text("View Details"),
+                  style: OutlinedButton.styleFrom(
+                    backgroundColor: AppColors.themeBlue.withOpacity(0.13),
+                    foregroundColor: AppColors.themeBlue,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 22,
+                      vertical: 11,
+                    ),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(11),
+                    ),
+                    textStyle: const TextStyle(fontWeight: FontWeight.w700),
+                  ),
+                  onPressed: () {
+                    context.read<DownloadPageBloc>().ordersDetails = order;
+                    context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                  },
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
   }
 
+  // --- HELPER WIDGETS AND FUNCTIONS (Unchanged) ---
   Widget _headerCell(BuildContext context, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 13, horizontal: 10),
-      child: Text(
-        text,
-        style: context.textTheme.titleSmall?.copyWith(
-          fontWeight: FontManager.bold,
-          color: AppColors.themeBlue,
-          letterSpacing: 0.3,
-        ),
+    return Text(
+      text,
+      style: context.textTheme.titleSmall?.copyWith(
+        fontWeight: FontManager.bold,
+        color: AppColors.themeBlue,
+        letterSpacing: 0.3,
       ),
     );
   }
@@ -396,7 +489,6 @@ class OrderTableView extends StatelessWidget {
       'LKR': 'si_LK',
       'VND': 'vi_VN',
     };
-
     final locale = currencyLocaleMap[currencyCode] ?? 'en';
     final format = NumberFormat.simpleCurrency(
       locale: locale,

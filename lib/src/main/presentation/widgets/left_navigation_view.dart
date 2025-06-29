@@ -25,92 +25,102 @@ class LeftNavigationView extends StatelessWidget {
 
     return BlocBuilder<NavigationCubit, NavigationCubitState>(
       builder: (context, state) {
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            //const SizedBox(height: 0),
-            Container(
-              width: 255,
-              margin: const EdgeInsets.symmetric(horizontal: 0),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(20),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.08),
-                    blurRadius: 18,
-                    offset: const Offset(0, 6),
-                  ),
-                ],
-                border: Border.all(color: Colors.grey.shade200, width: 1.2),
-              ),
-              child: ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: customerNavItems.length,
-                separatorBuilder:
-                    (_, __) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      child: Divider(height: 1, color: Colors.grey.shade100),
+        // **THE FIX IS HERE:**
+        // By wrapping your Column in a SingleChildScrollView, the left menu
+        // will become scrollable if it's too tall for the screen,
+        // which resolves the RenderFlex overflow error.
+        return SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 255,
+                margin: const EdgeInsets.symmetric(horizontal: 0),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.grey.withOpacity(0.08),
+                      blurRadius: 18,
+                      offset: const Offset(0, 6),
                     ),
-                itemBuilder: (context, index) {
-                  final isSelected = state.index == index;
-                  return Material(
-                    color: Colors.transparent,
-                    child: InkWell(
-                      borderRadius: BorderRadius.circular(16),
-                      onTap: () {
-                        context.read<NavigationCubit>().selectTab(
-                          index,
-                          subTitle: 0,
-                        );
-                      },
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 220),
-                        curve: Curves.easeInOut,
-                        padding: const EdgeInsets.symmetric(
-                          vertical: 13,
-                          horizontal: 22,
-                        ),
-                        margin: EdgeInsets.symmetric(
-                          vertical: isSelected ? 3 : 0,
-                          horizontal: isSelected ? 6 : 0,
-                        ),
-                        decoration: BoxDecoration(
-                          color:
-                              isSelected
-                                  ? AppColors.themeBlue.withOpacity(0.09)
-                                  : Colors.transparent,
-                          borderRadius: BorderRadius.circular(13),
-                          border:
-                              isSelected
-                                  ? Border.all(
-                                    color: AppColors.themeBlue.withOpacity(
-                                      0.21,
-                                    ),
-                                    width: 1.3,
-                                  )
-                                  : null,
-                        ),
-                        child: Text(
-                          customerNavItems[index]['label']!,
-                          style: context.textTheme.titleMedium?.copyWith(
+                  ],
+                  border: Border.all(color: Colors.grey.shade200, width: 1.2),
+                ),
+                // Your ListView with NeverScrollableScrollPhysics is correct,
+                // as this parent SingleChildScrollView now handles the scrolling.
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: customerNavItems.length,
+                  separatorBuilder:
+                      (_, __) => Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 16),
+                        child: Divider(height: 1, color: Colors.grey.shade100),
+                      ),
+                  itemBuilder: (context, index) {
+                    final isSelected = state.index == index;
+                    return Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {
+                          Navigator.of(context).pop();
+                          context.read<NavigationCubit>().selectTab(
+                            index,
+                            subTitle: 0,
+                          );
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 220),
+                          curve: Curves.easeInOut,
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 13,
+                            horizontal: 22,
+                          ),
+                          margin: EdgeInsets.symmetric(
+                            vertical: isSelected ? 3 : 0,
+                            horizontal: isSelected ? 6 : 0,
+                          ),
+                          decoration: BoxDecoration(
                             color:
                                 isSelected
-                                    ? AppColors.themeBlue
-                                    : Colors.black.withOpacity(0.85),
-                            fontWeight:
-                                isSelected ? FontWeight.w600 : FontWeight.w500,
-                            letterSpacing: 0.14,
+                                    ? AppColors.themeBlue.withOpacity(0.09)
+                                    : Colors.transparent,
+                            borderRadius: BorderRadius.circular(13),
+                            border:
+                                isSelected
+                                    ? Border.all(
+                                      color: AppColors.themeBlue.withOpacity(
+                                        0.21,
+                                      ),
+                                      width: 1.3,
+                                    )
+                                    : null,
+                          ),
+                          child: Text(
+                            customerNavItems[index]['label']!,
+                            style: context.textTheme.titleMedium?.copyWith(
+                              color:
+                                  isSelected
+                                      ? AppColors.themeBlue
+                                      : Colors.black.withOpacity(0.85),
+                              fontWeight:
+                                  isSelected
+                                      ? FontWeight.w600
+                                      : FontWeight.w500,
+                              letterSpacing: 0.14,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                  );
-                },
+                    );
+                  },
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         );
       },
     );

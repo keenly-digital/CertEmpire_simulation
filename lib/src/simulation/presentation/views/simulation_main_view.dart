@@ -288,6 +288,9 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                       caseStudy: parentCaseStudy,
                                     ),
                                   AdminQuestionOverviewWidget(
+                                    key: ValueKey(
+                                      currentQuestion.id,
+                                    ), // <-- ADD THIS LINE
                                     question: currentQuestion,
                                     questionIndex: currentQuestion.q,
                                     onContentChanged:
@@ -496,135 +499,98 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     return const SizedBox.shrink();
   }
 
+  // In ExamQuestionPage class (_ExamQuestionPageState)
+
   Widget _buildHeader(
     BuildContext context,
     SimulationState state,
-    bool isWide,
+    bool
+    isWide, // This 'isWide' is no longer needed but we'll leave it in the signature
   ) {
+    // Get the actual screen width for multi-breakpoint logic
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // --- Reusable UI Components ---
+    // We define the widgets once and reuse them in the different layouts.
     final fileName = state.simulationData?.fileName ?? '';
-
-    final totalQuestions = state.totalItemLength ?? 0;
-
-    final title = Flexible(
-      // By giving the title a higher flex factor, it claims more available space.
-      // The Spacer widget by default has a flex of 1.
-      flex: 4,
-      child: Tooltip(
-        message: fileName,
-        child: Text(
-          fileName,
-          overflow: TextOverflow.ellipsis,
-          style: context.textTheme.headlineSmall?.copyWith(
-            color: AppColors.themeBlue,
-            fontWeight: FontWeight.bold,
-          ),
+    final title = Tooltip(
+      message: fileName,
+      child: Text(
+        fileName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        style: context.textTheme.headlineSmall?.copyWith(
+          color: AppColors.themeBlue,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
 
-    final searchField = SizedBox(
-      width: isWide ? 250 : double.infinity,
-
-      child: TextFormField(
-        onChanged: (v) => context.read<SearchQuestionCubit>().setQuery(v),
-
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 12.h,
-          ),
-
-          hintText: 'Search in this file...',
-
-          hintStyle: const TextStyle(color: Colors.grey),
-
-          filled: true,
-
-          fillColor: Colors.white,
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.themePurple,
-              width: 2,
-            ),
-          ),
-
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+    final searchField = TextFormField(
+      onChanged: (v) => context.read<SearchQuestionCubit>().setQuery(v),
+      decoration: InputDecoration(
+        contentPadding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        hintText: 'Search in this file...',
+        hintStyle: const TextStyle(color: Colors.grey),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade200),
         ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.themePurple, width: 2),
+        ),
+        prefixIcon: const Icon(Icons.search, color: Colors.grey),
       ),
     );
 
     final downloadButton = appButton(
       withIcon: true,
-
       onPressed: () {},
-
       text: 'Download',
-
       textColor: Colors.white,
-
       borderColor: AppColors.themePurple,
-
       background: AppColors.themePurple,
-
       borderRadius: 12,
     );
 
     final viewModeToggle = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-
       decoration: BoxDecoration(
         color: Colors.white,
-
         borderRadius: BorderRadius.circular(12),
-
         border: Border.all(color: Colors.grey.shade200),
       ),
-
       child: Row(
         mainAxisSize: MainAxisSize.min,
-
         children: [
           const Text(
             "View:",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-
           const SizedBox(width: 4),
-
           Icon(
             Icons.list,
             color: !_isSingleQuestionView ? AppColors.themePurple : Colors.grey,
           ),
-
           Transform.scale(
             scale: 0.8,
-
             child: Switch(
               value: _isSingleQuestionView,
-
               onChanged:
                   (value) => setState(() {
                     _isSingleQuestionView = value;
-
                     _currentQuestionIndex = 0;
                   }),
-
               activeColor: AppColors.themePurple,
             ),
           ),
-
           Icon(
             Icons.filter_1,
             color: _isSingleQuestionView ? AppColors.themePurple : Colors.grey,
@@ -635,13 +601,11 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     final goToButton = OutlinedButton.icon(
       onPressed: () => setState(() => _showGoToField = !_showGoToField),
-
       icon: Icon(
         Icons.find_in_page_outlined,
         size: 16,
         color: _showGoToField ? AppColors.themePurple : Colors.grey.shade600,
       ),
-
       label: Text(
         "Go To",
         style: TextStyle(
@@ -649,67 +613,76 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
           fontWeight: FontWeight.bold,
         ),
       ),
-
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: Colors.grey.shade300),
-
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
 
-    if (isWide) {
+    // --- Breakpoint-based Layout Logic ---
+
+    // DESKTOP LAYOUT (> 1100px)
+    if (screenWidth > 1100) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-
         children: [
-          title,
-
-          const Spacer(),
-
+          Expanded(child: title), // Use Expanded to give title flexible space
+          const SizedBox(width: 16),
           viewModeToggle,
-
           const SizedBox(width: 16),
-
           goToButton,
-
           const SizedBox(width: 16),
-
-          searchField,
-
+          SizedBox(width: 250, child: searchField),
           const SizedBox(width: 16),
-
           downloadButton,
         ],
       );
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-
-      children: [
-        title,
-
-        const SizedBox(height: 16),
-
-        Row(
-          children: [
-            Expanded(child: searchField),
-
-            const SizedBox(width: 8),
-
-            goToButton,
-          ],
-        ),
-
-        const SizedBox(height: 8),
-
-        Align(alignment: Alignment.centerRight, child: viewModeToggle),
-
-        const SizedBox(height: 16),
-
-        Align(alignment: Alignment.centerRight, child: downloadButton),
-      ],
-    );
+    // TABLET LAYOUT (> 700px)
+    else if (screenWidth > 700) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(child: title),
+              const SizedBox(width: 16),
+              downloadButton,
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              viewModeToggle,
+              const SizedBox(width: 12),
+              goToButton,
+              const SizedBox(width: 12),
+              Expanded(child: searchField),
+            ],
+          ),
+        ],
+      );
+    }
+    // MOBILE LAYOUT (< 700px)
+    else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title,
+          const SizedBox(height: 16),
+          searchField, // Takes full width
+          const SizedBox(height: 12),
+          // All buttons wrap neatly and are aligned to the right.
+          Wrap(
+            alignment: WrapAlignment.end,
+            spacing: 12.0,
+            runSpacing: 12.0,
+            children: [viewModeToggle, goToButton, downloadButton],
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildGoToField(int totalQuestions) {
