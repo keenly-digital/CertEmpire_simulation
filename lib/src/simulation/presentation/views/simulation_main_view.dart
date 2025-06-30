@@ -28,6 +28,7 @@ import 'package:certempiree/src/simulation/presentation/widgets/app_button.dart'
 import 'package:certempiree/src/simulation/presentation/widgets/file_casestudy_row.dart';
 
 import 'package:certempiree/src/simulation/presentation/widgets/file_topic_row.dart';
+import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 
@@ -36,6 +37,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'dart:html' as html;
 
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({Key? key}) : super(key: key);
@@ -554,43 +556,23 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
       ),
     );
 
-    // --- Conditionally define the download button ---
-    // FIX: Replaced the missing 'appButton' with the standard ElevatedButton.
-    // In your build method...
     final downloadButton =
         isMobile
-            // Mobile: icon-only with popup
             ? PopupMenuButton<String>(
               tooltip: "Download",
-              offset: const Offset(0, 40), // popup opens below button
+              offset: const Offset(0, 40),
               itemBuilder:
-                  (context) => [
-                    const PopupMenuItem(
-                      value: 'pdf',
-                      child: Text('Download as PDF'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'qzs',
-                      child: Text('Download as QZS'),
-                    ),
+                  (context) => const [
+                    PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+                    PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
                   ],
               onSelected: (value) async {
-                if (value == 'pdf') {
-                  // Replace with your download logic
-                  await downloadAssetPdf(
-                    'MB-330_Dumps.pdf',
-                    'MB-330_Dumps.pdf',
-                  );
-                } else if (value == 'qzs') {
-                  // If you have a QZS download, handle here
-                  await downloadAssetPdf(
-                    'MB-330_Dumps.pdf',
-                    'MB-330_Dumps.pdf',
-                  );
-                }
+                final fileId =
+                    AppStrings.fileId; // <-- Insert your fileId logic
+                await _exportAndDownloadFile(context, fileId, value);
               },
               child: ElevatedButton(
-                onPressed: null, // disables direct press
+                onPressed: null,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.themePurple,
                   foregroundColor: Colors.white,
@@ -600,36 +582,21 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                 child: const Icon(Icons.download, size: 20),
               ),
             )
-            // Desktop: button with text, popup menu
             : PopupMenuButton<String>(
               tooltip: "Download",
               offset: const Offset(0, 52),
               itemBuilder:
-                  (context) => [
-                    const PopupMenuItem(
-                      value: 'pdf',
-                      child: Text('Download as PDF'),
-                    ),
-                    const PopupMenuItem(
-                      value: 'qzs',
-                      child: Text('Download as QZS'),
-                    ),
+                  (context) => const [
+                    PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+                    PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
                   ],
               onSelected: (value) async {
-                if (value == 'pdf') {
-                  await downloadAssetPdf(
-                    'MB-330_Dumps.pdf',
-                    'MB-330_Dumps.pdf',
-                  );
-                } else if (value == 'qzs') {
-                  await downloadAssetPdf(
-                    'MB-330_Dumps.pdf',
-                    'MB-330_Dumps.pdf',
-                  );
-                }
+                final fileId =
+                    AppStrings.fileId; // <-- Insert your fileId logic
+                await _exportAndDownloadFile(context, fileId, value);
               },
               child: ElevatedButton.icon(
-                onPressed: null, // disables direct press
+                onPressed: null,
                 icon: const Icon(Icons.download, size: 18),
                 label: const Text('Download'),
                 style: ElevatedButton.styleFrom(
@@ -810,4 +777,86 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     color: disabled ? Colors.grey.shade400 : AppColors.themePurple,
   );
+}
+
+Future<void> _showLoader(BuildContext context) async {
+  showDialog(
+    context: context,
+    useRootNavigator: true, // <<--- THIS IS IMPORTANT
+    barrierDismissible: false,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+}
+
+void _hideLoader(BuildContext context) {
+  if (Navigator.of(context, rootNavigator: true).canPop()) {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+}
+
+// 1. Export API call (gets file URL)
+Future<void> _exportAndDownloadFile(
+  BuildContext context,
+  String fileId,
+  String type,
+) async {
+  await _showLoader(context);
+
+  const apiUrl =
+      'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+
+  try {
+    final dio = Dio();
+    final response = await dio.get(
+      apiUrl,
+      queryParameters: {'fileId': fileId, 'type': type},
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+
+    if (response.data['Success'] == true && response.data['Data'] != null) {
+      final downloadUrl = response.data['Data'] as String;
+      final fileName = Uri.parse(downloadUrl).pathSegments.last;
+      // 2. Download file as blob and trigger browser download
+      await _triggerWebDownload(downloadUrl, fileName);
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+    } else {
+      _hideLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.data['Message'] ?? "Download failed")),
+      );
+    }
+  } catch (e) {
+    _hideLoader(context);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+  } finally {
+    _hideLoader(context);
+  }
+}
+
+// 2. Web download using Blob (always triggers a download, never opens a new tab)
+Future<void> _triggerWebDownload(String url, String filename) async {
+  final dio = Dio();
+  final response = await dio.get<List<int>>(
+    url,
+    options: Options(responseType: ResponseType.bytes),
+  );
+
+  final data = Uint8List.fromList(response.data!);
+  final blob = html.Blob([data]);
+  final objectUrl = html.Url.createObjectUrlFromBlob(blob);
+
+  final anchor =
+      html.AnchorElement(href: objectUrl)
+        ..download = filename
+        ..style.display = 'none';
+
+  html.document.body?.append(anchor);
+  anchor.click();
+  anchor.remove();
+  html.Url.revokeObjectUrl(objectUrl);
 }

@@ -1,17 +1,18 @@
+import 'dart:typed_data';
+
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
 import 'package:certempiree/core/config/theme/font_manager.dart';
 import 'package:certempiree/core/res/app_strings.dart';
-import 'package:certempiree/src/main/presentation/bloc/navigation_cubit.dart';
-import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/download_model.dart'; // Make sure this import points to your actual model
 import '../bloc/simulation_bloc/simulation_event.dart';
+import 'dart:html' as html;
 
 class DownloadTableView extends StatelessWidget {
   final List<DownloadedData>? download;
@@ -321,52 +322,106 @@ class _DownloadActionBtn extends StatelessWidget {
   });
 
   Future<void> _showLoader(BuildContext context) async {
-    return showDialog(
+    showDialog(
       context: context,
+      useRootNavigator: true, // <<--- THIS IS IMPORTANT
       barrierDismissible: false,
       builder: (_) => const Center(child: CircularProgressIndicator()),
     );
   }
 
-  Future<void> _hideLoader(BuildContext context) async {
-    if (Navigator.canPop(context)) {
-      Navigator.of(context).pop();
+  void _hideLoader(BuildContext context) {
+    if (Navigator.of(context, rootNavigator: true).canPop()) {
+      Navigator.of(context, rootNavigator: true).pop();
     }
+  }
+
+  // 1. Export API call (gets file URL)
+  Future<void> _exportAndDownloadFile(
+    BuildContext context,
+    String fileId,
+    String type,
+  ) async {
+    await _showLoader(context);
+
+    const apiUrl =
+        'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        apiUrl,
+        queryParameters: {'fileId': fileId, 'type': type},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.data['Success'] == true && response.data['Data'] != null) {
+        final downloadUrl = response.data['Data'] as String;
+        final fileName = Uri.parse(downloadUrl).pathSegments.last;
+        // 2. Download file as blob and trigger browser download
+        await _triggerWebDownload(downloadUrl, fileName);
+        _hideLoader(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+      } else {
+        _hideLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['Message'] ?? "Download failed"),
+          ),
+        );
+      }
+    } catch (e) {
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    } finally {
+      _hideLoader(context);
+    }
+  }
+
+  // 2. Web download using Blob (always triggers a download, never opens a new tab)
+  Future<void> _triggerWebDownload(String url, String filename) async {
+    final dio = Dio();
+    final response = await dio.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+
+    final data = Uint8List.fromList(response.data!);
+    final blob = html.Blob([data]);
+    final objectUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor =
+        html.AnchorElement(href: objectUrl)
+          ..download = filename
+          ..style.display = 'none';
+
+    html.document.body?.append(anchor);
+    anchor.click();
+    anchor.remove();
+    html.Url.revokeObjectUrl(objectUrl);
   }
 
   @override
   Widget build(BuildContext context) {
     if (label == "Download") {
       return PopupMenuButton<String>(
-        offset: const Offset(0, 40), // 40 = button height, adjust as needed
+        offset: const Offset(0, 40),
         tooltip: label,
         onSelected: (value) async {
-          final bloc = context.read<DownloadPageBloc>();
-          final fileId = AppStrings.fileId; // Pass fileId as needed!
-
-          // 1. Show loader
-          // await _showLoader(context);
-
-          // 2. Call API
-          if (value == 'pdf') {
-            // await bloc.exportFile(fileId, "pdf");
-
-            await downloadAssetPdf('MB-330_Dumps.pdf', 'MB-330_Dumps.pdf');
-          } else if (value == 'qzs') {
-            // await bloc.exportFile(fileId, "qzs");
-
-            await downloadAssetPdf('MB-330_Dumps.pdf', 'MB-330_Dumps.pdf');
+          final fileId =
+              AppStrings.fileId; // Provide fileId from your context/model
+          if (value == 'pdf' || value == 'qzs') {
+            await _exportAndDownloadFile(context, fileId, value);
           }
-
-          // 3. Hide loader
-          // _hideLoader(context);
-
-          // 4. If you want: Show toast/snackbar for result or errors!
         },
         itemBuilder:
-            (context) => [
-              const PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
-              const PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
+            (context) => const [
+              PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+              PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
             ],
         child: TextButton.icon(
           icon: Icon(icon, size: 18, color: color),
@@ -386,10 +441,28 @@ class _DownloadActionBtn extends StatelessWidget {
             minimumSize: const Size(45, 40),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           ),
-          onPressed: null, // Prevent direct press
+          onPressed: null,
         ),
       );
     }
-    return const SizedBox.shrink();
+    // All other buttons unchanged
+    return TextButton.icon(
+      icon: Icon(icon, size: 18, color: color),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 14.5,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: color.withOpacity(0.09),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(45, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      ),
+      onPressed: onTap,
+    );
   }
 }

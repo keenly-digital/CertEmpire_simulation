@@ -4,8 +4,7 @@ import 'package:bloc/bloc.dart';
 import 'package:certempiree/src/simulation/data/models/urls_model.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../../order/presentation/models/order_model.dart';
@@ -92,30 +91,54 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
   }
 
   /// Triggers file export request and opens the resulting PDF link.
-  Future<void> exportFile(String fileId, String type) async {
-    final dio = Dio();
+  final Dio _dio = Dio();
+
+  /// Triggers the download workflow. Shows loader, makes API call, starts download, handles errors.
+  Future<void> exportAndDownloadFile({
+    required BuildContext context,
+    required String fileId,
+    required String type, // 'pdf' or 'qzs'
+  }) async {
+    _showLoader(context);
+
     const url =
         'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
 
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         url,
         queryParameters: {'fileId': fileId, 'type': type},
         options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
       if (response.data['Success'] == true) {
-        final downloadUrl = response.data['Data'];
-        final filename = _extractFilenameFromUrl(downloadUrl); // see below
+        final downloadUrl = response.data['Data'] as String;
+        final filename = _extractFilenameFromUrl(downloadUrl);
+
+        _hideLoader(context);
+
         await _downloadFile(downloadUrl, filename);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Download started: $filename')));
+      } else {
+        _hideLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['Message'] ?? "Download failed"),
+          ),
+        );
       }
     } catch (e) {
-      debugPrint('Export file error: $e');
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
     }
   }
 
-  /// Returns the filename from a URL, or default if missing.
-  String _extractFilenameFromUrl(String url) {
+  static String _extractFilenameFromUrl(String url) {
     final uri = Uri.parse(url);
     final segments = uri.pathSegments;
     if (segments.isNotEmpty) {
@@ -124,8 +147,8 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     return 'downloaded_file';
   }
 
-  Future<void> _downloadFile(String url, String filename) async {
-    // Only works on web!
+  /// Downloads the file in browser (web only)
+  static Future<void> _downloadFile(String url, String filename) async {
     final anchor =
         html.AnchorElement(href: url)
           ..download = filename
@@ -134,25 +157,20 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     anchor.click();
     anchor.remove();
   }
-}
 
-Future<void> downloadAssetPdf(String assetPath, String filename) async {
-  // 1. Load PDF file as bytes
-  final bytes = await rootBundle.load(assetPath);
-  final buffer = bytes.buffer;
+  /// Shows modal loader
+  static void _showLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+  }
 
-  // 2. Create a Blob from bytes
-  final blob = html.Blob([buffer.asUint8List()]);
-
-  // 3. Create ObjectUrl
-  final url = html.Url.createObjectUrlFromBlob(blob);
-
-  // 4. Create anchor element and trigger download
-  final anchor =
-      html.AnchorElement(href: url)
-        ..download = filename
-        ..click();
-
-  // 5. Cleanup: revoke object url after a tick
-  html.Url.revokeObjectUrl(url);
+  /// Hides modal loader
+  static void _hideLoader(BuildContext context) {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
+    }
+  }
 }
