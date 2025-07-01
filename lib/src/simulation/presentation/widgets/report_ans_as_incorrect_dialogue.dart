@@ -99,11 +99,15 @@ class _ReportIncorrectAnswerDialogState
                         children: [
                           Container(
                             padding: const EdgeInsets.symmetric(
-                                vertical: 12, horizontal: 16),
+                              vertical: 12,
+                              horizontal: 16,
+                            ),
                             decoration: BoxDecoration(
                               gradient: LinearGradient(
                                 colors: [
-                                  AppColors.lightBackgroundpurple.withOpacity(0.8),
+                                  AppColors.lightBackgroundpurple.withOpacity(
+                                    0.8,
+                                  ),
                                   AppColors.lightBackgroundpurple,
                                 ],
                                 begin: Alignment.topCenter,
@@ -113,8 +117,10 @@ class _ReportIncorrectAnswerDialogState
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Icon(Icons.warning_amber_rounded,
-                                    color: AppColors.themePurple),
+                                Icon(
+                                  Icons.warning_amber_rounded,
+                                  color: AppColors.themePurple,
+                                ),
                                 const SizedBox(width: 8),
                                 const Text(
                                   "Report Answer as Incorrect",
@@ -131,7 +137,10 @@ class _ReportIncorrectAnswerDialogState
                             top: 0,
                             right: 0,
                             child: IconButton(
-                              icon: const Icon(Icons.close, color: AppColors.themePurple),
+                              icon: const Icon(
+                                Icons.close,
+                                color: AppColors.themePurple,
+                              ),
                               onPressed: () => Navigator.of(context).pop(),
                             ),
                           ),
@@ -155,12 +164,17 @@ class _ReportIncorrectAnswerDialogState
                               ListView.builder(
                                 shrinkWrap: true,
                                 physics: const NeverScrollableScrollPhysics(),
-                                itemCount: reportAndQuestionState
-                                        .question?.options.length ??
+                                itemCount:
+                                    reportAndQuestionState
+                                        .question
+                                        ?.options
+                                        .length ??
                                     0,
                                 itemBuilder: (context, index) {
-                                  final optionText = reportAndQuestionState
-                                          .question?.options[index] ??
+                                  final optionText =
+                                      reportAndQuestionState
+                                          .question
+                                          ?.options[index] ??
                                       "";
                                   final isSelected = reportAndQuestionState
                                       .selectedOptionIndices
@@ -201,12 +215,14 @@ class _ReportIncorrectAnswerDialogState
                                     color: Colors.grey,
                                   ),
                                   border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.circular(8),
-                                      borderSide: BorderSide.none),
+                                    borderRadius: BorderRadius.circular(8),
+                                    borderSide: BorderSide.none,
+                                  ),
                                   focusedBorder: OutlineInputBorder(
                                     borderSide: BorderSide(
-                                        color: AppColors.themePurple,
-                                        width: 2),
+                                      color: AppColors.themePurple,
+                                      width: 2,
+                                    ),
                                     borderRadius: BorderRadius.circular(8),
                                   ),
                                 ),
@@ -223,11 +239,14 @@ class _ReportIncorrectAnswerDialogState
                                     );
                                     return;
                                   }
-                                  if ((reportAndQuestionState.question?.options
+                                  if ((reportAndQuestionState
+                                              .question
+                                              ?.options
                                               .isNotEmpty ??
                                           false) &&
                                       reportAndQuestionState
-                                          .selectedOptionIndices.isEmpty) {
+                                          .selectedOptionIndices
+                                          .isEmpty) {
                                     CommonHelper.showToast(
                                       message:
                                           "Please select your suggested answer",
@@ -236,19 +255,21 @@ class _ReportIncorrectAnswerDialogState
                                   }
 
                                   final reportParams = ReportAnsParamsModel(
-                                    indexes: reportAndQuestionState
-                                        .selectedOptionIndices,
+                                    indexes:
+                                        reportAndQuestionState
+                                            .selectedOptionIndices,
                                     submitQuestionReportParam:
                                         SubmitQuestionReportParam(
-                                      explanation: explanationController.text,
-                                      type: ReportTypeEnum.Answer.index,
-                                      userId: AppStrings.userId,
-                                      targetId: widget.questionId ?? 0,
-                                      reason: "Answer is Incorrect",
-                                      fileId: AppStrings.fileId,
-                                      questionNumber:
-                                          "Question ${widget.questionId}",
-                                    ),
+                                          explanation:
+                                              explanationController.text,
+                                          type: ReportTypeEnum.Answer.name,
+                                          userId: AppStrings.userId,
+                                          targetId: widget.questionId ?? 0,
+                                          reason: "Answer is Incorrect",
+                                          fileId: AppStrings.fileId,
+                                          questionNumber:
+                                              "Question ${widget.questionId}",
+                                        ),
                                   );
 
                                   await context
@@ -306,31 +327,37 @@ class __SelectableOptionState extends State<_SelectableOption> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeInOut,
-          transform: _isHovering
-              ? (Matrix4.translationValues(0, -4, 0))
-              : Matrix4.identity(),
+          transform:
+              _isHovering
+                  ? (Matrix4.translationValues(0, -4, 0))
+                  : Matrix4.identity(),
           margin: const EdgeInsets.symmetric(vertical: 5),
           padding: const EdgeInsets.all(4),
           decoration: BoxDecoration(
-            color: widget.isSelected
-                ? AppColors.lightBackgroundpurple
-                : Colors.white,
+            color:
+                widget.isSelected
+                    ? AppColors.lightBackgroundpurple
+                    : Colors.white,
             border: Border.all(
-              color: widget.isSelected
-                  ? AppColors.themePurple
-                  : _isHovering ? AppColors.themePurple.withOpacity(0.5) : Colors.grey.shade300,
+              color:
+                  widget.isSelected
+                      ? AppColors.themePurple
+                      : _isHovering
+                      ? AppColors.themePurple.withOpacity(0.5)
+                      : Colors.grey.shade300,
               width: 1.5,
             ),
             borderRadius: BorderRadius.circular(8),
-            boxShadow: _isHovering || widget.isSelected
-                ? [
-                    BoxShadow(
-                      color: AppColors.themePurple.withOpacity(0.15),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ]
-                : [],
+            boxShadow:
+                _isHovering || widget.isSelected
+                    ? [
+                      BoxShadow(
+                        color: AppColors.themePurple.withOpacity(0.15),
+                        blurRadius: 8,
+                        offset: const Offset(0, 4),
+                      ),
+                    ]
+                    : [],
           ),
           child: widget.child,
         ),
