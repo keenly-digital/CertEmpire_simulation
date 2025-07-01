@@ -141,13 +141,13 @@ class _ShippingCard extends StatelessWidget {
               isEmpty
                   ? ["You have not set up this type of address yet."]
                   : [
-                    shipping?.firstName ?? "First Name",
-                    shipping?.company ?? "",
-                    shipping?.address1 ?? "",
-                    shipping?.address2 ?? "",
-                    shipping?.city ?? "",
-                    shipping?.postcode ?? "",
-                    shipping?.country ?? "",
+                    shipping.firstName ?? "First Name",
+                    shipping.company ?? "",
+                    shipping.address1 ?? "",
+                    shipping.address2 ?? "",
+                    shipping.city ?? "",
+                    shipping.postcode ?? "",
+                    shipping.country ?? "",
                   ],
         );
       },

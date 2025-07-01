@@ -1,3 +1,4 @@
+import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
@@ -9,13 +10,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
+
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/download_model.dart'; // Make sure this import points to your actual model
 import '../bloc/simulation_bloc/simulation_event.dart';
-import 'dart:html' as html;
 
 class DownloadTableView extends StatelessWidget {
   final List<DownloadedData>? download;
+
   const DownloadTableView({super.key, required this.download});
 
   @override
@@ -241,24 +243,29 @@ class DownloadTableView extends StatelessWidget {
         color: AppColors.themeBlue,
       ),
       const SizedBox(width: 8), // This SizedBox works for both Row and Wrap
-      _ModernActionBtn(
-        label: "Practice",
-        icon: Icons.play_circle_fill_rounded,
-        color: Colors.green[700]!,
-        onTap: () {
-          if (item.fileId?.isEmpty ?? true) {
-            ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(content: Text("File ID is not available.")),
-            );
-            return;
-          }
-          AppStrings.fileId = item.fileId ?? "";
-          context.read<SimulationBloc>().add(
-            FetchSimulationDataEvent(fieldId: item.fileId ?? "", pageNumber: 1),
-          );
-          context.go("/Downloads/Simulation");
-        },
-      ),
+      (item.tags?.contains("with simulation") ?? false)
+          ? _ModernActionBtn(
+            label: "Practice",
+            icon: Icons.play_circle_fill_rounded,
+            color: Colors.green[700]!,
+            onTap: () {
+              if (item.fileId?.isEmpty ?? true) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text("File ID is not available.")),
+                );
+                return;
+              }
+              AppStrings.fileId = item.fileId ?? "";
+              context.read<SimulationBloc>().add(
+                FetchSimulationDataEvent(
+                  fieldId: item.fileId ?? "",
+                  pageNumber: 1,
+                ),
+              );
+              context.go("/Downloads/Simulation");
+            },
+          )
+          : SizedBox.shrink(),
     ];
   }
 
@@ -277,6 +284,7 @@ class _ModernActionBtn extends StatelessWidget {
   final IconData icon;
   final Color color;
   final VoidCallback onTap;
+
   const _ModernActionBtn({
     required this.label,
     required this.icon,

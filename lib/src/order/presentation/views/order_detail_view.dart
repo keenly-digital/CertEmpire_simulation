@@ -288,7 +288,8 @@ Widget _buildMobileDownloadsSection(
                     color: AppColors.themeBlue,
                   ),
                   const SizedBox(width: 8),
-                  _ModernIconBtn(
+                  (download.tags?.contains("with simulation") ?? false)
+                      ?    _ModernIconBtn(
                     icon: Icons.play_circle_fill_rounded,
                     label: "Practice",
                     color: Colors.green[600]!,
@@ -309,7 +310,7 @@ Widget _buildMobileDownloadsSection(
                       );
                       context.go("/Downloads/Simulation");
                     },
-                  ),
+                  ):SizedBox.shrink(),
                 ],
               ),
             ],
