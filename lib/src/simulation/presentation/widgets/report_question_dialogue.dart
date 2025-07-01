@@ -226,8 +226,6 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                             fileId: widget.fileId,
                             questionNumber: "Question ${widget.questionIndex}",
                           );
-                          print(submitReportParam.toJson());
-                          print("Test 2");
                           context.read<SimulationBloc>().submitQuestionReport(
                             submitReportParam,
                             context,

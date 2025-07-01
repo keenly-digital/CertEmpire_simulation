@@ -197,7 +197,6 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
                             final updatedUserData = existingUserData?.copyWith(
                               shipping: updatedShipping,
                             );
-                            print(updatedUserData?.toJson());
                             context.read<UserBloc>().add(
                               UpdateUserEvent(userInfoData: updatedUserData!),
                             );

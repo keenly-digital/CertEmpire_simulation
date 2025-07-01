@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../models/user_model.dart';
@@ -31,11 +32,11 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
 
         emit(state.copyWith(userData: data.data, loading: false));
       } else {
-        print('Failed with status: ${response.statusCode}');
+        debugPrint('Failed with status: ${response.statusCode}');
         emit(state.copyWith(loading: false, userData: null));
       }
     } catch (e) {
-      print('Request error: $e');
+      debugPrint('Request error: $e');
     }
   }
 
@@ -127,11 +128,11 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
         UserInfoData userInfoData = UserInfoData.fromJson(response.data);
         emit(state.copyWith(userData: userInfoData, loading: false));
       } else {
-        print('Failed with status: ${response.statusCode}');
+        debugPrint('Failed with status: ${response.statusCode}');
         emit(state.copyWith(loading: false, userData: null));
       }
     } catch (e) {
-      print('Request error: $e');
+      debugPrint('Request error: $e');
     }
   }
 
@@ -163,11 +164,11 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
         UserInfoData userInfoData = UserInfoData.fromJson(response.data);
         emit(state.copyWith(userData: userInfoData, loading: false));
       } else {
-        print('Failed with status: ${response.statusCode}');
+        debugPrint('Failed with status: ${response.statusCode}');
         emit(state.copyWith(loading: false, userData: null));
       }
     } catch (e) {
-      print('Request error: $e');
+      debugPrint('Request error: $e');
     }
   }
 }
