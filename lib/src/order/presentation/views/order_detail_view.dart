@@ -289,28 +289,30 @@ Widget _buildMobileDownloadsSection(
                   ),
                   const SizedBox(width: 8),
                   (download.tags?.contains("with simulation") ?? false)
-                      ?    _ModernIconBtn(
-                    icon: Icons.play_circle_fill_rounded,
-                    label: "Practice",
-                    color: Colors.green[600]!,
-                    onTap: () {
-                      if (download.fileId?.isEmpty ?? true) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("File ID is not available."),
-                          ),
-                        );
-                        return;
-                      }
-                      context.read<SimulationBloc>().add(
-                        FetchSimulationDataEvent(
-                          fieldId: download.fileId ?? "",
-                          pageNumber: 1,
-                        ),
-                      );
-                      context.go("/Downloads/Simulation");
-                    },
-                  ):SizedBox.shrink(),
+                      ? _ModernIconBtn(
+                        icon: Icons.play_circle_fill_rounded,
+                        label: "Practice",
+                        color: Colors.green[600]!,
+                        onTap: () {
+                          AppStrings.fileId = download.fileId ?? "";
+                          if (download.fileId?.isEmpty ?? true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("File ID is not available."),
+                              ),
+                            );
+                            return;
+                          }
+                          context.read<SimulationBloc>().add(
+                            FetchSimulationDataEvent(
+                              fieldId: download.fileId ?? "",
+                              pageNumber: 1,
+                            ),
+                          );
+                          context.go("/Downloads/Simulation");
+                        },
+                      )
+                      : SizedBox.shrink(),
                 ],
               ),
             ],
@@ -629,6 +631,8 @@ Widget _buildDownloadsSection(
                                           );
                                           return;
                                         }
+                                        AppStrings.fileId =
+                                            download.fileId ?? "";
                                         context.read<SimulationBloc>().add(
                                           FetchSimulationDataEvent(
                                             fieldId: download.fileId ?? "",

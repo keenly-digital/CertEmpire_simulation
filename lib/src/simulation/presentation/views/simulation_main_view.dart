@@ -58,7 +58,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   @override
   void initState() {
     super.initState();
-    fetchSimulationData();
+    // fetchSimulationData();
   }
 
   @override

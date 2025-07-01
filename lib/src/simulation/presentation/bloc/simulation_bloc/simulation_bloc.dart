@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/core/shared/widgets/snakbar.dart';
 import 'package:certempiree/core/shared/widgets/toast.dart';
+import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/data/models/submit_report_param.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_state.dart';
@@ -24,7 +25,13 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
     FetchSimulationDataEvent event,
     Emitter<SimulationInitState> emit,
   ) async {
-    emit((state as SimulationState).copyWith(loading: true, success: false));
+    emit(
+      (state as SimulationState).copyWith(
+        loading: true,
+        success: false,
+        simulationData: FileContent(),
+      ),
+    );
     final result = await _simulationRepo.getSimulationData(
       event.fieldId ?? "",
       event.pageNumber,

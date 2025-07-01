@@ -192,10 +192,12 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
                               state: state.text,
                               postcode: postCode.text,
                               phone: phone.text,
+                              email: email.text,
                             );
                             final updatedUserData = existingUserData?.copyWith(
                               shipping: updatedShipping,
                             );
+                            print(updatedUserData?.toJson());
                             context.read<UserBloc>().add(
                               UpdateUserEvent(userInfoData: updatedUserData!),
                             );

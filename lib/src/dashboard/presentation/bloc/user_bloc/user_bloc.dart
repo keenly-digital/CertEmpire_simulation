@@ -93,6 +93,9 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
             "state": event.userInfoData.shipping?.state,
             "postcode": event.userInfoData.shipping?.postcode,
             "country": event.userInfoData.shipping?.country,
+            "email":
+                event.userInfoData.shipping?.email ?? event.userInfoData.email,
+            "phone": event.userInfoData.shipping?.phone,
           },
 
           "meta_data": [
