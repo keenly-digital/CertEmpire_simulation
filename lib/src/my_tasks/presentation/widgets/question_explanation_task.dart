@@ -184,7 +184,7 @@ class _QuestionExplanationTaskState extends State<QuestionExplanationTask> {
           taskId: widget.taskItem?.taskId,
           explanation:
               _controller.text, // Using text from the stateful controller
-          decision: widget.approved == true ? "Approved" : "Unapproved",
+          decision: widget.approved == true ? "Approved" : "Disapprove",
         );
         context.read<GetAllTaskBloc>().voteTask(context, voteTaskParamModel);
       },
