@@ -9,7 +9,14 @@ import '../bloc/report_bloc/get_all_reward_bloc.dart';
 import '../bloc/report_bloc/get_all_reward_events.dart';
 
 class WithdrawRequestDialog extends StatelessWidget {
-  const WithdrawRequestDialog({super.key});
+  const WithdrawRequestDialog({
+    super.key,
+    required this.fileName,
+    required this.price,
+  });
+
+  final String fileName;
+  final double price;
 
   @override
   Widget build(BuildContext context) {
@@ -51,8 +58,8 @@ class WithdrawRequestDialog extends StatelessWidget {
                       ),
                     ),
                     const SizedBox(height: 10),
-                    const Text(
-                      'You\'re about to request a withdrawal of \$30 against community help that you rendered wrt Amazon AZ-900. This will be processed manually via a refund.',
+                    Text(
+                      'You\'re about to request a withdrawal of \$$price against community help that you rendered $fileName. This will be processed manually via a refund.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
                         fontSize: 13,
