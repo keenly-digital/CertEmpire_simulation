@@ -2,18 +2,17 @@ import 'package:certempiree/src/my_reward/presentation/bloc/report_bloc/get_all_
 import 'package:certempiree/src/my_reward/presentation/widgets/withdraw_request_dialogue.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
 import '../../data/models/get_all_reward_data_model.dart';
 import '../bloc/report_bloc/get_all_reward_state.dart';
 import 'failed_dialogue.dart';
 
-class ReportSummaryCard extends StatelessWidget {
+class RewardSummaryCard extends StatelessWidget {
   final RewardData? rewardData;
   final int index;
 
-  const ReportSummaryCard({super.key, this.rewardData, required this.index});
+  const RewardSummaryCard({super.key, this.rewardData, required this.index});
 
   @override
   Widget build(BuildContext context) {
@@ -180,7 +179,10 @@ class ReportSummaryCard extends StatelessWidget {
                       (context) =>
                           (rewardData?.currentBalance ?? 0) <= 0
                               ? const FailedDialogue()
-                              : const WithdrawRequestDialog(),
+                              : WithdrawRequestDialog(
+                                price: rewardData?.currentBalance ?? 0,
+                                fileName: rewardData?.fileName ?? "",
+                              ),
                 );
               },
               child: Text(
