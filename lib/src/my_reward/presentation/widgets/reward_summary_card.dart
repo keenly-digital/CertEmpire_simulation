@@ -83,7 +83,7 @@ class ReportSummaryCard extends StatelessWidget {
       children: [
         Text(
           // Using data from the model instead of hardcoded text
-          'Order Number #${rewardData?.orderNumber ?? ''}',
+          'Order Number ${rewardData?.orderNumber ?? ''}',
           style: TextStyle(
             color: AppColors.purple,
             fontWeight: FontWeight.w600,
