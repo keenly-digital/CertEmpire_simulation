@@ -2,6 +2,7 @@ import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../dashboard/models/user_model.dart';
 import '../../../dashboard/presentation/bloc/user_bloc/user_events.dart';
 
@@ -30,18 +31,7 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
   @override
   void initState() {
     super.initState();
-    var userBloc = context.read<UserBloc>().state;
-    firstNameController.text = userBloc.userData?.shipping?.firstName ?? "";
-    lastNameController.text = userBloc.userData?.shipping?.lastName ?? "";
-    companyName.text = userBloc.userData?.shipping?.company ?? "";
-    country.text = userBloc.userData?.shipping?.country ?? "";
-    streetAddress.text = userBloc.userData?.shipping?.address1 ?? "";
-    streetAddress2.text = userBloc.userData?.shipping?.address2 ?? "";
-    townCity.text = userBloc.userData?.shipping?.city ?? "";
-    state.text = userBloc.userData?.shipping?.state ?? "";
-    postCode.text = userBloc.userData?.shipping?.postcode ?? "";
-    phone.text = userBloc.userData?.shipping?.phone ?? "";
-    email.text = userBloc.userData?.shipping?.email ?? "";
+    populateData();
   }
 
   @override
@@ -303,5 +293,36 @@ class _UpdateShippingAddressState extends State<UpdateShippingAddress> {
         ],
       ),
     );
+  }
+
+  Future<void> populateData() async {
+    final userBloc = context.read<UserBloc>();
+
+    int retries = 10;
+    while (userBloc.state.userData == null && retries > 0) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retries--;
+    }
+
+    final userData = userBloc.state.userData;
+
+    LogUtil.debug("User shippping JSON: ${userData?.toJson()}");
+
+    if (userData != null) {
+      final shipping = userData.shipping;
+      firstNameController.text = shipping?.firstName ?? "";
+      lastNameController.text = shipping?.lastName ?? "";
+      companyName.text = shipping?.company ?? "";
+      country.text = shipping?.country ?? "";
+      streetAddress.text = shipping?.address1 ?? "";
+      streetAddress2.text = shipping?.address2 ?? "";
+      townCity.text = shipping?.city ?? "";
+      state.text = shipping?.state ?? "";
+      postCode.text = shipping?.postcode ?? "";
+      phone.text = shipping?.phone ?? "";
+      email.text = userData.email ?? "";
+    }
+
+    setState(() {});
   }
 }

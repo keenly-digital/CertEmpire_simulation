@@ -30,19 +30,7 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
   @override
   void initState() {
     super.initState();
-    final userBloc = context.read<UserBloc>().state;
-    LogUtil.debug("User Billing JSON: ${userBloc.userData?.toJson()}");
-    firstNameController.text = userBloc.userData?.billing?.firstName ?? "";
-    lastNameController.text = userBloc.userData?.billing?.lastName ?? "";
-    companyName.text = userBloc.userData?.billing?.company ?? "";
-    country.text = userBloc.userData?.billing?.country ?? "";
-    streetAddress.text = userBloc.userData?.billing?.address1 ?? "";
-    streetAddress2.text = userBloc.userData?.billing?.address2 ?? "";
-    townCity.text = userBloc.userData?.billing?.city ?? "";
-    state.text = userBloc.userData?.billing?.state ?? "";
-    postCode.text = userBloc.userData?.billing?.postcode ?? "";
-    phone.text = userBloc.userData?.billing?.phone ?? "";
-    email.text = userBloc.userData?.email ?? "";
+    populateData();
   }
 
   @override
@@ -298,4 +286,35 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
       ),
     );
   }
+  Future<void> populateData() async {
+    final userBloc = context.read<UserBloc>();
+
+    int retries = 10;
+    while (userBloc.state.userData == null && retries > 0) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retries--;
+    }
+
+    final userData = userBloc.state.userData;
+
+    LogUtil.debug("User Billing JSON: ${userData?.toJson()}");
+
+    if (userData != null) {
+      final billing = userData.billing;
+      firstNameController.text = billing?.firstName ?? "";
+      lastNameController.text = billing?.lastName ?? "";
+      companyName.text = billing?.company ?? "";
+      country.text = billing?.country ?? "";
+      streetAddress.text = billing?.address1 ?? "";
+      streetAddress2.text = billing?.address2 ?? "";
+      townCity.text = billing?.city ?? "";
+      state.text = billing?.state ?? "";
+      postCode.text = billing?.postcode ?? "";
+      phone.text = billing?.phone ?? "";
+      email.text = userData.email ?? "";
+    }
+
+    setState(() {});
+  }
+
 }
