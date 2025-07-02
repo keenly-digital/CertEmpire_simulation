@@ -1,3 +1,4 @@
+import 'dart:html' as html;
 import 'dart:typed_data';
 
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
@@ -14,7 +15,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import 'dart:html' as html;
 import '../../../../core/config/theme/app_colors.dart';
 import '../../../simulation/data/models/download_model.dart';
 import '../models/order_model.dart';
@@ -415,6 +415,7 @@ Widget _buildAddressBox({
 
 class _SectionCard extends StatelessWidget {
   final Widget child;
+
   const _SectionCard({required this.child});
 
   @override
@@ -614,7 +615,7 @@ Widget _buildDownloadsSection(
                                       color: AppColors.themeBlue,
                                     ),
                                     const SizedBox(width: 8),
-                                    _ModernIconBtn(
+                                  ( download.tags?.contains("with simulation") ?? false)? _ModernIconBtn(
                                       icon: Icons.play_circle_fill_rounded,
                                       label: "Practice",
                                       color: Colors.green[600]!,
@@ -641,7 +642,7 @@ Widget _buildDownloadsSection(
                                         );
                                         context.go("/Downloads/Simulation");
                                       },
-                                    ),
+                                    ):SizedBox.shrink(),
                                   ],
                                 ),
                               ),
@@ -785,6 +786,7 @@ class _ModernIconBtn extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
+
   const _ModernIconBtn({
     required this.icon,
     required this.label,

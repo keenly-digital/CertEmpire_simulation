@@ -1,6 +1,8 @@
 import 'dart:async';
 import 'dart:html' as html;
+
 import 'package:bloc/bloc.dart';
+import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/simulation/data/models/urls_model.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
@@ -80,11 +82,21 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
 
       final urlsModel = UrlsModel.fromJson(response.data);
 
-      for (int i = 0; i < urlsModel.data!.length; i++) {
-        event.download[i].fileId = urlsModel.data![i].fileId;
+      for (final fileData in urlsModel.data ?? []) {
+        final matchedItem = event.download.firstWhere(
+          (element) => element.fileUrl == fileData.fileUrl,
+          orElse: () => DownloadedData(),
+        );
+        matchedItem.fileId = fileData.fileId;
       }
 
       emit(state.copyWith(orders: event.download, loading: false));
+      print(event.download.length);
+      event.download.forEach((element) {
+        LogUtil.debug(
+          "Matched fileId: ${element.fileId} :: fileUrl: ${element.fileUrl}",
+        );
+      });
     } catch (e) {
       debugPrint('File URL fetch error: $e');
     }

@@ -350,6 +350,7 @@ class _DownloadActionBtn extends StatelessWidget {
     String fileId,
     String type,
   ) async {
+    print("9840328409832 :::: ${fileId}");
     await _showLoader(context);
 
     const apiUrl =

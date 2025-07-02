@@ -32,13 +32,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
   @override
   void initState() {
     super.initState();
-    var userBloc = context.read<UserBloc>();
-    firstNameController.text = userBloc.state.userData?.firstName ?? "";
-    lastNameController.text = userBloc.state.userData?.lastName ?? "";
-    displayNameController.text =
-        "${userBloc.state.userData?.firstName ?? ""} ${userBloc.state.userData?.lastName ?? ""}";
-    emailController.text = userBloc.state.userData?.email ?? "";
-    selectedCurrency = userBloc.state.userData?.selectedCurrency?.name ?? "USD";
+    populateData();
   }
 
   @override
@@ -364,5 +358,30 @@ class _UpdateAccountState extends State<UpdateAccount> {
         ],
       ),
     );
+  }
+
+  Future<void> populateData() async {
+    final userBloc = context.read<UserBloc>();
+
+    int retries = 10;
+    while (userBloc.state.userData == null && retries > 0) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retries--;
+    }
+
+    final userData = userBloc.state.userData;
+
+
+    if (userData != null) {
+      var userBloc = context.read<UserBloc>();
+      firstNameController.text = userBloc.state.userData?.firstName ?? "";
+      lastNameController.text = userBloc.state.userData?.lastName ?? "";
+      displayNameController.text =
+      "${userBloc.state.userData?.firstName ?? ""} ${userBloc.state.userData?.lastName ?? ""}";
+      emailController.text = userBloc.state.userData?.email ?? "";
+      selectedCurrency = userBloc.state.userData?.selectedCurrency?.name ?? "USD";
+    }
+
+    setState(() {});
   }
 }

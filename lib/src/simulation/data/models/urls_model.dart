@@ -29,20 +29,20 @@ class UrlsModel {
 
 class Datum {
   String? fileId;
-  // String? fileUrl;
+  String? fileUrl;
 
   Datum({
     this.fileId,
-    // this.fileUrl,
+    this.fileUrl,
   });
 
   factory Datum.fromJson(Map<String, dynamic> json) => Datum(
     fileId: json["fileId"],
-    // fileUrl: json["fileUrl"],
+    fileUrl: json["fileUrl"],
   );
 
   Map<String, dynamic> toJson() => {
     "fileId": fileId,
-    // "fileUrl": fileUrl,
+    "fileUrl": fileUrl,
   };
 }
