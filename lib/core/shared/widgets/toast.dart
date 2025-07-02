@@ -25,7 +25,7 @@ class CommonHelper {
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),side: BorderSide(color: AppColors.purple)),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(

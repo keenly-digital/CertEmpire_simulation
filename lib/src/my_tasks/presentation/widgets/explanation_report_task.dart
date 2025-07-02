@@ -215,7 +215,7 @@ class ExplanationReportTask extends StatelessWidget {
                   verticalSpace(10),
 
                   /// --- RESPONSIVE ACTION BUTTONS ---
-                  // This new method builds a Row or Column based on screen width.
+
                   _buildActionButtons(context, isWide),
 
                   verticalSpace(12),
@@ -248,6 +248,7 @@ class ExplanationReportTask extends StatelessWidget {
     // The onPressed logic is preserved exactly.
     final disapproveButton = OutlinedButton(
       onPressed: () {
+        Navigator.pop(context);
         showDialog(
           barrierColor: Colors.transparent,
           context: context,
@@ -277,6 +278,8 @@ class ExplanationReportTask extends StatelessWidget {
     // Define the "Approve" button.
     final approveButton = OutlinedButton(
       onPressed: () {
+        Navigator.pop(context);
+
         showDialog(
           barrierColor: Colors.transparent,
           context: context,

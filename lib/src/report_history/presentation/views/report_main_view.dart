@@ -4,9 +4,7 @@ import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/report_history/data/models/get_all_reports.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import '../../../../core/utils/spacer_utility.dart';
 import '../bloc/report_bloc/get_all_report_bloc.dart';
 import '../bloc/report_bloc/get_all_report_events.dart';
 import '../bloc/report_bloc/get_all_report_state.dart';
@@ -173,7 +171,7 @@ class _ModernTableHeader extends StatelessWidget {
                   flex: 3,
                   child: Text("Exam Name", style: _headerStyle),
                 ),
-                Expanded(flex: 2, child: Text("Status", style: _headerStyle)),
+                Expanded(flex: 2, child: Text(" Status", style: _headerStyle)),
               ],
             );
           }

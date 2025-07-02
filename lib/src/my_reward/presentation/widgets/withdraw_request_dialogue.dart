@@ -76,6 +76,7 @@ class WithdrawRequestDialog extends StatelessWidget {
                     const SizedBox(height: 10),
                     TextButton(
                       onPressed: () async {
+                        Navigator.pop(context);
                         context.read<MyRewardBloc>().add(
                           GetCouponEvent(
                             context: context,
