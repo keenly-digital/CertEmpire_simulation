@@ -8,8 +8,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../main/presentation/bloc/navigation_cubit.dart';
-
 class AddressView extends StatelessWidget {
   const AddressView({super.key});
 

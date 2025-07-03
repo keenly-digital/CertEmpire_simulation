@@ -1,5 +1,4 @@
 import 'dart:html' as html;
-import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/core/res/app_strings.dart';
 import 'package:flutter/material.dart';
 

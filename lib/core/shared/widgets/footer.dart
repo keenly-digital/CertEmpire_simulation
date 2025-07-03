@@ -6,8 +6,6 @@ import 'package:certempiree/core/config/theme/font_manager.dart';
 
 import 'package:certempiree/core/res/app_strings.dart';
 
-import 'package:certempiree/core/utils/spacer_utility.dart';
-
 import 'package:flutter/material.dart';
 
 import 'package:url_launcher/url_launcher.dart';
