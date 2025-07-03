@@ -6,7 +6,7 @@ class SubmitQuestionReportParam {
   String? userId;
   String? fileId;
   String? questionNumber;
-  String? orderId;
+  int? orderId;
 
   SubmitQuestionReportParam({
     this.type,
@@ -16,7 +16,7 @@ class SubmitQuestionReportParam {
     this.userId,
     this.fileId,
     this.questionNumber,
-    this.orderId,
+    required this.orderId,
   });
 
   factory SubmitQuestionReportParam.fromJson(Map<String, dynamic> json) =>

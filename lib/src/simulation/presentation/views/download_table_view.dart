@@ -256,6 +256,7 @@ class DownloadTableView extends StatelessWidget {
                 return;
               }
               AppStrings.fileId = item.fileId ?? "";
+              AppStrings.orderId = item.orderId ?? 0;
               context.read<SimulationBloc>().add(
                 FetchSimulationDataEvent(
                   fieldId: item.fileId ?? "",

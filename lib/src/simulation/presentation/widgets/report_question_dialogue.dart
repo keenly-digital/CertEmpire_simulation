@@ -225,6 +225,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                             reason: _selectedReason,
                             fileId: widget.fileId,
                             questionNumber: "Question ${widget.questionIndex}",
+                            orderId: AppStrings.orderId
                           );
                           context.read<SimulationBloc>().submitQuestionReport(
                             submitReportParam,

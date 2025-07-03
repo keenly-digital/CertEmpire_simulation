@@ -183,8 +183,11 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                               reason: "Wrong Explanation",
                               fileId: widget.fileId ?? "",
                               questionNumber: "",
+                              orderId: AppStrings.orderId,
                             );
-                            context
+
+                            print("object..... ${AppStrings.orderId}")
+;                            context
                                 .read<SimulationBloc>()
                                 .submitExplanationReport(
                                   submitReportParam,

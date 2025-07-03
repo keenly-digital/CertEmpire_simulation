@@ -88,6 +88,8 @@ class SimulationDataSrc {
         "userId": submitQuestionReportParam.submitQuestionReportParam?.userId,
         "fileId": submitQuestionReportParam.submitQuestionReportParam?.fileId,
         "correctAnswerIndices": submitQuestionReportParam.indexes ?? [],
+        "orderId":
+            submitQuestionReportParam.submitQuestionReportParam?.orderId ?? 0,
       },
     );
 
