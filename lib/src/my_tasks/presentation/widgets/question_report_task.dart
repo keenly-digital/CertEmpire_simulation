@@ -207,6 +207,7 @@ class QuestionReportTask extends StatelessWidget {
     // The onPressed logic is preserved exactly.
     final disapproveButton = OutlinedButton(
       onPressed: () {
+        Navigator.pop(context);
         showDialog(
           barrierColor: Colors.transparent,
           context: context,

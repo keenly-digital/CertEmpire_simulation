@@ -59,7 +59,20 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: QuestionReportTask(taskItem: task),
+            child:LayoutBuilder(
+              builder: (context, constraints) {
+                double width = constraints.maxWidth;
+                double dialogWidth = width > 600 ? 500 : width * 0.75;
+
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 0.90.sh,
+                    maxWidth: dialogWidth,
+                  ),
+                  child: QuestionReportTask(taskItem: task),
+                );
+              },
+            ),
           );
         },
       );
