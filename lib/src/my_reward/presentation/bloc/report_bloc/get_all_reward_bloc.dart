@@ -87,7 +87,6 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
     res.when(
       onSuccess: (data) async {
         CommonHelper.hideLoader(event.context);
-        CommonHelper.showToast(message: data.message);
         Navigator.pop(event.context);
         await showDialog<String>(
           barrierColor: Colors.transparent,

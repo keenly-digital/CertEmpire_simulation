@@ -82,7 +82,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-        Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
@@ -107,7 +106,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-        Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
