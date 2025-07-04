@@ -30,72 +30,56 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
   @override
   void initState() {
     super.initState();
-    final userBloc = context.read<UserBloc>().state;
-    LogUtil.debug("User Billing JSON: ${userBloc.userData?.toJson()}");
-    firstNameController.text = userBloc.userData?.billing?.firstName ?? "";
-    lastNameController.text = userBloc.userData?.billing?.lastName ?? "";
-    companyName.text = userBloc.userData?.billing?.company ?? "";
-    country.text = userBloc.userData?.billing?.country ?? "";
-    streetAddress.text = userBloc.userData?.billing?.address1 ?? "";
-    streetAddress2.text = userBloc.userData?.billing?.address2 ?? "";
-    townCity.text = userBloc.userData?.billing?.city ?? "";
-    state.text = userBloc.userData?.billing?.state ?? "";
-    postCode.text = userBloc.userData?.billing?.postcode ?? "";
-    phone.text = userBloc.userData?.billing?.phone ?? "";
-    email.text = userBloc.userData?.email ?? "";
+    populateData();
   }
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
+    final isWide = MediaQuery.of(context).size.width > 850;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 34),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 1400),
-          child: Padding(
-            padding: EdgeInsets.symmetric(
-              horizontal: screenWidth < 700 ? 10 : 34,
+    // --- REFACTORED: Removed Scaffold, AppBar, and ListView ---
+    // This widget is now a simple layout component intended to be placed
+    // inside a parent that handles scrolling and the Scaffold.
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1400),
+        // Padding was moved from the ListView to here to preserve the layout.
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 36),
+          child: Card(
+            elevation: 6,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(24),
             ),
-            child: Card(
-              elevation: 6,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
+            child: Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: isWide ? 44 : 18,
+                vertical: 38,
               ),
-              child: Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: screenWidth > 850 ? 44 : 18,
-                  vertical: 38,
-                ),
-                child: Form(
-                  key: _formKey,
-                  child: Column(
-                    children: [
-                      // Responsive two-column on wide screens, one-column on mobile
-                      LayoutBuilder(
-                        builder: (context, constraints) {
-                          bool wide = constraints.maxWidth > 800;
-                          return Wrap(
-                            spacing: 30,
-                            runSpacing: 0,
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisSize:
+                      MainAxisSize
+                          .min, // Prevents column from expanding infinitely
+                  children: [
+                    // Responsive two-column on wide screens, one-column on mobile
+                    LayoutBuilder(
+                      builder: (context, constraints) {
+                        if (constraints.maxWidth > 600) {
+                          return Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(
-                                width:
-                                    wide
-                                        ? constraints.maxWidth / 2 - 20
-                                        : double.infinity,
+                              Expanded(
                                 child: _buildTitleInput(
                                   "First name",
                                   firstNameController,
                                   required: true,
                                 ),
                               ),
-                              SizedBox(
-                                width:
-                                    wide
-                                        ? constraints.maxWidth / 2 - 20
-                                        : double.infinity,
+                              const SizedBox(width: 20),
+                              Expanded(
                                 child: _buildTitleInput(
                                   "Last name",
                                   lastNameController,
@@ -104,97 +88,112 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
                               ),
                             ],
                           );
+                        } else {
+                          return Column(
+                            children: [
+                              _buildTitleInput(
+                                "First name",
+                                firstNameController,
+                                required: true,
+                              ),
+                              _buildTitleInput(
+                                "Last name",
+                                lastNameController,
+                                required: true,
+                              ),
+                            ],
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTitleInput("Company name", companyName),
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        left: 2,
+                        bottom: 12,
+                        top: 2,
+                      ),
+                      child: Text(
+                        "This will be how your name will be displayed in the account section and in reviews.",
+                        style: TextStyle(
+                          color: Colors.black.withOpacity(0.68),
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+                    _buildTitleInput("Country / Region", country),
+                    const SizedBox(height: 18),
+                    Divider(
+                      thickness: 1.1,
+                      color: Colors.grey.shade200,
+                      height: 30,
+                    ),
+                    _buildTitleInput(
+                      "Street address (optional)",
+                      streetAddress,
+                    ),
+                    _buildTitleInput("Street address 2", streetAddress2),
+                    _buildTitleInput("Town / City", townCity),
+                    _buildTitleInput("State / Country", state),
+                    _buildTitleInput("Post Code / ZIP", postCode),
+                    _buildTitleInput("Phone", phone),
+                    _buildTitleInput("Email address", email),
+                    const SizedBox(height: 28),
+                    SizedBox(
+                      width: double.infinity,
+                      child: FilledButton.icon(
+                        icon: const Icon(Icons.save_rounded, size: 22),
+                        label: const Text(
+                          "Save Changes",
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 16.5,
+                          ),
+                        ),
+                        style: FilledButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(vertical: 15),
+                          backgroundColor: Theme.of(context).primaryColor,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                          foregroundColor: Colors.white,
+                          elevation: 2,
+                        ),
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            final currentUser = context.read<UserBloc>();
+                            final existingUserData = currentUser.state.userData;
+                            final updatedBilling = Ing(
+                              firstName: firstNameController.text,
+                              lastName: lastNameController.text,
+                              company: companyName.text,
+                              country: country.text,
+                              address1: streetAddress.text,
+                              address2: streetAddress2.text,
+                              city: townCity.text,
+                              state: state.text,
+                              postcode: postCode.text,
+                              phone: phone.text,
+                            );
+                            final updatedUserData = existingUserData?.copyWith(
+                              billing: updatedBilling,
+                            );
+                            context.read<UserBloc>().add(
+                              UpdateUserEvent(userInfoData: updatedUserData!),
+                            );
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("Billing address updated!"),
+                                backgroundColor: Colors.green,
+                                duration: Duration(seconds: 2),
+                              ),
+                            );
+                          }
                         },
                       ),
-                      const SizedBox(height: 12),
-                      _buildTitleInput("Company name", companyName),
-                      Padding(
-                        padding: const EdgeInsets.only(
-                          left: 2,
-                          bottom: 12,
-                          top: 2,
-                        ),
-                        child: Text(
-                          "This will be how your name will be displayed in the account section and in reviews.",
-                          style: TextStyle(
-                            color: Colors.black.withOpacity(0.68),
-                            fontSize: 13,
-                          ),
-                        ),
-                      ),
-                      _buildTitleInput("Country / Region", country),
-                      const SizedBox(height: 18),
-                      Divider(
-                        thickness: 1.1,
-                        color: Colors.grey.shade200,
-                        height: 30,
-                      ),
-                      _buildTitleInput(
-                        "Street address (optional)",
-                        streetAddress,
-                      ),
-                      _buildTitleInput("Street address 2", streetAddress2),
-                      _buildTitleInput("Town / City", townCity),
-                      _buildTitleInput("State / Country", state),
-                      _buildTitleInput("Post Code / ZIP", postCode),
-                      _buildTitleInput("Phone", phone),
-                      _buildTitleInput("Email address", email),
-                      const SizedBox(height: 28),
-                      SizedBox(
-                        width: double.infinity,
-                        child: FilledButton.icon(
-                          icon: const Icon(Icons.save_rounded, size: 22),
-                          label: const Text(
-                            "Save Changes",
-                            style: TextStyle(
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16.5,
-                            ),
-                          ),
-                          style: FilledButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 15),
-                            backgroundColor: Theme.of(context).primaryColor,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10),
-                            ),
-                            foregroundColor: Colors.white,
-                            elevation: 2,
-                          ),
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              final currentUser = context.read<UserBloc>();
-                              final existingUserData =
-                                  currentUser.state.userData;
-                              final updatedBilling = Ing(
-                                firstName: firstNameController.text,
-                                lastName: lastNameController.text,
-                                company: companyName.text,
-                                country: country.text,
-                                address1: streetAddress.text,
-                                address2: streetAddress2.text,
-                                city: townCity.text,
-                                state: state.text,
-                                postcode: postCode.text,
-                                phone: phone.text,
-                              );
-                              final updatedUserData = existingUserData
-                                  ?.copyWith(billing: updatedBilling);
-                              context.read<UserBloc>().add(
-                                UpdateUserEvent(userInfoData: updatedUserData!),
-                              );
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text("Billing address updated!"),
-                                  backgroundColor: Colors.green,
-                                  duration: Duration(seconds: 2),
-                                ),
-                              );
-                            }
-                          },
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -287,4 +286,35 @@ class _UpdateBillingAddressState extends State<UpdateBillingAddress> {
       ),
     );
   }
+  Future<void> populateData() async {
+    final userBloc = context.read<UserBloc>();
+
+    int retries = 10;
+    while (userBloc.state.userData == null && retries > 0) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retries--;
+    }
+
+    final userData = userBloc.state.userData;
+
+    LogUtil.debug("User Billing JSON: ${userData?.toJson()}");
+
+    if (userData != null) {
+      final billing = userData.billing;
+      firstNameController.text = billing?.firstName ?? "";
+      lastNameController.text = billing?.lastName ?? "";
+      companyName.text = billing?.company ?? "";
+      country.text = billing?.country ?? "";
+      streetAddress.text = billing?.address1 ?? "";
+      streetAddress2.text = billing?.address2 ?? "";
+      townCity.text = billing?.city ?? "";
+      state.text = billing?.state ?? "";
+      postCode.text = billing?.postcode ?? "";
+      phone.text = billing?.phone ?? "";
+      email.text = userData.email ?? "";
+    }
+
+    setState(() {});
+  }
+
 }

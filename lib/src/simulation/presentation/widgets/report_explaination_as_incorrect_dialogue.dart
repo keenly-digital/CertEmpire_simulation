@@ -48,10 +48,7 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
           backgroundColor: AppColors.themePurple,
           elevation: 2,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -86,7 +83,9 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                   children: [
                     Container(
                       padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 16),
+                        vertical: 12,
+                        horizontal: 16,
+                      ),
                       decoration: BoxDecoration(
                         gradient: LinearGradient(
                           colors: [
@@ -100,8 +99,10 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const Icon(Icons.report_gmailerrorred_rounded,
-                              color: AppColors.themePurple),
+                          const Icon(
+                            Icons.report_gmailerrorred_rounded,
+                            color: AppColors.themePurple,
+                          ),
                           const SizedBox(width: 8),
                           Text(
                             AppStrings.reportExplanation,
@@ -118,7 +119,10 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                       top: 0,
                       right: 0,
                       child: IconButton(
-                        icon: const Icon(Icons.close, color: AppColors.themePurple),
+                        icon: const Icon(
+                          Icons.close,
+                          color: AppColors.themePurple,
+                        ),
                         onPressed: () => Navigator.of(context).pop(),
                       ),
                     ),
@@ -153,11 +157,14 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                             color: Colors.grey,
                           ),
                           border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(8),
-                              borderSide: BorderSide.none),
+                            borderRadius: BorderRadius.circular(8),
+                            borderSide: BorderSide.none,
+                          ),
                           focusedBorder: OutlineInputBorder(
                             borderSide: BorderSide(
-                                color: AppColors.themePurple, width: 2),
+                              color: AppColors.themePurple,
+                              width: 2,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                         ),
@@ -170,14 +177,17 @@ class _ReportExplanationDialogueState extends State<ReportExplanationDialogue> {
                           onPressed: () {
                             final submitReportParam = SubmitQuestionReportParam(
                               explanation: _controller.text,
-                              type: ReportTypeEnum.Explanation.index,
+                              type: ReportTypeEnum.Explanation.name,
                               userId: AppStrings.userId,
                               targetId: widget.questionId ?? 0,
                               reason: "Wrong Explanation",
                               fileId: widget.fileId ?? "",
                               questionNumber: "",
+                              orderId: AppStrings.orderId,
                             );
-                            context
+
+                            print("object..... ${AppStrings.orderId}")
+;                            context
                                 .read<SimulationBloc>()
                                 .submitExplanationReport(
                                   submitReportParam,

@@ -60,9 +60,8 @@ class MyRewardBloc extends Bloc<RewardInitEvent, RewardInitialState> {
     res.when(
       onSuccess: (data) {
         CommonHelper.hideLoader(event.context);
-
         emit(state.copyWith(withDrawLoading: false));
-
+        Navigator.pop(event.context);
         showDialog(
           context: event.context,
           builder: (context) => SuccessDialogue(),

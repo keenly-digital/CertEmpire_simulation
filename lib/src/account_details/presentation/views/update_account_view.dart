@@ -1,8 +1,4 @@
-import 'dart:math';
-
 import 'package:certempiree/core/shared/widgets/spaces.dart';
-import 'package:certempiree/src/dashboard/models/user_model.dart';
-import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_events.dart';
 import 'package:certempiree/src/dashboard/presentation/bloc/user_bloc/user_state.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -36,30 +32,30 @@ class _UpdateAccountState extends State<UpdateAccount> {
   @override
   void initState() {
     super.initState();
-    var userBloc = context.read<UserBloc>();
-    firstNameController.text = userBloc.state.userData?.firstName ?? "";
-    lastNameController.text = userBloc.state.userData?.lastName ?? "";
-    displayNameController.text =
-        "${userBloc.state.userData?.firstName ?? ""} ${userBloc.state.userData?.lastName ?? ""}";
-    emailController.text = userBloc.state.userData?.email ?? "";
-    selectedCurrency = userBloc.state.userData?.selectedCurrency?.name ?? "USD";
+    populateData();
   }
 
   @override
   Widget build(BuildContext context) {
     final screenWidth = MediaQuery.of(context).size.width;
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 34),
+    // No Scaffold, AppBar, or ListView! Only return the content card.
+    return Center(
       child: Padding(
-        padding: EdgeInsets.symmetric(horizontal: screenWidth < 700 ? 12 : 36),
+        padding: EdgeInsets.symmetric(
+          horizontal: screenWidth < 700 ? 6 : 30,
+          vertical: screenWidth < 500 ? 18 : 36,
+        ),
         child: Card(
           elevation: 5,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(24),
           ),
           child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 40),
+            padding: EdgeInsets.symmetric(
+              horizontal: screenWidth < 500 ? 12 : 40,
+              vertical: screenWidth < 500 ? 18 : 40,
+            ),
             child: Form(
               key: _formKey,
               child: BlocBuilder<UserBloc, UserInitialState>(
@@ -67,38 +63,44 @@ class _UpdateAccountState extends State<UpdateAccount> {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // Responsive layout for name fields
+                      // Responsive name fields
                       LayoutBuilder(
                         builder: (context, constraints) {
                           bool wide = constraints.maxWidth > 650;
-                          return Wrap(
-                            spacing: 32,
-                            runSpacing: 0,
-                            children: [
-                              SizedBox(
-                                width:
-                                    wide
-                                        ? constraints.maxWidth / 2 - 18
-                                        : double.infinity,
-                                child: _buildTitleInput(
-                                  "First name",
-                                  firstNameController,
-                                  required: true,
-                                ),
-                              ),
-                              SizedBox(
-                                width:
-                                    wide
-                                        ? constraints.maxWidth / 2 - 18
-                                        : double.infinity,
-                                child: _buildTitleInput(
-                                  "Last name",
-                                  lastNameController,
-                                  required: true,
-                                ),
-                              ),
-                            ],
-                          );
+                          return wide
+                              ? Row(
+                                children: [
+                                  Expanded(
+                                    child: _buildTitleInput(
+                                      "First name",
+                                      firstNameController,
+                                      required: true,
+                                    ),
+                                  ),
+                                  const SizedBox(width: 32),
+                                  Expanded(
+                                    child: _buildTitleInput(
+                                      "Last name",
+                                      lastNameController,
+                                      required: true,
+                                    ),
+                                  ),
+                                ],
+                              )
+                              : Column(
+                                children: [
+                                  _buildTitleInput(
+                                    "First name",
+                                    firstNameController,
+                                    required: true,
+                                  ),
+                                  _buildTitleInput(
+                                    "Last name",
+                                    lastNameController,
+                                    required: true,
+                                  ),
+                                ],
+                              );
                         },
                       ),
                       const SizedBox(height: 12),
@@ -231,6 +233,7 @@ class _UpdateAccountState extends State<UpdateAccount> {
                           ),
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {
+                              // Submit logic
                               final currentUser = context.read<UserBloc>();
                               final existingUserData =
                                   currentUser.state.userData;
@@ -248,6 +251,13 @@ class _UpdateAccountState extends State<UpdateAccount> {
                                   );
                               context.read<UserBloc>().updateUserProfile(
                                 updatedUserData!,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text("Account Info updated!"),
+                                  backgroundColor: Colors.green,
+                                  duration: Duration(seconds: 2),
+                                ),
                               );
                             }
                           },
@@ -348,5 +358,30 @@ class _UpdateAccountState extends State<UpdateAccount> {
         ],
       ),
     );
+  }
+
+  Future<void> populateData() async {
+    final userBloc = context.read<UserBloc>();
+
+    int retries = 10;
+    while (userBloc.state.userData == null && retries > 0) {
+      await Future.delayed(Duration(milliseconds: 500));
+      retries--;
+    }
+
+    final userData = userBloc.state.userData;
+
+
+    if (userData != null) {
+      var userBloc = context.read<UserBloc>();
+      firstNameController.text = userBloc.state.userData?.firstName ?? "";
+      lastNameController.text = userBloc.state.userData?.lastName ?? "";
+      displayNameController.text =
+      "${userBloc.state.userData?.firstName ?? ""} ${userBloc.state.userData?.lastName ?? ""}";
+      emailController.text = userBloc.state.userData?.email ?? "";
+      selectedCurrency = userBloc.state.userData?.selectedCurrency?.name ?? "USD";
+    }
+
+    setState(() {});
   }
 }

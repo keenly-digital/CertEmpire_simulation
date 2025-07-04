@@ -2,6 +2,7 @@ import 'package:certempiree/src/account_details/presentation/views/update_accoun
 import 'package:certempiree/src/addresses/presentation/views/addresses_main_view.dart';
 import 'package:certempiree/src/addresses/presentation/views/update_billing_address.dart';
 import 'package:certempiree/src/addresses/presentation/views/update_shipping_address.dart';
+import 'package:certempiree/src/logout/logout_main_view.dart';
 import 'package:certempiree/src/main/presentation/views/main_page.dart';
 import 'package:certempiree/src/my_reward/presentation/views/my_reward_main_view.dart';
 import 'package:certempiree/src/my_tasks/presentation/views/my_task_main_veiw.dart';
@@ -115,6 +116,13 @@ class AppRouter {
             pageBuilder:
                 (context, state) =>
                     const NoTransitionPage(child: UpdateAccount()),
+          ),
+          GoRoute(
+            path: '/Logout',
+            name: AppRoute.Logout.name,
+            pageBuilder:
+                (context, state) =>
+                    const NoTransitionPage(child: LogoutMainView()),
           ),
         ],
       ),

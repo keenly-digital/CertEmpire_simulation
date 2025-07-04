@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:bloc/bloc.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../models/user_model.dart';
@@ -31,11 +32,11 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
 
         emit(state.copyWith(userData: data.data, loading: false));
       } else {
-        print('Failed with status: ${response.statusCode}');
+        debugPrint('Failed with status: ${response.statusCode}');
         emit(state.copyWith(loading: false, userData: null));
       }
     } catch (e) {
-      print('Request error: $e');
+      debugPrint('Request error: $e');
     }
   }
 
@@ -93,6 +94,9 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
             "state": event.userInfoData.shipping?.state,
             "postcode": event.userInfoData.shipping?.postcode,
             "country": event.userInfoData.shipping?.country,
+            "email":
+                event.userInfoData.shipping?.email ?? event.userInfoData.email,
+            "phone": event.userInfoData.shipping?.phone,
           },
 
           "meta_data": [
@@ -124,11 +128,47 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
         UserInfoData userInfoData = UserInfoData.fromJson(response.data);
         emit(state.copyWith(userData: userInfoData, loading: false));
       } else {
-        print('Failed with status: ${response.statusCode}');
+        debugPrint('Failed with status: ${response.statusCode}');
         emit(state.copyWith(loading: false, userData: null));
       }
     } catch (e) {
-      print('Request error: $e');
+      debugPrint('Request error: $e');
+    }
+  }
+
+  Future<void> updateUserProfile(
+    UserInfoData event,
+    // Emitter<UserInitialState> emit,
+  ) async {
+    final dio = Dio();
+    final consumerSecret = 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
+
+    final url =
+        "${AppStrings.baseUrl}/wp-json/wc/v3/customers/${AppStrings.id}?consumer_key=ck_f6f8767e67544a97e27d0336f31dcf27c882694a&consumer_secret=$consumerSecret";
+
+    try {
+      final response = await dio.put(
+        url,
+        data: {
+          "email": event.email,
+          "first_name": event.firstName,
+          "last_name": event.lastName,
+          "display_name": event.username,
+          "current_password": event.currentPassword ?? "",
+          "new_password": event.newPassword ?? "",
+          "default_currency": event.selectedCurrency?.name ?? "USD",
+        },
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+      if (response.statusCode == 200) {
+        UserInfoData userInfoData = UserInfoData.fromJson(response.data);
+        emit(state.copyWith(userData: userInfoData, loading: false));
+      } else {
+        debugPrint('Failed with status: ${response.statusCode}');
+        emit(state.copyWith(loading: false, userData: null));
+      }
+    } catch (e) {
+      debugPrint('Request error: $e');
     }
   }
 

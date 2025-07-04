@@ -1,7 +1,7 @@
 import 'package:bloc/bloc.dart';
 import 'package:certempiree/core/di/dependency_injection.dart';
+import 'package:certempiree/core/shared/widgets/snakbar.dart';
 import 'package:certempiree/core/shared/widgets/toast.dart';
-import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
 import 'package:certempiree/src/my_tasks/data/models/vote_task_param_model.dart';
 import 'package:certempiree/src/my_tasks/domain/task/task_repo.dart';
@@ -50,7 +50,6 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
   void dialogueSelection(TaskItem? task, BuildContext context) {
     if (task?.reportType == "Question") {
       showDialog(
-
         barrierColor: Colors.transparent,
         context: context,
         barrierDismissible: true,
@@ -60,14 +59,26 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.r),
             ),
-            child: QuestionReportTask(taskItem: task),
+            child:LayoutBuilder(
+              builder: (context, constraints) {
+                double width = constraints.maxWidth;
+                double dialogWidth = width > 600 ? 500 : width * 0.75;
+
+                return ConstrainedBox(
+                  constraints: BoxConstraints(
+                    maxHeight: 0.90.sh,
+                    maxWidth: dialogWidth,
+                  ),
+                  child: QuestionReportTask(taskItem: task),
+                );
+              },
+            ),
           );
         },
       );
     } else if (task?.reportType == "Explanation" ||
         task?.reportType == "Answer") {
       showDialog(
-
         barrierColor: Colors.transparent,
         context: context,
         barrierDismissible: true,
@@ -109,7 +120,7 @@ class GetAllTaskBloc extends Bloc<GetAllTaskEvent, GetAllTaskState> {
     res.when(
       onSuccess: (s) {
         CommonHelper.hideLoader(context);
-        // CommonHelper.showToast(message: s.data?.message ?? "");
+        Snackbar.show(s.message);
         Navigator.pop(context);
       },
       onFailure: (f) {

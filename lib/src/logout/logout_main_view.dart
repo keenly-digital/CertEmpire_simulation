@@ -1,5 +1,4 @@
 import 'dart:html' as html;
-import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/core/res/app_strings.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +14,8 @@ class _LogoutMainViewState extends State<LogoutMainView> {
   void initState() {
     super.initState();
     // Redirect immediately on widget load
-    html.window.location.href = "${AppStrings.baseUrl}?action=logout";
+    html.window.location.href =
+        "${AppStrings.baseUrl}/my-account/?action=logout";
   }
 
   @override

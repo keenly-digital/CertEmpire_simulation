@@ -136,7 +136,7 @@ class _MyRewardMainViewState extends State<MyRewardMainView> {
                         horizontal: 18,
                         vertical: 22,
                       ),
-                      child: ReportSummaryCard(
+                      child: RewardSummaryCard(
                         rewardData: state.rewardData?[index],
                         index: index,
                       ),

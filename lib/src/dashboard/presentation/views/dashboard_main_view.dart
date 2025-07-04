@@ -23,73 +23,70 @@ class _UserMainViewState extends State<UserMainView> {
 
   @override
   Widget build(BuildContext context) {
-    // Mock data - we will replace this with real data from your UserBloc later
     final String userName = AppStrings.name;
     final String lastStudiedFile =
         "MB-330: Microsoft Dynamics 365 Supply Chain Management";
     final int questionsAnswered = 35;
     final int totalQuestions = 150;
 
-    // === NO Scaffold or SingleChildScrollView here! ===
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildWelcomeHeader(userName),
-        const SizedBox(height: 24.0),
-        LayoutBuilder(
-          builder: (context, constraints) {
-            // Use a two-column layout for wider screens (laptops/tablets)
-            if (constraints.maxWidth > 950) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // Left column: Continue card + summary
-                  Expanded(
-                    flex: 5,
-                    child: Column(
-                      children: [
-                        _buildContinueStudyingCard(
-                          context,
-                          fileName: lastStudiedFile,
-                          answered: questionsAnswered,
-                          total: totalQuestions,
-                        ),
-                        const SizedBox(height: 24),
-                        _buildSummarySection(context),
-                      ],
+    return SingleChildScrollView(
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildWelcomeHeader(userName),
+          const SizedBox(height: 24.0),
+          LayoutBuilder(
+            builder: (context, constraints) {
+              if (constraints.maxWidth > 950) {
+                return Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: Column(
+                        children: [
+                          _buildContinueStudyingCard(
+                            context,
+                            fileName: lastStudiedFile,
+                            answered: questionsAnswered,
+                            total: totalQuestions,
+                          ),
+                          const SizedBox(height: 24),
+                          _buildSummarySection(context),
+                        ],
+                      ),
                     ),
-                  ),
-                  const SizedBox(width: 24.0),
-                  Expanded(
-                    flex: 3,
-                    child: SizedBox(
-                      height: 585,
-                      // 👈 Adjust this value as you want (e.g., 400–600)
-                      child: _buildUpdatesFeed(context),
+                    const SizedBox(width: 24.0),
+                    Expanded(
+                      flex: 3,
+                      child: SizedBox(
+                        height: 585,
+                        child: _buildUpdatesFeed(context),
+                      ),
                     ),
-                  ),
-                ],
-              );
-            } else {
-              // Stack vertically on narrower screens (mobile)
-              return Column(
-                children: [
-                  _buildContinueStudyingCard(
-                    context,
-                    fileName: lastStudiedFile,
-                    answered: questionsAnswered,
-                    total: totalQuestions,
-                  ),
-                  const SizedBox(height: 24.0),
-                  _buildUpdatesFeed(context),
-                  const SizedBox(height: 24.0),
-                  _buildSummarySection(context),
-                ],
-              );
-            }
-          },
-        ),
-      ],
+                  ],
+                );
+              } else {
+                return Column(
+                  children: [
+                    _buildContinueStudyingCard(
+                      context,
+                      fileName: lastStudiedFile,
+                      answered: questionsAnswered,
+                      total: totalQuestions,
+                    ),
+                    const SizedBox(height: 24.0),
+                    _buildUpdatesFeed(context),
+                    const SizedBox(height: 24.0),
+                    _buildSummarySection(context),
+                  ],
+                );
+              }
+            },
+          ),
+        ],
+      ),
     );
   }
 
@@ -289,16 +286,30 @@ class _UserMainViewState extends State<UserMainView> {
     );
   }
 
+  // --- REFACTORED WIDGET ---
   Widget _buildSummarySection(BuildContext context) {
-    // ----- CHANGE: Grid now has 2 columns to make cards larger -----
+    // Get the screen width to determine the layout.
+    final screenWidth = MediaQuery.of(context).size.width;
+
+    // Define the breakpoint for switching to a single column.
+    const mobileBreakpoint = 600;
+
+    // Dynamically set the number of columns based on screen width.
+    final int crossAxisCount = screenWidth < mobileBreakpoint ? 1 : 2;
+
+    // Dynamically set the aspect ratio. Single-column cards can be wider.
+    final double aspectRatio = screenWidth < mobileBreakpoint ? 3.0 : 1.8;
+
+    // Dynamically set the spacing. Less horizontal spacing is needed for a single column.
+    final double crossAxisSpacing = screenWidth < mobileBreakpoint ? 0 : 20;
+
     return GridView.count(
-      crossAxisCount: 2,
+      crossAxisCount: crossAxisCount,
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      crossAxisSpacing: 20,
+      crossAxisSpacing: crossAxisSpacing,
       mainAxisSpacing: 20,
-      childAspectRatio: 2.2,
-      // Adjusted aspect ratio for better look
+      childAspectRatio: aspectRatio,
       children: [
         _summaryCard(
           context: context,
@@ -361,31 +372,39 @@ class _UserMainViewState extends State<UserMainView> {
             ),
           ],
         ),
-        // ----- CHANGE: Restructured card content for better visual hierarchy -----
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  title,
-                  style: TextStyle(
-                    color: Colors.grey.shade600,
-                    fontSize: 16,
-                    fontWeight: FontWeight.w500,
+                Expanded(
+                  child: Text(
+                    title,
+                    style: TextStyle(
+                      color: Colors.grey.shade600,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w500,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
                   ),
                 ),
                 Icon(icon, color: color, size: 28),
               ],
             ),
-            const Spacer(),
-            Text(
-              value,
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: Colors.grey[800],
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Text(
+                value,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey[800],
+                ),
+                maxLines: 1,
               ),
             ),
           ],

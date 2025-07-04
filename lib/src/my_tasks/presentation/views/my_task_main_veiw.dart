@@ -5,7 +5,6 @@ import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get
 import 'package:certempiree/src/my_tasks/presentation/widgets/task_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import '../bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import '../bloc/get_all_task_bloc/get_all_task_event.dart';
@@ -97,7 +96,6 @@ class _MyTaskMainViewState extends State<MyTaskMainView> {
                 ],
               ),
               const SizedBox(height: 20),
-              // Do NOT use Expanded/ListView - just use Column with spacing
               ...List.generate(state.taskItem?.length ?? 0, (index) {
                 final task = state.taskItem?[index];
                 final isOdd = index % 2 == 1;
@@ -193,7 +191,8 @@ class _ModernPager extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: 52,
-      width: double.infinity, // Full width
+      width: double.infinity,
+      // Full width
       decoration: BoxDecoration(
         color: Colors.white,
         border: Border.all(color: AppColors.themeBlue.withOpacity(0.12)),

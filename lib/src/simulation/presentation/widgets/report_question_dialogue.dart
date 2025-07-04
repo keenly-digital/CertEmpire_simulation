@@ -49,10 +49,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
           backgroundColor: AppColors.themePurple,
           elevation: 2,
           padding: const EdgeInsets.symmetric(vertical: 14),
-          textStyle: const TextStyle(
-            fontSize: 16,
-            fontWeight: FontWeight.bold,
-          ),
+          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -84,8 +81,10 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
             Stack(
               children: [
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                  padding: const EdgeInsets.symmetric(
+                    vertical: 12,
+                    horizontal: 16,
+                  ),
                   decoration: BoxDecoration(
                     gradient: LinearGradient(
                       colors: [
@@ -99,8 +98,10 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.flag_outlined,
-                          color: AppColors.themePurple),
+                      const Icon(
+                        Icons.flag_outlined,
+                        color: AppColors.themePurple,
+                      ),
                       const SizedBox(width: 8),
                       Text(
                         AppStrings.reportQue,
@@ -117,8 +118,7 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                   top: 0,
                   right: 0,
                   child: IconButton(
-                    icon:
-                        const Icon(Icons.close, color: AppColors.themePurple),
+                    icon: const Icon(Icons.close, color: AppColors.themePurple),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ),
@@ -142,17 +142,17 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                     const SizedBox(height: 8),
                     // Using RadioListTile for better layout and interaction
                     Theme(
-                      data: Theme.of(context).copyWith(
-                        unselectedWidgetColor: AppColors.themePurple,
-                      ),
+                      data: Theme.of(
+                        context,
+                      ).copyWith(unselectedWidgetColor: AppColors.themePurple),
                       child: Column(
                         children: [
                           RadioListTile<String>(
                             title: const Text('Question is Outdated'),
                             value: 'Outdated',
                             groupValue: _selectedReason,
-                            onChanged: (val) =>
-                                setState(() => _selectedReason = val),
+                            onChanged:
+                                (val) => setState(() => _selectedReason = val),
                             activeColor: AppColors.themePurple,
                             contentPadding: EdgeInsets.zero,
                           ),
@@ -160,8 +160,8 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                             title: const Text('Question is framed wrong'),
                             value: 'Framed Wrong',
                             groupValue: _selectedReason,
-                            onChanged: (val) =>
-                                setState(() => _selectedReason = val),
+                            onChanged:
+                                (val) => setState(() => _selectedReason = val),
                             activeColor: AppColors.themePurple,
                             contentPadding: EdgeInsets.zero,
                           ),
@@ -191,11 +191,14 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
                           color: Colors.grey,
                         ),
                         border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(8),
-                            borderSide: BorderSide.none),
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
                         focusedBorder: OutlineInputBorder(
                           borderSide: BorderSide(
-                              color: AppColors.themePurple, width: 2),
+                            color: AppColors.themePurple,
+                            width: 2,
+                          ),
                           borderRadius: BorderRadius.circular(8),
                         ),
                       ),
@@ -216,21 +219,19 @@ class _ReportQuestionDialogState extends State<ReportQuestionDialog> {
 
                           final submitReportParam = SubmitQuestionReportParam(
                             explanation: _explanationController.text,
-                            type: ReportTypeEnum.Question.index,
+                            type: ReportTypeEnum.Question.name,
                             userId: AppStrings.userId,
                             targetId: widget.questionId ?? 0,
                             reason: _selectedReason,
                             fileId: widget.fileId,
                             questionNumber: "Question ${widget.questionIndex}",
+                            orderId: AppStrings.orderId
                           );
-
-                          context
-                              .read<SimulationBloc>()
-                              .submitQuestionReport(
-                                submitReportParam,
-                                context,
-                              );
-                           Navigator.pop(context);
+                          context.read<SimulationBloc>().submitQuestionReport(
+                            submitReportParam,
+                            context,
+                          );
+                          Navigator.pop(context);
                         },
                       ),
                     ),

@@ -9,6 +9,7 @@ import 'package:certempiree/core/shared/widgets/toast.dart';
 import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 
 import 'package:certempiree/src/simulation/data/models/question_model.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 
@@ -27,6 +28,7 @@ import 'package:certempiree/src/simulation/presentation/widgets/app_button.dart'
 import 'package:certempiree/src/simulation/presentation/widgets/file_casestudy_row.dart';
 
 import 'package:certempiree/src/simulation/presentation/widgets/file_topic_row.dart';
+import 'package:dio/dio.dart';
 
 import 'package:flutter/material.dart';
 
@@ -35,6 +37,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'dart:html' as html;
 
 class ExamQuestionPage extends StatefulWidget {
   const ExamQuestionPage({Key? key}) : super(key: key);
@@ -55,7 +58,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
   @override
   void initState() {
     super.initState();
-    fetchSimulationData();
+    // fetchSimulationData();
   }
 
   @override
@@ -261,7 +264,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                 return Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _buildHeader(context, simulationState, isWide),
+                    _buildHeader(context, simulationState),
                     AnimatedContainer(
                       duration: const Duration(milliseconds: 300),
                       height: _showGoToField ? 60 : 0,
@@ -288,6 +291,9 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
                                       caseStudy: parentCaseStudy,
                                     ),
                                   AdminQuestionOverviewWidget(
+                                    key: ValueKey(
+                                      currentQuestion.id,
+                                    ), // <-- ADD THIS LINE
                                     question: currentQuestion,
                                     questionIndex: currentQuestion.q,
                                     onContentChanged:
@@ -496,135 +502,148 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
     return const SizedBox.shrink();
   }
 
-  Widget _buildHeader(
-    BuildContext context,
-    SimulationState state,
-    bool isWide,
-  ) {
+  // In ExamQuestionPage class (_ExamQuestionPageState)
+
+  // PASTE THIS ENTIRE METHOD OVER YOUR EXISTING _buildHeader METHOD
+
+  Widget _buildHeader(BuildContext context, SimulationState state) {
+    // Get the screen width to determine the layout.
+    final screenWidth = MediaQuery.of(context).size.width;
+    // Use the new 650px breakpoint for mobile, as you requested.
+    final isMobile = screenWidth <= 650;
+
+    // --- Reusable UI Components ---
+    // These are defined once and reused in the layouts below.
     final fileName = state.simulationData?.fileName ?? '';
-
-    final totalQuestions = state.totalItemLength ?? 0;
-
-    final title = Flexible(
-      // By giving the title a higher flex factor, it claims more available space.
-      // The Spacer widget by default has a flex of 1.
-      flex: 4,
-      child: Tooltip(
-        message: fileName,
-        child: Text(
-          fileName,
-          overflow: TextOverflow.ellipsis,
-          style: context.textTheme.headlineSmall?.copyWith(
-            color: AppColors.themeBlue,
-            fontWeight: FontWeight.bold,
-          ),
+    final title = Tooltip(
+      message: fileName,
+      child: Text(
+        fileName,
+        overflow: TextOverflow.ellipsis,
+        maxLines: 2,
+        style: context.textTheme.headlineSmall?.copyWith(
+          color: AppColors.themeBlue,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
 
-    final searchField = SizedBox(
-      width: isWide ? 250 : double.infinity,
-
-      child: TextFormField(
-        onChanged: (v) => context.read<SearchQuestionCubit>().setQuery(v),
-
-        decoration: InputDecoration(
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: 20.w,
-            vertical: 12.h,
-          ),
-
-          hintText: 'Search in this file...',
-
-          hintStyle: const TextStyle(color: Colors.grey),
-
-          filled: true,
-
-          fillColor: Colors.white,
-
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: BorderSide(color: Colors.grey.shade200),
-          ),
-
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(
-              color: AppColors.themePurple,
-              width: 2,
-            ),
-          ),
-
-          prefixIcon: const Icon(Icons.search, color: Colors.grey),
+    final searchField = TextFormField(
+      // The ScreenUtil dependencies (.w, .h) are removed for better portability.
+      onChanged: (v) => context.read<SearchQuestionCubit>().setQuery(v),
+      decoration: InputDecoration(
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 12,
         ),
+        hintText: 'Search in this file...',
+        hintStyle: const TextStyle(color: Colors.grey),
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade200),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.grey.shade200),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: AppColors.themePurple, width: 2),
+        ),
+        prefixIcon: const Icon(Icons.search, color: Colors.grey),
       ),
     );
 
-    final downloadButton = appButton(
-      withIcon: true,
-
-      onPressed: () {},
-
-      text: 'Download',
-
-      textColor: Colors.white,
-
-      borderColor: AppColors.themePurple,
-
-      background: AppColors.themePurple,
-
-      borderRadius: 12,
-    );
+    final downloadButton =
+        isMobile
+            ? PopupMenuButton<String>(
+              tooltip: "Download",
+              offset: const Offset(0, 40),
+              itemBuilder:
+                  (context) => const [
+                    PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+                    PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
+                  ],
+              onSelected: (value) async {
+                final fileId =
+                    AppStrings.fileId; // <-- Insert your fileId logic
+                await _exportAndDownloadFile(context, fileId, value);
+              },
+              child: ElevatedButton(
+                onPressed: null,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.themePurple,
+                  foregroundColor: Colors.white,
+                  shape: const CircleBorder(),
+                  padding: const EdgeInsets.all(12),
+                ),
+                child: const Icon(Icons.download, size: 20),
+              ),
+            )
+            : PopupMenuButton<String>(
+              tooltip: "Download",
+              offset: const Offset(0, 52),
+              itemBuilder:
+                  (context) => const [
+                    PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+                    PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
+                  ],
+              onSelected: (value) async {
+                final fileId =
+                    AppStrings.fileId; // <-- Insert your fileId logic
+                await _exportAndDownloadFile(context, fileId, value);
+              },
+              child: ElevatedButton.icon(
+                onPressed: null,
+                icon: const Icon(Icons.download, size: 18),
+                label: const Text('Download'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: AppColors.themePurple,
+                  foregroundColor: Colors.white,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16,
+                    vertical: 14,
+                  ),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                ),
+              ),
+            );
 
     final viewModeToggle = Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-
       decoration: BoxDecoration(
         color: Colors.white,
-
         borderRadius: BorderRadius.circular(12),
-
         border: Border.all(color: Colors.grey.shade200),
       ),
-
       child: Row(
         mainAxisSize: MainAxisSize.min,
-
         children: [
           const Text(
             "View:",
             style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey),
           ),
-
           const SizedBox(width: 4),
-
           Icon(
             Icons.list,
             color: !_isSingleQuestionView ? AppColors.themePurple : Colors.grey,
           ),
-
           Transform.scale(
             scale: 0.8,
-
             child: Switch(
               value: _isSingleQuestionView,
-
               onChanged:
                   (value) => setState(() {
                     _isSingleQuestionView = value;
-
                     _currentQuestionIndex = 0;
                   }),
-
               activeColor: AppColors.themePurple,
             ),
           ),
-
           Icon(
             Icons.filter_1,
             color: _isSingleQuestionView ? AppColors.themePurple : Colors.grey,
@@ -635,13 +654,11 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     final goToButton = OutlinedButton.icon(
       onPressed: () => setState(() => _showGoToField = !_showGoToField),
-
       icon: Icon(
         Icons.find_in_page_outlined,
         size: 16,
         color: _showGoToField ? AppColors.themePurple : Colors.grey.shade600,
       ),
-
       label: Text(
         "Go To",
         style: TextStyle(
@@ -649,67 +666,54 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
           fontWeight: FontWeight.bold,
         ),
       ),
-
       style: OutlinedButton.styleFrom(
         side: BorderSide(color: Colors.grey.shade300),
-
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       ),
     );
 
-    if (isWide) {
+    // --- Simplified Layout Logic based on the 650px breakpoint ---
+
+    // WIDE LAYOUT (> 650px)
+    if (!isMobile) {
       return Row(
         crossAxisAlignment: CrossAxisAlignment.center,
-
         children: [
-          title,
-
-          const Spacer(),
-
+          Expanded(child: title),
+          const SizedBox(width: 24),
+          SizedBox(width: 250, child: searchField),
+          const SizedBox(width: 16),
           viewModeToggle,
-
-          const SizedBox(width: 16),
-
+          const SizedBox(width: 12),
           goToButton,
-
-          const SizedBox(width: 16),
-
-          searchField,
-
-          const SizedBox(width: 16),
-
-          downloadButton,
+          const SizedBox(width: 12),
+          downloadButton, // The full button with text
         ],
       );
     }
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-
-      children: [
-        title,
-
-        const SizedBox(height: 16),
-
-        Row(
-          children: [
-            Expanded(child: searchField),
-
-            const SizedBox(width: 8),
-
-            goToButton,
-          ],
-        ),
-
-        const SizedBox(height: 8),
-
-        Align(alignment: Alignment.centerRight, child: viewModeToggle),
-
-        const SizedBox(height: 16),
-
-        Align(alignment: Alignment.centerRight, child: downloadButton),
-      ],
-    );
+    // MOBILE LAYOUT (<= 650px)
+    else {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          title,
+          const SizedBox(height: 16),
+          searchField,
+          const SizedBox(height: 16),
+          // This Row ensures all three action buttons are on the same line.
+          Row(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              viewModeToggle,
+              const SizedBox(width: 8),
+              goToButton,
+              const SizedBox(width: 8),
+              downloadButton, // The compact icon-only button
+            ],
+          ),
+        ],
+      );
+    }
   }
 
   Widget _buildGoToField(int totalQuestions) {
@@ -773,4 +777,86 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 
     color: disabled ? Colors.grey.shade400 : AppColors.themePurple,
   );
+}
+
+Future<void> _showLoader(BuildContext context) async {
+  showDialog(
+    context: context,
+    useRootNavigator: true, // <<--- THIS IS IMPORTANT
+    barrierDismissible: false,
+    builder: (_) => const Center(child: CircularProgressIndicator()),
+  );
+}
+
+void _hideLoader(BuildContext context) {
+  if (Navigator.of(context, rootNavigator: true).canPop()) {
+    Navigator.of(context, rootNavigator: true).pop();
+  }
+}
+
+// 1. Export API call (gets file URL)
+Future<void> _exportAndDownloadFile(
+  BuildContext context,
+  String fileId,
+  String type,
+) async {
+  await _showLoader(context);
+
+  const apiUrl =
+      'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+
+  try {
+    final dio = Dio();
+    final response = await dio.get(
+      apiUrl,
+      queryParameters: {'fileId': fileId, 'type': type},
+      options: Options(headers: {'Content-Type': 'application/json'}),
+    );
+
+    if (response.data['Success'] == true && response.data['Data'] != null) {
+      final downloadUrl = response.data['Data'] as String;
+      final fileName = Uri.parse(downloadUrl).pathSegments.last;
+      // 2. Download file as blob and trigger browser download
+      await _triggerWebDownload(downloadUrl, fileName);
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+    } else {
+      _hideLoader(context);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(response.data['Message'] ?? "Download failed")),
+      );
+    }
+  } catch (e) {
+    _hideLoader(context);
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+  } finally {
+    _hideLoader(context);
+  }
+}
+
+// 2. Web download using Blob (always triggers a download, never opens a new tab)
+Future<void> _triggerWebDownload(String url, String filename) async {
+  final dio = Dio();
+  final response = await dio.get<List<int>>(
+    url,
+    options: Options(responseType: ResponseType.bytes),
+  );
+
+  final data = Uint8List.fromList(response.data!);
+  final blob = html.Blob([data]);
+  final objectUrl = html.Url.createObjectUrlFromBlob(blob);
+
+  final anchor =
+      html.AnchorElement(href: objectUrl)
+        ..download = filename
+        ..style.display = 'none';
+
+  html.document.body?.append(anchor);
+  anchor.click();
+  anchor.remove();
+  html.Url.revokeObjectUrl(objectUrl);
 }

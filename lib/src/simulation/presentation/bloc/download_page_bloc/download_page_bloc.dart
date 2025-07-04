@@ -2,10 +2,11 @@ import 'dart:async';
 import 'dart:html' as html;
 
 import 'package:bloc/bloc.dart';
+import 'package:certempiree/core/utils/log_util.dart';
 import 'package:certempiree/src/simulation/data/models/urls_model.dart';
 import 'package:dio/dio.dart';
 import 'package:equatable/equatable.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 import '../../../../../core/res/app_strings.dart';
 import '../../../../order/presentation/models/order_model.dart';
@@ -81,73 +82,107 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
 
       final urlsModel = UrlsModel.fromJson(response.data);
 
-      for (int i = 0; i < urlsModel.data!.length; i++) {
-        event.download[i].fileId = urlsModel.data![i].fileId;
+      for (final fileData in urlsModel.data ?? []) {
+        final matchedItem = event.download.firstWhere(
+          (element) => element.fileUrl == fileData.fileUrl,
+          orElse: () => DownloadedData(),
+        );
+        matchedItem.fileId = fileData.fileId;
       }
 
       emit(state.copyWith(orders: event.download, loading: false));
+      print(event.download.length);
+      event.download.forEach((element) {
+        LogUtil.debug(
+          "Matched fileId: ${element.fileId} :: fileUrl: ${element.fileUrl}",
+        );
+      });
     } catch (e) {
       debugPrint('File URL fetch error: $e');
     }
   }
 
-  /// Triggers file export request and downloads file with proper name & format.
-  Future<void> exportFile(
-    String fileId, {
-    String format = "pdf",
-    bool forceDownload = false,
-    String? fileName,
+  /// Triggers file export request and opens the resulting PDF link.
+  final Dio _dio = Dio();
+
+  /// Triggers the download workflow. Shows loader, makes API call, starts download, handles errors.
+  Future<void> exportAndDownloadFile({
+    required BuildContext context,
+    required String fileId,
+    required String type, // 'pdf' or 'qzs'
   }) async {
-    final dio = Dio();
+    _showLoader(context);
+
     const url =
         'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
 
-    // Clean the filename for safety (no spaces, no special chars)
-    String safeName = (fileName ?? "download")
-        .replaceAll(RegExp(r'[^\w\s-]'), '')
-        .replaceAll(' ', '_');
-
-    final downloadFileName = "$safeName.$format";
-
     try {
-      final response = await dio.get(
+      final response = await _dio.get(
         url,
-        queryParameters: {'fileId': fileId, 'type': format},
-        options: Options(
-          responseType: ResponseType.bytes,
-          headers: {'Content-Type': 'application/json'},
-        ),
+        queryParameters: {'fileId': fileId, 'type': type},
+        options: Options(headers: {'Content-Type': 'application/json'}),
       );
 
-      if (response.statusCode == 200) {
-        // 1. If backend returns raw bytes (PDF, QZS, etc. directly)
-        if (response.data is List<int>) {
-          final bytes = response.data as List<int>;
-          final blob = html.Blob([bytes]);
-          final url2 = html.Url.createObjectUrlFromBlob(blob);
-          final anchor =
-              html.AnchorElement(href: url2)
-                ..setAttribute('download', downloadFileName)
-                ..style.display = 'none';
-          html.document.body?.append(anchor);
-          anchor.click();
-          anchor.remove();
-          html.Url.revokeObjectUrl(url2);
-        }
-        // 2. If backend returns a JSON with a file URL as 'Data'
-        else if (response.data is Map && response.data['Data'] != null) {
-          final fileUrl = response.data['Data'] as String;
-          final anchor =
-              html.AnchorElement(href: fileUrl)
-                ..setAttribute('download', downloadFileName)
-                ..style.display = 'none';
-          html.document.body?.append(anchor);
-          anchor.click();
-          anchor.remove();
-        }
+      if (response.data['Success'] == true) {
+        final downloadUrl = response.data['Data'] as String;
+        final filename = _extractFilenameFromUrl(downloadUrl);
+
+        _hideLoader(context);
+
+        await _downloadFile(downloadUrl, filename);
+
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Download started: $filename')));
+      } else {
+        _hideLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['Message'] ?? "Download failed"),
+          ),
+        );
       }
     } catch (e) {
-      debugPrint('Export file error: $e');
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
+  }
+
+  static String _extractFilenameFromUrl(String url) {
+    final uri = Uri.parse(url);
+    final segments = uri.pathSegments;
+    if (segments.isNotEmpty) {
+      return segments.last;
+    }
+    return 'downloaded_file';
+  }
+
+  /// Downloads the file in browser (web only)
+  static Future<void> _downloadFile(String url, String filename) async {
+    final anchor =
+        html.AnchorElement(href: url)
+          ..download = filename
+          ..style.display = 'none';
+    html.document.body!.append(anchor);
+    anchor.click();
+    anchor.remove();
+  }
+
+  /// Shows modal loader
+  static void _showLoader(BuildContext context) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  /// Hides modal loader
+  static void _hideLoader(BuildContext context) {
+    if (Navigator.of(context).canPop()) {
+      Navigator.of(context).pop();
     }
   }
 }

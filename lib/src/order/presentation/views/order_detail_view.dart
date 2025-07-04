@@ -1,10 +1,18 @@
+import 'dart:html' as html;
+import 'dart:typed_data';
+
 import 'package:certempiree/core/config/extensions/theme_extension.dart';
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:certempiree/core/shared/widgets/spaces.dart';
 import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_bloc.dart';
 import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_state.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
+import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
@@ -16,6 +24,7 @@ class OrderDetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // This padding logic is already responsive, which is great.
     final double horizontalPadding =
         MediaQuery.of(context).size.width < 800 ? 8 : 30;
 
@@ -23,7 +32,6 @@ class OrderDetailView extends StatelessWidget {
       builder: (context, orderState) {
         final downloadPageBloc = context.watch<DownloadPageBloc>();
         final OrdersDetails? orderDetails = downloadPageBloc.ordersDetails;
-        print('Order Details loaded in Detail View: $orderDetails');
 
         if (orderDetails == null) {
           return const Center(child: Text('No order details found.'));
@@ -34,74 +42,109 @@ class OrderDetailView extends StatelessWidget {
             downloads.where((d) => d.orderId == orderDetails.id).toList();
         final theme = Theme.of(context);
 
-        // ✅ Only change: no Scaffold, no top-level SingleChildScrollView.
-        return Container(
-          color: const Color(0xFFF7F8FC),
-          width: double.infinity,
-          child: SingleChildScrollView(
-            padding: EdgeInsets.symmetric(
-              vertical: 36,
-              horizontal: horizontalPadding,
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                _SectionCard(child: _buildOrderInfo(orderDetails, context)),
-                verticalSpace(18),
-                _SectionCard(
-                  child: _buildDownloadsSection(
-                    context,
-                    orderDetails,
-                    matchingDownloads,
-                  ),
+        // --- RESPONSIVE LOGIC ---
+        // Use LayoutBuilder to decide which UI to show based on screen width.
+        return LayoutBuilder(
+          builder: (context, constraints) {
+            final bool isMobile = constraints.maxWidth < 600;
+
+            return Container(
+              color: const Color(0xFFF7F8FC),
+              width: double.infinity,
+              child: SingleChildScrollView(
+                padding: EdgeInsets.symmetric(
+                  vertical: 36,
+                  horizontal: horizontalPadding,
                 ),
-                verticalSpace(18),
-                _SectionCard(
-                  child: _buildOrderDetailsSection(
-                    orderDetails,
-                    matchingDownloads,
-                  ),
-                ),
-                verticalSpace(18),
-                _SectionCard(
-                  child: _buildAddressBox(
-                    context: context,
-                    title: "Billing Address",
-                    content: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          orderDetails.billing?.firstName ?? "",
-                          style: const TextStyle(fontStyle: FontStyle.italic),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    // Conditionally render the correct Order Info widget
+                    isMobile
+                        ? _buildMobileOrderInfo(orderDetails, context)
+                        : _SectionCard(
+                          child: _buildOrderInfo(orderDetails, context),
                         ),
-                        Text(
-                          orderDetails.billing?.postcode ?? "",
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                        Text(
-                          orderDetails.billing?.country ?? "",
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                        Text(
-                          orderDetails.billing?.email ?? "",
-                          style: const TextStyle(fontStyle: FontStyle.italic),
-                        ),
-                      ],
+                    verticalSpace(18),
+                    // Conditionally render the correct Downloads Section
+                    _SectionCard(
+                      child:
+                          isMobile
+                              ? _buildMobileDownloadsSection(
+                                context,
+                                orderDetails,
+                                matchingDownloads,
+                              )
+                              : _buildDownloadsSection(
+                                context,
+                                orderDetails,
+                                matchingDownloads,
+                              ),
                     ),
-                  ),
+                    verticalSpace(18),
+                    // Conditionally render the correct Order Details Section
+                    _SectionCard(
+                      child:
+                          isMobile
+                              ? _buildMobileOrderDetailsSection(
+                                orderDetails,
+                                matchingDownloads,
+                              )
+                              : _buildOrderDetailsSection(
+                                orderDetails,
+                                matchingDownloads,
+                              ),
+                    ),
+                    verticalSpace(18),
+                    _SectionCard(
+                      child: _buildAddressBox(
+                        context: context,
+                        title: "Billing Address",
+                        content: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              orderDetails.billing?.firstName ?? "",
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            Text(
+                              orderDetails.billing?.postcode ?? "",
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            Text(
+                              orderDetails.billing?.country ?? "",
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                            Text(
+                              orderDetails.billing?.email ?? "",
+                              style: const TextStyle(
+                                fontStyle: FontStyle.italic,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    verticalSpace(28),
+                    Padding(
+                      padding: EdgeInsets.symmetric(
+                        horizontal:
+                            MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
+                      ),
+                      child: _buildOrderAgainButton(theme.primaryColor),
+                    ),
+                    verticalSpace(20),
+                  ],
                 ),
-                verticalSpace(28),
-                Padding(
-                  padding: EdgeInsets.symmetric(
-                    horizontal:
-                        MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
-                  ),
-                  child: _buildOrderAgainButton(theme.primaryColor),
-                ),
-                verticalSpace(20),
-              ],
-            ),
-          ),
+              ),
+            );
+          },
         );
       },
     );
@@ -109,6 +152,244 @@ class OrderDetailView extends StatelessWidget {
 }
 
 // ---- Everything below this line is TOP-LEVEL (outside any class) ----
+
+// ===================================================================
+// NEW MOBILE-FRIENDLY WIDGETS
+// ===================================================================
+
+/// Mobile version of the Order Summary section.
+Widget _buildMobileOrderInfo(OrdersDetails orderDetails, BuildContext context) {
+  final statusText =
+      orderDetails.status == 'completed'
+          ? 'Completed'
+          : (orderDetails.status ?? '');
+  final statusColor =
+      orderDetails.status == 'completed'
+          ? Colors.green[700]
+          : Colors.orange[800];
+  final orderDate = orderDetails.dateCreated ?? '';
+
+  // Uses a Column layout for mobile to prevent overflow.
+  return _SectionCard(
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          "Order Summary",
+          style: context.textTheme.titleLarge?.copyWith(
+            fontWeight: FontWeight.bold,
+            fontSize: 22,
+            color: AppColors.themeBlue,
+          ),
+        ),
+        const SizedBox(height: 16),
+        // Stacks icon, text, and status vertically.
+        RichText(
+          text: TextSpan(
+            style: const TextStyle(fontSize: 16, color: Colors.black87),
+            children: [
+              TextSpan(
+                text: 'Order #${orderDetails.id} ',
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+              const TextSpan(text: 'was placed on '),
+              TextSpan(
+                text: _formatDate(orderDate),
+                style: const TextStyle(
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black87,
+                ),
+              ),
+              const TextSpan(text: ' and is currently '),
+              TextSpan(
+                text: '$statusText.',
+                style: TextStyle(
+                  color: statusColor,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    ),
+  );
+}
+
+/// Mobile version of the Downloads section.
+Widget _buildMobileDownloadsSection(
+  BuildContext context,
+  OrdersDetails orderDetails,
+  List<DownloadedData> matchingDownloads,
+) {
+  if (matchingDownloads.isEmpty) {
+    return Padding(
+      padding: const EdgeInsets.all(10.0),
+      child: Row(
+        children: [
+          Icon(Icons.info_outline, color: Colors.orange[400], size: 24),
+          const SizedBox(width: 10),
+          const Flexible(
+            child: Text(
+              "No downloads available for this order.",
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  // Converts the DataTable into a vertical list of products.
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Downloads',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 19,
+          color: AppColors.themeBlue,
+          letterSpacing: 0.3,
+        ),
+      ),
+      const Divider(height: 24),
+      ...matchingDownloads.map((download) {
+        final lineItem = _findLineItemForDownload(orderDetails, download);
+        return Padding(
+          padding: const EdgeInsets.only(bottom: 20.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                lineItem?.name ?? download.productName ?? '',
+                style: const TextStyle(
+                  fontWeight: FontWeight.w600,
+                  fontSize: 16,
+                ),
+              ),
+              const SizedBox(height: 12),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Expires: ${download.accessExpires == null ? '-' : _formatDate(download.accessExpires)}',
+                  ),
+                  Text('Remaining: ${download.downloadsRemaining ?? '-'}'),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  _DownloadActionBtn(
+                    label: "Download",
+                    icon: Icons.download_rounded,
+                    color: AppColors.themeBlue,
+                  ),
+                  const SizedBox(width: 8),
+                  (download.tags?.contains("with simulation") ?? false)
+                      ? _ModernIconBtn(
+                        icon: Icons.play_circle_fill_rounded,
+                        label: "Practice",
+                        color: Colors.green[600]!,
+                        onTap: () {
+                          AppStrings.orderId = download.orderId ?? 0;
+                          AppStrings.fileId = download.fileId ?? "";
+                          if (download.fileId?.isEmpty ?? true) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text("File ID is not available."),
+                              ),
+                            );
+                            return;
+                          }
+                          context.read<SimulationBloc>().add(
+                            FetchSimulationDataEvent(
+                              fieldId: download.fileId ?? "",
+                              pageNumber: 1,
+                            ),
+                          );
+                          context.go("/Downloads/Simulation");
+                        },
+                      )
+                      : SizedBox.shrink(),
+                ],
+              ),
+            ],
+          ),
+        );
+      }).toList(),
+    ],
+  );
+}
+
+/// Mobile version of the Order Details totals section.
+Widget _buildMobileOrderDetailsSection(
+  OrdersDetails orderDetails,
+  List<DownloadedData> matchingDownloads,
+) {
+  const currency = '€';
+
+  // Converts the totals DataTable into a simple vertical list.
+  return Column(
+    crossAxisAlignment: CrossAxisAlignment.start,
+    children: [
+      Text(
+        'Order Details',
+        style: TextStyle(
+          fontWeight: FontWeight.bold,
+          fontSize: 19,
+          color: AppColors.themeBlue,
+          letterSpacing: 0.3,
+        ),
+      ),
+      const Divider(height: 24),
+      ...matchingDownloads.map((download) {
+        final lineItem = _findLineItemForDownload(orderDetails, download);
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Flexible(
+                child: Text(
+                  '${lineItem?.name ?? download.productName ?? ''} × ${lineItem?.quantity ?? 1}',
+                ),
+              ),
+              Text(
+                '${lineItem?.total ?? download.productMeta?.price ?? '0.00'} $currency',
+              ),
+            ],
+          ),
+        );
+      }),
+      const Divider(height: 24),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('Payment method:'),
+          Text(orderDetails.paymentTitle ?? 'N/A'),
+        ],
+      ),
+      const SizedBox(height: 8),
+      Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text('Total:', style: TextStyle(fontWeight: FontWeight.bold)),
+          Text(
+            '${orderDetails.total ?? '0.00'} $currency EUR',
+            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+          ),
+        ],
+      ),
+    ],
+  );
+}
+
+// ===================================================================
+// ORIGINAL WIDGETS FOR DESKTOP (UNCHANGED)
+// ===================================================================
 
 Widget _buildAddressBox({
   required BuildContext context,
@@ -135,6 +416,7 @@ Widget _buildAddressBox({
 
 class _SectionCard extends StatelessWidget {
   final Widget child;
+
   const _SectionCard({required this.child});
 
   @override
@@ -328,19 +610,46 @@ Widget _buildDownloadsSection(
                               DataCell(
                                 Row(
                                   children: [
-                                    _ModernIconBtn(
-                                      icon: Icons.download_rounded,
+                                    _DownloadActionBtn(
                                       label: "Download",
+                                      icon: Icons.download_rounded,
                                       color: AppColors.themeBlue,
-                                      onTap: () {},
                                     ),
                                     const SizedBox(width: 8),
-                                    _ModernIconBtn(
-                                      icon: Icons.play_circle_fill_rounded,
-                                      label: "Practice",
-                                      color: Colors.green[600]!,
-                                      onTap: () {},
-                                    ),
+                                    (download.tags?.contains(
+                                              "with simulation",
+                                            ) ??
+                                            false)
+                                        ? _ModernIconBtn(
+                                          icon: Icons.play_circle_fill_rounded,
+                                          label: "Practice",
+                                          color: Colors.green[600]!,
+                                          onTap: () {
+                                            if (download.fileId?.isEmpty ??
+                                                true) {
+                                              ScaffoldMessenger.of(
+                                                context,
+                                              ).showSnackBar(
+                                                const SnackBar(
+                                                  content: Text(
+                                                    "File ID is not available.",
+                                                  ),
+                                                ),
+                                              );
+                                              return;
+                                            }
+                                            AppStrings.fileId =
+                                                download.fileId ?? "";
+                                            context.read<SimulationBloc>().add(
+                                              FetchSimulationDataEvent(
+                                                fieldId: download.fileId ?? "",
+                                                pageNumber: 1,
+                                              ),
+                                            );
+                                            context.go("/Downloads/Simulation");
+                                          },
+                                        )
+                                        : SizedBox.shrink(),
                                   ],
                                 ),
                               ),
@@ -484,6 +793,7 @@ class _ModernIconBtn extends StatelessWidget {
   final String label;
   final Color color;
   final VoidCallback onTap;
+
   const _ModernIconBtn({
     required this.icon,
     required this.label,
@@ -531,5 +841,165 @@ LineItem? _findLineItemForDownload(
     );
   } catch (_) {
     return null;
+  }
+}
+
+class _DownloadActionBtn extends StatelessWidget {
+  final String label;
+  final IconData icon;
+  final Color color;
+  final VoidCallback? onTap;
+
+  const _DownloadActionBtn({
+    super.key,
+    required this.label,
+    required this.icon,
+    required this.color,
+    this.onTap,
+  });
+
+  Future<void> _showLoader(BuildContext context) async {
+    showDialog(
+      context: context,
+      useRootNavigator: true, // <<--- THIS IS IMPORTANT
+      barrierDismissible: false,
+      builder: (_) => const Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  void _hideLoader(BuildContext context) {
+    if (Navigator.of(context, rootNavigator: true).canPop()) {
+      Navigator.of(context, rootNavigator: true).pop();
+    }
+  }
+
+  // 1. Export API call (gets file URL)
+  Future<void> _exportAndDownloadFile(
+    BuildContext context,
+    String fileId,
+    String type,
+  ) async {
+    await _showLoader(context);
+
+    const apiUrl =
+        'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+
+    try {
+      final dio = Dio();
+      final response = await dio.get(
+        apiUrl,
+        queryParameters: {'fileId': fileId, 'type': type},
+        options: Options(headers: {'Content-Type': 'application/json'}),
+      );
+
+      if (response.data['Success'] == true && response.data['Data'] != null) {
+        final downloadUrl = response.data['Data'] as String;
+        final fileName = Uri.parse(downloadUrl).pathSegments.last;
+        // 2. Download file as blob and trigger browser download
+        await _triggerWebDownload(downloadUrl, fileName);
+        _hideLoader(context);
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+      } else {
+        _hideLoader(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['Message'] ?? "Download failed"),
+          ),
+        );
+      }
+    } catch (e) {
+      _hideLoader(context);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    } finally {
+      _hideLoader(context);
+    }
+  }
+
+  // 2. Web download using Blob (always triggers a download, never opens a new tab)
+  Future<void> _triggerWebDownload(String url, String filename) async {
+    final dio = Dio();
+    final response = await dio.get<List<int>>(
+      url,
+      options: Options(responseType: ResponseType.bytes),
+    );
+
+    final data = Uint8List.fromList(response.data!);
+    final blob = html.Blob([data]);
+    final objectUrl = html.Url.createObjectUrlFromBlob(blob);
+
+    final anchor =
+        html.AnchorElement(href: objectUrl)
+          ..download = filename
+          ..style.display = 'none';
+
+    html.document.body?.append(anchor);
+    anchor.click();
+    anchor.remove();
+    html.Url.revokeObjectUrl(objectUrl);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (label == "Download") {
+      return PopupMenuButton<String>(
+        offset: const Offset(0, 40),
+        tooltip: label,
+        onSelected: (value) async {
+          final fileId =
+              AppStrings.fileId; // Provide fileId from your context/model
+          if (value == 'pdf' || value == 'qzs') {
+            await _exportAndDownloadFile(context, fileId, value);
+          }
+        },
+        itemBuilder:
+            (context) => const [
+              PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
+              PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
+            ],
+        child: TextButton.icon(
+          icon: Icon(icon, size: 18, color: color),
+          label: Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontWeight: FontWeight.bold,
+              fontSize: 14.5,
+            ),
+          ),
+          style: TextButton.styleFrom(
+            backgroundColor: color.withOpacity(0.09),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(8),
+            ),
+            minimumSize: const Size(45, 40),
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+          ),
+          onPressed: null,
+        ),
+      );
+    }
+    // All other buttons unchanged
+    return TextButton.icon(
+      icon: Icon(icon, size: 18, color: color),
+      label: Text(
+        label,
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 14.5,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        backgroundColor: color.withOpacity(0.09),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+        minimumSize: const Size(45, 40),
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+      ),
+      onPressed: onTap,
+    );
   }
 }
