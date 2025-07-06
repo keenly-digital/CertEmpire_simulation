@@ -419,7 +419,7 @@ class OrderTableView extends StatelessWidget {
                   ),
                   onPressed: () {
                     context.read<DownloadPageBloc>().ordersDetails = order;
-                    context.read<NavigationCubit>().selectTab(1, subTitle: 1);
+                    context.go("/Orders/OrderDetail");
                   },
                 ),
               ],

@@ -133,14 +133,14 @@ class OrderDetailView extends StatelessWidget {
                       ),
                     ),
                     verticalSpace(28),
-                    Padding(
-                      padding: EdgeInsets.symmetric(
-                        horizontal:
-                            MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
-                      ),
-                      child: _buildOrderAgainButton(theme.primaryColor),
-                    ),
-                    verticalSpace(20),
+                    // Padding(
+                    //   padding: EdgeInsets.symmetric(
+                    //     horizontal:
+                    //         MediaQuery.of(context).size.width < 800 ? 2 : 4.0,
+                    //   ),
+                    //   child: _buildOrderAgainButton(theme.primaryColor),
+                    // ),
+                    // verticalSpace(20),
                   ],
                 ),
               ),
@@ -773,21 +773,21 @@ Widget _buildOrderDetailsSection(
   );
 }
 
-Widget _buildOrderAgainButton(Color primaryColor) {
-  return OutlinedButton.icon(
-    icon: const Icon(Icons.shopping_cart_checkout_rounded),
-    style: OutlinedButton.styleFrom(
-      foregroundColor: primaryColor,
-      backgroundColor: const Color(0xFFF2F5FD),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
-      side: BorderSide(color: primaryColor.withOpacity(0.26), width: 1.2),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
-      textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
-    ),
-    onPressed: () {},
-    label: const Text('Order again'),
-  );
-}
+// Widget _buildOrderAgainButton(Color primaryColor) {
+//   return OutlinedButton.icon(
+//     icon: const Icon(Icons.shopping_cart_checkout_rounded),
+//     style: OutlinedButton.styleFrom(
+//       foregroundColor: primaryColor,
+//       backgroundColor: const Color(0xFFF2F5FD),
+//       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),
+//       side: BorderSide(color: primaryColor.withOpacity(0.26), width: 1.2),
+//       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(13)),
+//       textStyle: const TextStyle(fontWeight: FontWeight.w700, fontSize: 16),
+//     ),
+//     onPressed: () {},
+//     label: const Text('Order again'),
+//   );
+// }
 
 class _ModernIconBtn extends StatelessWidget {
   final IconData icon;
@@ -953,10 +953,7 @@ class _DownloadActionBtn extends StatelessWidget {
           final fileId =
               AppStrings.fileId; // Provide fileId from your context/model
           if (value == 'pdf' || value == 'qzs') {
-            CommonHelper.showToast(
-              message: "This Feature is Coming Soon",
-            );
-
+            CommonHelper.showToast(message: "This Feature is Coming Soon");
 
             // await _exportAndDownloadFile(context, fileId, value);
           }

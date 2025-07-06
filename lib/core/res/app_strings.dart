@@ -23,7 +23,6 @@ class AppStrings {
   static const String reportAnswerAsIncorrect = 'Report Answer as Incorrect';
 
   static String fileId = '';
-  static String authToken = "";
   static int id = 0;
   static String userId = '';
 
@@ -34,4 +33,5 @@ class AppStrings {
   static String baseUrl = "https://staging2.certempire.com";
   static String name = "Ali R Zain";
   static int orderId = 0;
+  static String authToken = "";
 }
