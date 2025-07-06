@@ -7,9 +7,11 @@ import 'package:certempiree/src/simulation/data/models/file_content_model.dart';
 import 'package:certempiree/src/simulation/data/models/submit_report_param.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_state.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/di/dependency_injection.dart';
+import '../../../../../core/res/app_strings.dart';
 import '../../../../../core/utils/log_util.dart';
 import '../../../domain/repos/simulation_repo.dart';
 import '../../widgets/thank_you_dialogue.dart';
@@ -82,7 +84,6 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-        Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
@@ -107,12 +108,33 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
           builder: (context) => ThankYouDialogue(),
           barrierDismissible: true,
         );
-        Snackbar.show(data.message);
       },
       onFailure: (message) {
         Snackbar.show(message);
         CommonHelper.hideLoader(context);
       },
     );
+  }
+
+  Future<void> downloadRemaining(int productId, int downloadsRemaining) async {
+    final dio = Dio();
+    final url =
+        '${AppStrings.baseUrl}/wp-json/cwc/v2/downloads/update?consumer_secret=cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
+    try {
+      final response = await dio.post(
+        url,
+        data: {
+          "customer": 10860,
+          "product_id": productId,
+          "downloads_remaining": downloadsRemaining,
+        },
+      );
+      if (response.statusCode == 200) {
+      } else {
+        debugPrint('Failed with status: ${response.statusCode}');
+      }
+    } catch (e) {
+      LogUtil.debug(e.toString());
+    }
   }
 }

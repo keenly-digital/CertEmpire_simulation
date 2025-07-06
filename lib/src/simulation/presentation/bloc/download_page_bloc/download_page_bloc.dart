@@ -45,7 +45,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
 
       if (response.statusCode == 200) {
         final downloads = DownloadModel.fromJson(response.data);
-        emit(state.copyWith(orders: downloads.data, loading: false));
+        // emit(state.copyWith(orders: downloads.data, loading: false));
 
         // Trigger fetching simulation file URLs after downloads are loaded
         add(GetFileURlEvent(download: downloads.data ?? []));

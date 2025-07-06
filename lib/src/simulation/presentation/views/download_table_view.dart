@@ -12,6 +12,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/config/theme/app_colors.dart';
+import '../../../../core/shared/widgets/toast.dart';
 import '../../data/models/download_model.dart'; // Make sure this import points to your actual model
 import '../bloc/simulation_bloc/simulation_event.dart';
 
@@ -425,7 +426,12 @@ class _DownloadActionBtn extends StatelessWidget {
           final fileId =
               AppStrings.fileId; // Provide fileId from your context/model
           if (value == 'pdf' || value == 'qzs') {
-            await _exportAndDownloadFile(context, fileId, value);
+            CommonHelper.showToast(
+              message: "This Feature is Coming Soon",
+            );
+
+
+            // await _exportAndDownloadFile(context, fileId, value);
           }
         },
         itemBuilder:

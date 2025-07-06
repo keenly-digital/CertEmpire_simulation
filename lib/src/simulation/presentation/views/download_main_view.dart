@@ -28,7 +28,9 @@ class _DownloadMainViewState extends State<DownloadMainView> {
       child: BlocBuilder<DownloadPageBloc, DownloadPageInitial>(
         builder: (context, state) {
           // Just return your table view directly.
-          return DownloadTableView(download: state.orders ?? []);
+          return state.loading == true
+              ? Center(child: CircularProgressIndicator())
+              : DownloadTableView(download: state.orders ?? []);
         },
       ),
     );
