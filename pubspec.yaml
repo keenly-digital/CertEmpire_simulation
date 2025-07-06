@@ -87,3 +87,7 @@ flutter:
         - asset: fonts/Montserrat_Medium.ttf
         - asset: fonts/Montserrat_Regular.ttf
         - asset: fonts/Montserrat_SemiBold.ttf
+        
+Cache-Control: no-cache, no-store, must-revalidate
+Pragma: no-cache
+Expires: 0
