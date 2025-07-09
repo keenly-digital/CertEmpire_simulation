@@ -1,6 +1,5 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class RewardButton extends StatelessWidget {
   final String? txt;
@@ -8,8 +7,13 @@ class RewardButton extends StatelessWidget {
   final Color? borderColor;
   final Color? txtColor;
 
-
-  const RewardButton({super.key, this.txt, this.onPressed, this.borderColor,this.txtColor});
+  const RewardButton({
+    super.key,
+    this.txt,
+    this.onPressed,
+    this.borderColor,
+    this.txtColor,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +31,7 @@ class RewardButton extends StatelessWidget {
       ),
       child: Text(
         txt ?? "",
-        style: TextStyle(fontSize: 14 , color: txtColor ??AppColors.purple),
+        style: TextStyle(fontSize: 14, color: txtColor ?? AppColors.purple),
       ),
     );
   }

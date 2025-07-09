@@ -1,14 +1,8 @@
 import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/res/app_strings.dart';
-import 'package:certempiree/core/res/asset.dart';
 import 'package:certempiree/src/my_tasks/data/models/my_task_model.dart';
-import 'package:certempiree/src/my_tasks/data/models/vote_task_param_model.dart';
-import 'package:certempiree/src/my_tasks/presentation/bloc/get_all_task_bloc/get_all_task_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
-import '../../../../core/shared/widgets/spaces.dart';
 
 class SubmitionDialogue extends StatelessWidget {
   const SubmitionDialogue({super.key, this.taskItem, this.approved});
@@ -75,7 +69,6 @@ class SubmitionDialogue extends StatelessWidget {
                         overflow: TextOverflow.ellipsis,
                       ),
                     ),
-
                   ],
                 ),
               ),

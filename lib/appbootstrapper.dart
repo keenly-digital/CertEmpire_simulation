@@ -32,6 +32,7 @@ class _AppBootstrapperState extends State<AppBootstrapper> {
         AppStrings.id = data['id'] ?? '10860';
         AppStrings.userId = data['simulation_user_id'];
         AppStrings.authToken = encodedData;
+        AppStrings.name = data['name'] ?? 'Guest';
       } catch (e) {
         debugPrint("Error decoding data: $e");
       }

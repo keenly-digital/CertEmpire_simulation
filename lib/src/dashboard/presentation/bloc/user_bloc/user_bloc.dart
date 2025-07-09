@@ -20,12 +20,11 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
 
     final url =
         '${AppStrings.baseUrl}/wp-json/cwc/v2/customer/${AppStrings.id}';
-    final consumerSecret = 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
 
     try {
       final response = await dio.get(
         url,
-        queryParameters: {'consumer_secret': consumerSecret},
+        queryParameters: {'consumer_secret': AppStrings.consumerSecret},
       );
       if (response.statusCode == 200) {
         var data = UserData.fromJson(response.data);
@@ -45,10 +44,9 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
     Emitter<UserInitialState> emit,
   ) async {
     final dio = Dio();
-    final consumerSecret = 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
 
     final url =
-        "${AppStrings.baseUrl}/wp-json/wc/v3/customers/${AppStrings.id}?consumer_key=ck_f6f8767e67544a97e27d0336f31dcf27c882694a&consumer_secret=$consumerSecret";
+        "${AppStrings.baseUrl}/wp-json/wc/v3/customers/${AppStrings.id}?consumer_key=${AppStrings.consumerKey}&consumer_secret=${AppStrings.consumerSecret}";
 
     try {
       final response = await dio.put(
@@ -141,10 +139,9 @@ class UserBloc extends Bloc<UserInitEvent, UserInitialState> {
     // Emitter<UserInitialState> emit,
   ) async {
     final dio = Dio();
-    final consumerSecret = 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
 
     final url =
-        "${AppStrings.baseUrl}/wp-json/wc/v3/customers/${AppStrings.id}?consumer_key=ck_f6f8767e67544a97e27d0336f31dcf27c882694a&consumer_secret=$consumerSecret";
+        "${AppStrings.baseUrl}/wp-json/wc/v3/customers/${AppStrings.id}?consumer_key=${AppStrings.consumerKey}&consumer_secret=${AppStrings.consumerSecret}";
 
     try {
       final response = await dio.put(

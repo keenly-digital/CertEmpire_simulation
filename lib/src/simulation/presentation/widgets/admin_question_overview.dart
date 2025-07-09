@@ -1,3 +1,4 @@
+import 'package:certempiree/src/simulation/presentation/widgets/explanation_build.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_ans_as_incorrect_dialogue.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_explaination_as_incorrect_dialogue.dart';
 import 'package:certempiree/src/simulation/presentation/widgets/report_question_dialogue.dart';
@@ -169,8 +170,8 @@ class _AdminQuestionOverviewWidgetState
     return Text(
       text.toUpperCase(),
       style: TextStyle(
-        color: Colors.grey.shade500,
-        fontWeight: FontWeight.w600,
+        color: Colors.black,
+        fontWeight: FontWeight.bold,
         fontSize: 12,
         letterSpacing: 0.8,
       ),
@@ -329,16 +330,26 @@ class _AdminQuestionOverviewWidgetState
                     const SizedBox(height: 18),
                     _buildLabel("Explanation"),
                     const SizedBox(height: 10),
+
+                    // Padding(
+                    //   padding: const EdgeInsets.only(right: 4),
+                    //   child: inlineTextWithImages(
+                    //     widget.question.answerExplanation,
+                    //     style: TextStyle(
+                    //       color: Colors.grey[700],
+                    //       fontSize: 15.5,
+                    //       height: 1.33,
+                    //     ),
+                    //     imageMaxWidth: 350,
+                    //   ),
+                    // ),
                     Padding(
                       padding: const EdgeInsets.only(right: 4),
-                      child: inlineTextWithImages(
-                        widget.question.answerExplanation,
-                        style: TextStyle(
-                          color: Colors.grey[700],
-                          fontSize: 15.5,
-                          height: 1.33,
-                        ),
-                        imageMaxWidth: 350,
+                      child: ExplanationSection(
+                        explanation: widget.question.answerExplanation,
+                        headingColor: Colors.black,
+                        headingFontSize: 12,
+                        textColor: Colors.black87,
                       ),
                     ),
                     const SizedBox(height: 10),
@@ -461,7 +472,7 @@ class _AdminQuestionOverviewWidgetState
         Text(
           "Correct Answer:",
           style: TextStyle(
-            color: Colors.grey.shade600,
+            color: Colors.black,
             fontWeight: FontWeight.w600,
             fontSize: 13,
             letterSpacing: 0.2,
@@ -507,7 +518,7 @@ class _AdminQuestionOverviewWidgetState
             Text(
               "Correct Answer:",
               style: TextStyle(
-                color: Colors.grey.shade600,
+                color: Colors.black,
                 fontWeight: FontWeight.w600,
                 fontSize: 13,
                 letterSpacing: 0.2,

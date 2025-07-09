@@ -355,8 +355,7 @@ class _DownloadActionBtn extends StatelessWidget {
     print("9840328409832 :::: ${fileId}");
     await _showLoader(context);
 
-    const apiUrl =
-        'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+    final apiUrl = '${AppStrings.netbaseUrl}Quiz/ExportFile';
 
     try {
       final dio = Dio();
@@ -426,10 +425,7 @@ class _DownloadActionBtn extends StatelessWidget {
           final fileId =
               AppStrings.fileId; // Provide fileId from your context/model
           if (value == 'pdf' || value == 'qzs') {
-            CommonHelper.showToast(
-              message: "This Feature is Coming Soon",
-            );
-
+            CommonHelper.showToast(message: "This Feature is Coming Soon");
 
             // await _exportAndDownloadFile(context, fileId, value);
           }

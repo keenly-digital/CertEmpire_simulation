@@ -41,7 +41,6 @@ class OrderDetailView extends StatelessWidget {
             downloadPageBloc.state.orders ?? <DownloadedData>[];
         final List<DownloadedData> matchingDownloads =
             downloads.where((d) => d.orderId == orderDetails.id).toList();
-        final theme = Theme.of(context);
 
         // --- RESPONSIVE LOGIC ---
         // Use LayoutBuilder to decide which UI to show based on screen width.
@@ -882,8 +881,7 @@ class _DownloadActionBtn extends StatelessWidget {
   ) async {
     await _showLoader(context);
 
-    const apiUrl =
-        'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+    final apiUrl = '${AppStrings.netbaseUrl}Quiz/ExportFile';
 
     try {
       final dio = Dio();

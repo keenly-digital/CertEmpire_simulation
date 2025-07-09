@@ -38,8 +38,8 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
       final response = await dio.get(
         url,
         queryParameters: {
-          'consumer_key': 'ck_f6f8767e67544a97e27d0336f31dcf27c882694a',
-          'consumer_secret': 'cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620',
+          'consumer_key': AppStrings.consumerKey,
+          'consumer_secret': AppStrings.consumerSecret,
         },
       );
 
@@ -64,8 +64,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
     Emitter<DownloadPageInitial> emit,
   ) async {
     final dio = Dio();
-    const url =
-        'https://certempirbackend-production.up.railway.app/api/WordpressAPI/GetSimulationURL';
+    final url = '${AppStrings.netbaseUrl}WordpressAPI/GetSimulationURL';
 
     final fileURLs =
         event.download
@@ -113,8 +112,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
   }) async {
     _showLoader(context);
 
-    const url =
-        'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+    final url = '${AppStrings.netbaseUrl}Quiz/ExportFile';
 
     try {
       final response = await _dio.get(

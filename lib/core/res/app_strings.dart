@@ -22,16 +22,21 @@ class AppStrings {
   static const String close = 'CLOSE';
   static const String reportAnswerAsIncorrect = 'Report Answer as Incorrect';
 
-  static String fileId = '';
-  static int id = 0;
-  static String userId = '';
+  // static String fileId = '';
+  // static int id = 0;
+  // static String userId = '';
 
-  // static String fileId = 'f9699361-dfd0-4336-83c0-8eccb5b8b472';
-  // static int id = 10860;
-  // static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
+  static String fileId = 'f9699361-dfd0-4336-83c0-8eccb5b8b472';
+  static int id = 10860;
+  static String userId = '97cf017a-32c0-4b2e-934a-aa9680e9d544';
 
   static String baseUrl = "https://staging2.certempire.com";
-  static String name = "Ali R Zain";
+  static String netbaseUrl =
+      "https://certempirbackend-production.up.railway.app/api/";
+  static String name = "";
   static int orderId = 0;
   static String authToken = "";
+
+  static String consumerSecret = "cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620";
+  static String consumerKey = "ck_f6f8767e67544a97e27d0336f31dcf27c882694a";
 }

@@ -119,12 +119,12 @@ class SimulationBloc extends Bloc<SimulationEvent, SimulationInitState> {
   Future<void> downloadRemaining(int productId, int downloadsRemaining) async {
     final dio = Dio();
     final url =
-        '${AppStrings.baseUrl}/wp-json/cwc/v2/downloads/update?consumer_secret=cs_1b64f61e4cf40ae19ab5284143dd19e77cc79620';
+        '${AppStrings.baseUrl}/wp-json/cwc/v2/downloads/update?consumer_secret=${AppStrings.consumerSecret}';
     try {
       final response = await dio.post(
         url,
         data: {
-          "customer": 10860,
+          "customer": AppStrings.id,
           "product_id": productId,
           "downloads_remaining": downloadsRemaining,
         },

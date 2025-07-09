@@ -1,4 +1,4 @@
-
+import 'package:certempiree/core/res/app_strings.dart';
 import 'package:dio/dio.dart';
 
 import 'dio_interceptors.dart';
@@ -6,28 +6,26 @@ import 'dio_interceptors.dart';
 class ApiClient {
   late final Dio _dio;
   String _token = '';
-  // static const _baseUrl = 'https://exam-backend-production-1314.up.railway.app/api';
-  static const _baseUrl = 'https://certempirbackend-production.up.railway.app/api/';
 
   static const _connectTimeout = Duration(minutes: 15);
   static const _receiveTimeout = Duration(minutes: 15);
   static const _sendTimeout = Duration(minutes: 15);
 
   ApiClient._internal() {
-    _dio = Dio(BaseOptions(
-      baseUrl: _baseUrl,
-      connectTimeout: _connectTimeout,
-      receiveTimeout: _receiveTimeout,
-      sendTimeout: _sendTimeout,
-    ));
+    _dio = Dio(
+      BaseOptions(
+        baseUrl: AppStrings.netbaseUrl,
+        connectTimeout: _connectTimeout,
+        receiveTimeout: _receiveTimeout,
+        sendTimeout: _sendTimeout,
+      ),
+    );
     _dio.interceptors.addAll([
       // Add interceptors for authentication, error handling, etc.
       AuthInterceptor(this),
       ErrorInterceptor(),
-      CustomLoggingInterceptor()
+      CustomLoggingInterceptor(),
     ]);
-
-
   }
 
   static final ApiClient _instance = ApiClient._internal();

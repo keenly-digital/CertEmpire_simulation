@@ -802,8 +802,7 @@ Future<void> _exportAndDownloadFile(
 ) async {
   await _showLoader(context);
 
-  const apiUrl =
-      'https://certempirbackend-production.up.railway.app/api/Quiz/ExportFile';
+  final apiUrl = '${AppStrings.netbaseUrl}Quiz/ExportFile';
 
   try {
     final dio = Dio();

@@ -2,23 +2,24 @@ import 'package:certempiree/core/config/theme/app_colors.dart';
 import 'package:certempiree/core/shared/widgets/snakbar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 
 class CommonHelper {
   static showToast({String? message}) {
-    Snackbar.show(message??"");
+    Snackbar.show(message ?? "");
   }
 
   static void showLoader(BuildContext context) {
     showDialog(
-
       barrierColor: Colors.transparent,
       context: context,
       barrierDismissible: true,
       builder: (BuildContext context) {
         return Dialog(
           backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8),side: BorderSide(color: AppColors.purple)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: AppColors.purple),
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: Row(
