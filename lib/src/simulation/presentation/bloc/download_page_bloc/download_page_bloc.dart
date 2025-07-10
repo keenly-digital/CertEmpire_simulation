@@ -90,7 +90,6 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
       }
 
       emit(state.copyWith(orders: event.download, loading: false));
-      print(event.download.length);
       event.download.forEach((element) {
         LogUtil.debug(
           "Matched fileId: ${element.fileId} :: fileUrl: ${element.fileUrl}",
@@ -112,7 +111,7 @@ class DownloadPageBloc extends Bloc<DownloadPageEvent, DownloadPageInitial> {
   }) async {
     _showLoader(context);
 
-    final url = '${AppStrings.netbaseUrl}Quiz/ExportFile';
+    final url = '${AppStrings.netbaseUrl}Quiz/GetFileDownloadUrl';
 
     try {
       final response = await _dio.get(

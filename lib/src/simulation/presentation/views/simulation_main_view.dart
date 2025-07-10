@@ -782,7 +782,7 @@ class _ExamQuestionPageState extends State<ExamQuestionPage> {
 Future<void> _showLoader(BuildContext context) async {
   showDialog(
     context: context,
-    useRootNavigator: true, // <<--- THIS IS IMPORTANT
+    useRootNavigator: true,
     barrierDismissible: false,
     builder: (_) => const Center(child: CircularProgressIndicator()),
   );
@@ -794,59 +794,66 @@ void _hideLoader(BuildContext context) {
   }
 }
 
-// 1. Export API call (gets file URL)
 Future<void> _exportAndDownloadFile(
   BuildContext context,
   String fileId,
   String type,
 ) async {
-  await _showLoader(context);
+  _showLoader(context);
 
-  final apiUrl = '${AppStrings.netbaseUrl}Quiz/ExportFile';
+  final apiUrl = '${AppStrings.netbaseUrl}Quiz/GetFileDownloadUrl';
 
   try {
     final dio = Dio();
     final response = await dio.get(
       apiUrl,
-      queryParameters: {'fileId': fileId, 'type': type},
+      queryParameters: {'fileId': fileId, 'filetype': type},
       options: Options(headers: {'Content-Type': 'application/json'}),
     );
+
+    // Defensive: Check if widget is still mounted (if used in StatefulWidget)
+    // if (!mounted) return;
 
     if (response.data['Success'] == true && response.data['Data'] != null) {
       final downloadUrl = response.data['Data'] as String;
       final fileName = Uri.parse(downloadUrl).pathSegments.last;
-      // 2. Download file as blob and trigger browser download
       await _triggerWebDownload(downloadUrl, fileName);
-      _hideLoader(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
+      }
     } else {
-      _hideLoader(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response.data['Message'] ?? "Download failed")),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response.data['Message'] ?? "Download failed"),
+          ),
+        );
+      }
     }
   } catch (e) {
-    _hideLoader(context);
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
+    }
   } finally {
     _hideLoader(context);
   }
 }
 
-// 2. Web download using Blob (always triggers a download, never opens a new tab)
 Future<void> _triggerWebDownload(String url, String filename) async {
   final dio = Dio();
   final response = await dio.get<List<int>>(
     url,
     options: Options(responseType: ResponseType.bytes),
   );
-
-  final data = Uint8List.fromList(response.data!);
-  final blob = html.Blob([data]);
+  final bytes = response.data;
+  if (bytes == null || bytes.isEmpty) {
+    throw Exception('Download failed: No data received.');
+  }
+  final blob = html.Blob([Uint8List.fromList(bytes)]);
   final objectUrl = html.Url.createObjectUrlFromBlob(blob);
 
   final anchor =

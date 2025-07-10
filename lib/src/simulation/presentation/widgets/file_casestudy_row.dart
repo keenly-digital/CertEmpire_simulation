@@ -58,14 +58,12 @@ class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // --- REFACTORED: Added LayoutBuilder for a responsive header ---
+          // --- Responsive Header ---
           LayoutBuilder(
             builder: (context, constraints) {
-              // On screens wider than 500px, use the original Row layout.
               if (constraints.maxWidth > 500) {
                 return _buildWideHeader();
               } else {
-                // On narrower screens, use a Column-based layout to prevent overflow.
                 return _buildNarrowHeader();
               }
             },
@@ -76,6 +74,27 @@ class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
               jsonContent: widget.caseStudy.description,
               isExpanded: _isExpanded,
             ),
+            // ---- Hide Button at bottom when expanded ----
+            if (_isExpanded)
+              Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 16.0),
+                  child: TextButton(
+                    onPressed: () => setState(() => _isExpanded = false),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: const [
+                        Text(
+                          "Hide",
+                          style: TextStyle(fontWeight: FontWeight.bold),
+                        ),
+                        Icon(Icons.keyboard_arrow_up),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
           ],
         ],
       ),
@@ -144,7 +163,6 @@ class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
   Widget _buildNarrowHeader() {
     return Column(
       children: [
-        // Top row for the icon and title
         Row(
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
@@ -175,7 +193,6 @@ class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
           ],
         ),
         const SizedBox(height: 8),
-        // Bottom row for the questions count and button, aligned to the right
         Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
@@ -211,7 +228,6 @@ class _FileCaseStudyRowWidgetState extends State<FileCaseStudyRowWidget> {
   }
 }
 
-// This widget does not require any changes.
 class ExpandableQuillViewer extends StatelessWidget {
   final String? jsonContent;
   final bool isExpanded;

@@ -9,6 +9,7 @@ import 'package:certempiree/src/order/presentation/bloc/order_bloc/order_state.d
 import 'package:certempiree/src/simulation/presentation/bloc/download_page_bloc/download_page_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_bloc.dart';
 import 'package:certempiree/src/simulation/presentation/bloc/simulation_bloc/simulation_event.dart';
+import 'package:certempiree/src/simulation/presentation/widgets/download_button.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -282,7 +283,7 @@ Widget _buildMobileDownloadsSection(
               Row(
                 mainAxisAlignment: MainAxisAlignment.end,
                 children: [
-                  _DownloadActionBtn(
+                  DownloadActionBtn(
                     label: "Download",
                     icon: Icons.download_rounded,
                     color: AppColors.themeBlue,
@@ -610,7 +611,7 @@ Widget _buildDownloadsSection(
                               DataCell(
                                 Row(
                                   children: [
-                                    _DownloadActionBtn(
+                                    DownloadActionBtn(
                                       label: "Download",
                                       icon: Icons.download_rounded,
                                       color: AppColors.themeBlue,
@@ -841,166 +842,5 @@ LineItem? _findLineItemForDownload(
     );
   } catch (_) {
     return null;
-  }
-}
-
-class _DownloadActionBtn extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final Color color;
-  final VoidCallback? onTap;
-
-  const _DownloadActionBtn({
-    super.key,
-    required this.label,
-    required this.icon,
-    required this.color,
-    this.onTap,
-  });
-
-  Future<void> _showLoader(BuildContext context) async {
-    showDialog(
-      context: context,
-      useRootNavigator: true, // <<--- THIS IS IMPORTANT
-      barrierDismissible: false,
-      builder: (_) => const Center(child: CircularProgressIndicator()),
-    );
-  }
-
-  void _hideLoader(BuildContext context) {
-    if (Navigator.of(context, rootNavigator: true).canPop()) {
-      Navigator.of(context, rootNavigator: true).pop();
-    }
-  }
-
-  // 1. Export API call (gets file URL)
-  Future<void> _exportAndDownloadFile(
-    BuildContext context,
-    String fileId,
-    String type,
-  ) async {
-    await _showLoader(context);
-
-    final apiUrl = '${AppStrings.netbaseUrl}Quiz/ExportFile';
-
-    try {
-      final dio = Dio();
-      final response = await dio.get(
-        apiUrl,
-        queryParameters: {'fileId': fileId, 'type': type},
-        options: Options(headers: {'Content-Type': 'application/json'}),
-      );
-
-      if (response.data['Success'] == true && response.data['Data'] != null) {
-        final downloadUrl = response.data['Data'] as String;
-        final fileName = Uri.parse(downloadUrl).pathSegments.last;
-        // 2. Download file as blob and trigger browser download
-        await _triggerWebDownload(downloadUrl, fileName);
-        _hideLoader(context);
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Download started: $fileName')));
-      } else {
-        _hideLoader(context);
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(response.data['Message'] ?? "Download failed"),
-          ),
-        );
-      }
-    } catch (e) {
-      _hideLoader(context);
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(SnackBar(content: Text("Error: ${e.toString()}")));
-    } finally {
-      _hideLoader(context);
-    }
-  }
-
-  // 2. Web download using Blob (always triggers a download, never opens a new tab)
-  Future<void> _triggerWebDownload(String url, String filename) async {
-    final dio = Dio();
-    final response = await dio.get<List<int>>(
-      url,
-      options: Options(responseType: ResponseType.bytes),
-    );
-
-    final data = Uint8List.fromList(response.data!);
-    final blob = html.Blob([data]);
-    final objectUrl = html.Url.createObjectUrlFromBlob(blob);
-
-    final anchor =
-        html.AnchorElement(href: objectUrl)
-          ..download = filename
-          ..style.display = 'none';
-
-    html.document.body?.append(anchor);
-    anchor.click();
-    anchor.remove();
-    html.Url.revokeObjectUrl(objectUrl);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    if (label == "Download") {
-      return PopupMenuButton<String>(
-        offset: const Offset(0, 40),
-        tooltip: label,
-        onSelected: (value) async {
-          final fileId =
-              AppStrings.fileId; // Provide fileId from your context/model
-          if (value == 'pdf' || value == 'qzs') {
-            CommonHelper.showToast(message: "This Feature is Coming Soon");
-
-            // await _exportAndDownloadFile(context, fileId, value);
-          }
-        },
-        itemBuilder:
-            (context) => const [
-              PopupMenuItem(value: 'pdf', child: Text('Download as PDF')),
-              PopupMenuItem(value: 'qzs', child: Text('Download as QZS')),
-            ],
-        child: TextButton.icon(
-          icon: Icon(icon, size: 18, color: color),
-          label: Text(
-            label,
-            style: TextStyle(
-              color: color,
-              fontWeight: FontWeight.bold,
-              fontSize: 14.5,
-            ),
-          ),
-          style: TextButton.styleFrom(
-            backgroundColor: color.withOpacity(0.09),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(8),
-            ),
-            minimumSize: const Size(45, 40),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          ),
-          onPressed: null,
-        ),
-      );
-    }
-    // All other buttons unchanged
-    return TextButton.icon(
-      icon: Icon(icon, size: 18, color: color),
-      label: Text(
-        label,
-        style: TextStyle(
-          color: color,
-          fontWeight: FontWeight.bold,
-          fontSize: 14.5,
-        ),
-      ),
-      style: TextButton.styleFrom(
-        backgroundColor: color.withOpacity(0.09),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-        minimumSize: const Size(45, 40),
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      ),
-      onPressed: onTap,
-    );
   }
 }
